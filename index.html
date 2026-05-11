@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>PIXEL XP - Sistema Militar</title>
+    <title>PIXEL XP - Sistema Militar Multiplayer</title>
     <style>
         * {
             margin: 0;
@@ -247,8 +247,10 @@
         .naval-cell.ship { background: #5a8a5a; }
         .naval-cell.hit { background: #8a6a4a; }
         .naval-cell.miss { background: #2a5a2a; }
-        .online-user { background: #3a7a2a; padding: 5px; margin: 3px; cursor: pointer; border: 1px solid #aaffaa; }
+        .online-user { background: #3a7a2a; padding: 8px; margin: 5px; cursor: pointer; border: 1px solid #aaffaa; border-radius: 4px; }
         .online-user:hover { background: #5a9a3a; }
+        .game-item { background: #2a5a2a; padding: 8px; margin: 5px; cursor: pointer; border: 1px solid #ffaa66; }
+        .notification { background: #ffaa66; color: #1a3a1a; padding: 5px; margin: 5px 0; border-radius: 3px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -315,12 +317,40 @@
         saveOnline();
     }
 
-    // ========== SISTEMA DE DESAFIOS DE BATALHA NAVAL ==========
+    // ========== SISTEMA MULTIPLAYER ==========
     let pendingChallenges = JSON.parse(localStorage.getItem('naval_challenges')) || [];
     let activeGames = JSON.parse(localStorage.getItem('naval_games')) || [];
+    let notificationListener = null;
     
     function saveChallenges() { localStorage.setItem('naval_challenges', JSON.stringify(pendingChallenges)); }
     function saveGames() { localStorage.setItem('naval_games', JSON.stringify(activeGames)); }
+    
+    function initEmptyBoard() { return Array(8).fill().map(() => Array(8).fill(false)); }
+    
+    function placeShips() {
+        let board = initEmptyBoard();
+        let ships = [[0,0], [2,3], [5,5], [7,1]];
+        ships.forEach(([r,c]) => { if(r<8 && c<8) board[r][c] = true; });
+        return board;
+    }
+    
+    function checkAndNotifyChallenges() {
+        let myChallenges = pendingChallenges.filter(c => c.to === currentUser && c.status === 'pending');
+        if (myChallenges.length > 0 && notificationListener) {
+            myChallenges.forEach(challenge => {
+                notificationListener(challenge);
+            });
+        }
+    }
+    
+    setInterval(() => {
+        if (currentUser) {
+            let myChallenges = pendingChallenges.filter(c => c.to === currentUser && c.status === 'pending');
+            if (myChallenges.length > 0) {
+                checkAndNotifyChallenges();
+            }
+        }
+    }, 3000);
 
     // ========== LOGIN ==========
     document.getElementById('doLoginBtn').onclick = () => {
@@ -357,49 +387,8 @@
         updateClock();
         setInterval(updateClock, 1000);
         initStartMenu();
-        checkPendingChallenges();
-        setInterval(checkPendingChallenges, 5000);
     }
     
-    function checkPendingChallenges() {
-        let myChallenges = pendingChallenges.filter(c => c.to === currentUser && c.status === 'pending');
-        if (myChallenges.length > 0) {
-            myChallenges.forEach(challenge => {
-                if (confirm(`⚓ ${challenge.from} desafiou você para uma BATALHA NAVAL! Aceitar?`)) {
-                    challenge.status = 'accepted';
-                    activeGames.push({
-                        id: challenge.id,
-                        player1: challenge.from,
-                        player2: challenge.to,
-                        turn: challenge.from,
-                        board1: initEmptyBoard(),
-                        board2: initEmptyBoard(),
-                        hits1: initEmptyBoard(),
-                        hits2: initEmptyBoard(),
-                        ships1: placeShips(),
-                        ships2: placeShips(),
-                        gameOver: false,
-                        winner: null
-                    });
-                    saveChallenges();
-                    saveGames();
-                    alert(`🎯 Desafio aceito! Abra o jogo para continuar.`);
-                } else {
-                    challenge.status = 'declined';
-                    saveChallenges();
-                }
-            });
-        }
-    }
-    
-    function initEmptyBoard() { return Array(8).fill().map(() => Array(8).fill(false)); }
-    function placeShips() {
-        let board = initEmptyBoard();
-        let ships = [[0,0], [2,3], [5,5], [7,1]];
-        ships.forEach(([r,c]) => { if(r<8 && c<8) board[r][c] = true; });
-        return board;
-    }
-
     function updateClock() { document.getElementById('clock').innerText = new Date().toLocaleTimeString() + "  " + new Date().toLocaleDateString(); }
     
     function initStartMenu() {
@@ -483,12 +472,11 @@
         let html = `<div><h3>📁 ARQUIVOS</h3><div class="folder-item" id="showUsers">🔐 USUÁRIOS</div><div class="folder-item" id="showLogs">📜 LOGS</div><div id="fileView"></div></div>`;
         createWindow("EXPLORADOR", html, 480, 400);
         setTimeout(() => {
-            document.getElementById('showUsers').onclick = () => document.getElementById('fileView').innerHTML = `<pre>${JSON.stringify(usersDB, null, 2)}</pre><p>Online: ${onlineUsers.join(', ')}</p>`;
+            document.getElementById('showUsers').onclick = () => document.getElementById('fileView').innerHTML = `<pre>${JSON.stringify(usersDB, null, 2)}</pre><p>Online agora: ${onlineUsers.join(', ') || 'Ninguém'}</p>`;
             document.getElementById('showLogs').onclick = () => document.getElementById('fileView').innerHTML = `<pre>Usuário atual: ${currentUser}</pre>`;
         }, 50);
     }
 
-    // ========== CAMPO MINADO ==========
     function openMines() {
         let html = `<div><h3>💣 CAMPO MINADO</h3><div id="minesDiv"></div><div id="mineStatus" style="margin-top:10px;font-weight:bold;"></div><button id="newMine" class="game-btn">NOVO JOGO</button></div>`;
         createWindow("CAMPO MINADO", html, 450, 500);
@@ -527,53 +515,100 @@
         document.getElementById('newMine')?.addEventListener('click', () => initGame());
     }
 
-    // ========== BATALHA NAVAL MULTIPLAYER ==========
+    // ========== BATALHA NAVAL MULTIPLAYER COMPLETO ==========
     function openNavalMultiplayer() {
-        let onlineList = onlineUsers.filter(u => u !== currentUser);
-        let myGames = activeGames.filter(g => g.player1 === currentUser || g.player2 === currentUser);
+        let refreshInterval;
         
-        let html = `<div>
-            <h3>⚓ BATALHA NAVAL MULTIPLAYER</h3>
-            <div style="background:#1a3a1a; padding:10px; margin:10px 0;">
-                <h4>👥 USUÁRIOS ONLINE</h4>
-                <div id="onlineUsersList">${onlineList.map(u => `<div class="online-user" data-user="${u}">🎯 DESAFIAR ${u}</div>`).join('') || '<p>Nenhum outro usuário online</p>'}</div>
-            </div>
-            <div style="background:#1a3a1a; padding:10px; margin:10px 0;">
-                <h4>🎮 PARTIDAS ATIVAS</h4>
-                <div id="activeGamesList">${myGames.map(g => `<div class="folder-item" data-game="${g.id}">⚔️ ${g.player1} vs ${g.player2} - ${g.gameOver ? 'FINALIZADO' : `Turno: ${g.turn}`}</div>`).join('') || '<p>Nenhuma partida ativa</p>'}</div>
-            </div>
-            <div id="gameBoardContainer" style="margin-top:15px;"></div>
-        </div>`;
-        
-        let win = createWindow("BATALHA NAVAL MULTIPLAYER", html, 800, 600);
-        
-        setTimeout(() => {
-            document.querySelectorAll('.online-user').forEach(el => {
-                el.onclick = () => {
-                    let opponent = el.dataset.user;
-                    if (confirm(`Enviar desafio para ${opponent}?`)) {
-                        let challengeId = Date.now() + Math.random();
-                        pendingChallenges.push({
-                            id: challengeId,
-                            from: currentUser,
-                            to: opponent,
-                            status: 'pending',
-                            timestamp: Date.now()
-                        });
-                        saveChallenges();
-                        alert(`Desafio enviado para ${opponent}! Aguardando resposta...`);
-                    }
-                };
-            });
+        function renderNavalLobby() {
+            let onlineList = onlineUsers.filter(u => u !== currentUser);
+            let myGames = activeGames.filter(g => g.player1 === currentUser || g.player2 === currentUser);
             
-            document.querySelectorAll('[data-game]').forEach(el => {
-                el.onclick = () => {
-                    let gameId = el.dataset.game;
-                    let game = activeGames.find(g => g.id == gameId);
-                    if (game) renderGameBoard(game);
-                };
-            });
-        }, 50);
+            let html = `<div>
+                <h3>⚓ BATALHA NAVAL MULTIPLAYER</h3>
+                <div style="background:#1a3a1a; padding:10px; margin:10px 0;">
+                    <h4>👥 USUÁRIOS ONLINE (${onlineList.length})</h4>
+                    <div id="onlineUsersList">${onlineList.map(u => `<div class="online-user" data-user="${u}">🎯 DESAFIAR ${u}</div>`).join('') || '<p>Nenhum outro usuário online</p>'}</div>
+                </div>
+                <div style="background:#1a3a1a; padding:10px; margin:10px 0;">
+                    <h4>🎮 SUAS PARTIDAS ATIVAS (${myGames.length})</h4>
+                    <div id="activeGamesList">${myGames.map(g => `<div class="game-item" data-game='${JSON.stringify(g)}'>⚔️ ${g.player1} vs ${g.player2} - ${g.gameOver ? `VENCEDOR: ${g.winner}` : `Turno: ${g.turn === currentUser ? 'SUA VEZ!' : 'AGUARDANDO...'}`}</div>`).join('') || '<p>Nenhuma partida ativa</p>'}</div>
+                </div>
+                <div id="gameBoardContainer" style="margin-top:15px;"></div>
+            </div>`;
+            
+            let win = createWindow("BATALHA NAVAL MULTIPLAYER", html, 850, 650);
+            
+            setTimeout(() => {
+                document.querySelectorAll('.online-user').forEach(el => {
+                    el.onclick = () => {
+                        let opponent = el.dataset.user;
+                        if (confirm(`Enviar desafio para ${opponent}?`)) {
+                            let challengeId = Date.now() + Math.random();
+                            pendingChallenges.push({
+                                id: challengeId,
+                                from: currentUser,
+                                to: opponent,
+                                status: 'pending',
+                                timestamp: Date.now()
+                            });
+                            saveChallenges();
+                            alert(`✅ Desafio enviado para ${opponent}! Aguardando resposta...`);
+                            renderNavalLobby();
+                        }
+                    };
+                });
+                
+                document.querySelectorAll('[data-game]').forEach(el => {
+                    el.onclick = () => {
+                        let game = JSON.parse(el.dataset.game);
+                        renderGameBoard(game);
+                    };
+                });
+                
+                // Verificar desafios recebidos
+                let myChallenges = pendingChallenges.filter(c => c.to === currentUser && c.status === 'pending');
+                myChallenges.forEach(challenge => {
+                    if (confirm(`🔔 ${challenge.from} desafiou você para uma BATALHA NAVAL! Aceitar?`)) {
+                        challenge.status = 'accepted';
+                        let newGame = {
+                            id: challenge.id,
+                            player1: challenge.from,
+                            player2: challenge.to,
+                            turn: challenge.from,
+                            board1: placeShips(),
+                            board2: placeShips(),
+                            ships1: placeShips(),
+                            ships2: placeShips(),
+                            hits1: initEmptyBoard(),
+                            hits2: initEmptyBoard(),
+                            gameOver: false,
+                            winner: null
+                        };
+                        activeGames.push(newGame);
+                        saveGames();
+                        saveChallenges();
+                        alert(`🎯 Desafio aceito! Partida iniciada contra ${challenge.from}`);
+                        renderNavalLobby();
+                    }
+                });
+            }, 50);
+            
+            refreshInterval = setInterval(() => {
+                if (document.getElementById('windowContainer').children.length > 0) {
+                    onlineList = onlineUsers.filter(u => u !== currentUser);
+                    myGames = activeGames.filter(g => g.player1 === currentUser || g.player2 === currentUser);
+                    let gamesDiv = document.getElementById('activeGamesList');
+                    if (gamesDiv) {
+                        gamesDiv.innerHTML = myGames.map(g => `<div class="game-item" data-game='${JSON.stringify(g)}'>⚔️ ${g.player1} vs ${g.player2} - ${g.gameOver ? `VENCEDOR: ${g.winner}` : `Turno: ${g.turn === currentUser ? 'SUA VEZ!' : 'AGUARDANDO...'}`}</div>`).join('') || '<p>Nenhuma partida ativa</p>';
+                        document.querySelectorAll('[data-game]').forEach(el => {
+                            el.onclick = () => { renderGameBoard(JSON.parse(el.dataset.game)); };
+                        });
+                    }
+                } else {
+                    clearInterval(refreshInterval);
+                }
+            }, 2000);
+        }
         
         function renderGameBoard(game) {
             let container = document.getElementById('gameBoardContainer');
@@ -595,7 +630,7 @@
                     <div>
                         <h3>🌊 SEU CAMPO (${currentUser})</h3>
                         <div id="myBoard" style="display:grid; grid-template-columns:repeat(8,35px); gap:2px;"></div>
-                        <p>Navios restantes: ${4 - myHits.flat().filter((v,i) => v && myShips.flat()[i]).length}/4</p>
+                        <p>Navios restantes: ${4 - myScore}/4</p>
                     </div>
                     <div>
                         <h3>🎯 ATAQUE A ${opponentName}</h3>
@@ -604,9 +639,9 @@
                     </div>
                 </div>
                 <div style="text-align:center; margin-top:15px;">
-                    <p>${game.gameOver ? `🏆 VENCEDOR: ${game.winner} 🏆` : (isMyTurn ? '✅ SUA VEZ DE ATACAR!' : '⏳ AGUARDANDO OPONENTE...')}</p>
+                    ${game.gameOver ? `<p class="notification">🏆 VENCEDOR: ${game.winner} 🏆</p>` : (isMyTurn ? '<p class="notification">✅ SUA VEZ DE ATACAR!</p>' : '<p>⏳ AGUARDANDO OPONENTE...</p>')}
                     <button id="refreshGameBtn" class="game-btn">ATUALIZAR</button>
-                    <button id="exitGameBtn" class="game-btn">SAIR</button>
+                    <button id="backToLobbyBtn" class="game-btn">VOLTAR AO LOBBY</button>
                 </div>
             `;
             
@@ -639,7 +674,7 @@
                 if (updatedGame) renderGameBoard(updatedGame);
                 else container.innerHTML = '<p>Partida finalizada ou não encontrada.</p>';
             };
-            document.getElementById('exitGameBtn').onclick = () => { container.innerHTML = '<p>Selecione uma partida na lista acima.</p>'; };
+            document.getElementById('backToLobbyBtn').onclick = () => { renderNavalLobby(); };
         }
         
         function makeAttack(game, row, col, amIPlayer1, opponentName) {
@@ -656,7 +691,7 @@
             let hit = opponentShips[row][col];
             
             let totalShips = 4;
-            let hitsCount = myHits.flat().filter((v,i) => v && opponentShips.flat()[i]).length;
+            let hitsCount = myHits.flat().filter((v, i) => v && opponentShips.flat()[i]).length;
             
             if (hitsCount === totalShips) {
                 currentGame.gameOver = true;
@@ -668,12 +703,9 @@
             
             saveGames();
             renderGameBoard(currentGame);
-            
-            setTimeout(() => {
-                let updated = activeGames.find(g => g.id === game.id);
-                if (updated) renderGameBoard(updated);
-            }, 500);
         }
+        
+        renderNavalLobby();
     }
 
     // ========== JOGO DA COBRA ==========
