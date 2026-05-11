@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Editor de Ficha - OPERAÇÃO: FICHA MUTO FODA</title>
+    <title>Editor de Ficha - OPERAÇÃO: FICHA TÁTICA</title>
     <style>
         * {
             box-sizing: border-box;
@@ -297,10 +297,10 @@
 <body>
 <div class="sheet">
     <div class="header">
-        <h1>⚡ OPERAÇÃO: FICHA MUTO FODA ⚡</h1>
+        <h1>⚡ OPERAÇÃO: FICHA TÁTICA ⚡</h1>
         <div class="unidade-box">
             <strong>UNIDADE:</strong> 
-            <input type="text" id="unidadeField" placeholder="Esquadrão Pressure" style="background:transparent;border:none;border-bottom:2px dotted #a55929;font-weight:bold;width:180px;font-family:monospace;">
+            <input type="text" id="unidadeField" placeholder="Esquadrão Pressão" style="background:transparent;border:none;border-bottom:2px dotted #a55929;font-weight:bold;width:180px;font-family:monospace;">
         </div>
         <div style="margin-top: 8px; font-size:0.8rem;">📄 Ficha editável — RPG tático intenso</div>
     </div>
@@ -350,11 +350,11 @@
     <!-- INFORMAÇÕES BÁSICAS e ARTIDAO? mantendo coerência com o arquivo original, adicionamos bloco extra -->
     <div style="background:#e7dabc; border-radius: 28px; padding: 12px 20px; margin: 16px 0;">
         <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between;">
-            <div><strong>🎖️ NOME/CODINOME:</strong> <input type="text" id="nomePersonagem" placeholder="Operador" value="Capitão Muto"></div>
-            <div><strong>📋 ARQUIVO:</strong> <input type="text" id="arquivoID" placeholder="ID" value="MUTO-77"></div>
+            <div><strong>🎖️ NOME/CODINOME:</strong> <input type="text" id="nomePersonagem" placeholder="Operador" value="Capitão Tático"></div>
+            <div><strong>📋 ARQUIVO:</strong> <input type="text" id="arquivoID" placeholder="ID" value="TAC-77"></div>
             <div><strong>🔰 PATENTE:</strong> <input type="text" id="patente" placeholder="Especialista" value="Força Tática"></div>
         </div>
-        <div style="margin-top: 12px;"><strong>📝 INFORMAÇÕES ADICIONAIS / MISSÃO:</strong> <input type="text" id="infoExtra" style="width:100%; margin-top:6px; padding:8px; border-radius:60px; border:1px solid #bb954f;" value="Operação: Ficha Muto - Zona de Risco Alto"></div>
+        <div style="margin-top: 12px;"><strong>📝 INFORMAÇÕES ADICIONAIS / MISSÃO:</strong> <input type="text" id="infoExtra" style="width:100%; margin-top:6px; padding:8px; border-radius:60px; border:1px solid #bb954f;" value="Operação: Ficha Tática - Zona de Risco Alto"></div>
     </div>
 
     <div class="action-bar">
@@ -386,7 +386,7 @@
                 data[id] = el.value;
             }
         }
-        localStorage.setItem('fichaMutoData', JSON.stringify(data));
+        localStorage.setItem('fichaTaticaData', JSON.stringify(data));
         // feedback sutil
         showToast("✓ Dados salvos automaticamente!");
     }
@@ -420,7 +420,7 @@
 
     // carregar do localStorage
     function loadFromLocalStorage() {
-        const saved = localStorage.getItem('fichaMutoData');
+        const saved = localStorage.getItem('fichaTaticaData');
         if (!saved) return false;
         try {
             const data = JSON.parse(saved);
@@ -473,7 +473,7 @@
         showToast("🗑️ Ficha resetada completamente!");
     }
 
-    // Exemplo tático bacana baseado no espírito da ficha "FODA"
+    // Exemplo tático bacana baseado no espírito da ficha
     function loadExampleData() {
         document.getElementById('unidadeField').value = 'ESQUADRÃO FÊNIX';
         document.getElementById('vida').value = '48 / 48';
@@ -492,7 +492,7 @@
         document.getElementById('hab3').value = '🏃 Movimento tático: após matar inimigo, ganha ação extra';
         document.getElementById('hab4').value = '🧠 Liderança de pelotão: aliados ganham +2 em iniciativa';
         document.getElementById('obsHabilidades').value = 'Coordenação com sniper, tiro de cobertura e regeneração rápida';
-        document.getElementById('nomePersonagem').value = 'SGT. "MUTO" RODRIGUES';
+        document.getElementById('nomePersonagem').value = 'SGT. RODRIGUES';
         document.getElementById('arquivoID').value = 'MVP-OP-666';
         document.getElementById('patente').value = 'Sargento de Operações Especiais';
         document.getElementById('infoExtra').value = 'Missão: Extrair HVTs - Zona de Guerra Alpha. Recompensa: 50k';
@@ -509,13 +509,13 @@
         }
         // incluir também estatisticas especiais de forma legível
         const jsonStr = JSON.stringify(data, null, 2);
-        downloadFile('ficha_muto_export.json', jsonStr);
+        downloadFile('ficha_tatica_export.json', jsonStr);
         showToast('📁 JSON exportado!');
     }
 
     // Exportar como TXT resumo formatado
     function exportAsTxt() {
-        let content = "══════════════ OPERAÇÃO: FICHA MUTO FODA ══════════════\n";
+        let content = "══════════════ OPERAÇÃO: FICHA TÁTICA ══════════════\n";
         content += `UNIDADE: ${document.getElementById('unidadeField').value}\n`;
         content += `NOME: ${document.getElementById('nomePersonagem').value} | ID: ${document.getElementById('arquivoID').value} | PATENTE: ${document.getElementById('patente').value}\n`;
         content += `\n📊 ESTATÍSTICAS:\n`;
@@ -527,7 +527,7 @@
         content += `\n⚡ HABILIDADES ESPECIAIS:\n1. ${document.getElementById('hab1').value}\n2. ${document.getElementById('hab2').value}\n3. ${document.getElementById('hab3').value}\n4. ${document.getElementById('hab4').value}\nObservações: ${document.getElementById('obsHabilidades').value}\n`;
         content += `\n📝 INFORMAÇÕES ADICIONAIS: ${document.getElementById('infoExtra').value}\n`;
         content += `───────────────── Ficha exportada em ${new Date().toLocaleString()} ─────────────────`;
-        downloadFile('ficha_muto_resumo.txt', content);
+        downloadFile('ficha_tatica_resumo.txt', content);
         showToast('📄 TXT resumo salvo!');
     }
 
@@ -553,7 +553,7 @@
             if(!document.getElementById('mov1').value) document.getElementById('mov1').value = '7m';
             if(!document.getElementById('mov2').value) document.getElementById('mov2').value = '11m';
             if(!document.getElementById('unidadeField').value) document.getElementById('unidadeField').value = 'Força Tática K9';
-            if(!document.getElementById('nomePersonagem').value) document.getElementById('nomePersonagem').value = 'Recruta Muto';
+            if(!document.getElementById('nomePersonagem').value) document.getElementById('nomePersonagem').value = 'Recruta Tático';
             saveToLocalStorage();
         }
         attachAutoSave();
