@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Ficha de Operações - Forças Táticas</title>
+    <!-- Incluindo html2pdf para gerar PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -66,7 +68,7 @@
             letter-spacing: 1px;
         }
 
-        /* SLOT DE IMAGEM MELHORADO */
+        /* SLOT DE IMAGEM - AGORA COM UPLOAD LOCAL */
         .image-slot {
             background: #bcb09b;
             border: 2px solid #4a3a28;
@@ -97,6 +99,7 @@
             overflow: hidden;
             position: relative;
             border-bottom: 1px solid #6b5a3e;
+            cursor: pointer;
         }
 
         .image-preview-container img {
@@ -120,14 +123,14 @@
             width: 100%;
         }
 
-        .image-input-area input {
+        .image-input-area input[type="file"] {
             width: 100%;
             background: #fffcf0;
             border: 1px solid #7c6846;
             font-family: monospace;
-            font-size: 0.65rem;
-            padding: 4px;
-            text-align: center;
+            font-size: 0.6rem;
+            padding: 3px;
+            cursor: pointer;
         }
 
         .image-buttons {
@@ -426,8 +429,8 @@
     </style>
 </head>
 <body>
-<div class="sheet">
-    <!-- cabeçalho com espaço para IMAGEM (canto superior direito) - VERSÃO MELHORADA -->
+<div class="sheet" id="fichaContainer">
+    <!-- cabeçalho com espaço para IMAGEM - UPLOAD LOCAL -->
     <div class="military-header">
         <div class="title-section">
             <h1>FICHA DE OPERAÇÕES<br> COMANDO TÁTICO</h1>
@@ -435,13 +438,13 @@
         </div>
         <div class="image-slot" id="imageSlot">
             <div class="image-preview-container" id="imagePreviewContainer">
-                <div class="no-image" id="noImageText">SEM IMAGEM</div>
+                <div class="no-image" id="noImageText">SEM IMAGEM<br>CLIQUE PARA SELECIONAR</div>
                 <img id="previewImage" style="display: none;" alt="Preview">
             </div>
             <div class="image-input-area">
-                <input type="text" id="imageUrlInput" placeholder="URL da imagem (jpg, png, gif)">
+                <input type="file" id="imageUploadInput" accept="image/*" style="display: none;">
                 <div class="image-buttons">
-                    <button id="uploadImageBtn" type="button">CARREGAR URL</button>
+                    <button id="selectImageBtn" type="button">SELECIONAR IMAGEM</button>
                     <button id="clearImageBtn" type="button">LIMPAR</button>
                 </div>
             </div>
@@ -504,7 +507,7 @@
     <div class="action-bar">
         <button id="resetBtn" class="reset-btn">LIMPAR FICHA</button>
         <button id="exportTxtBtn" class="export-txt-btn">EXPORTAR RELATORIO (TXT)</button>
-        <button id="archiveBtn" class="archive-btn">ARQUIVAR FICHA</button>
+        <button id="archiveBtn" class="archive-btn">ARQUIVAR FICHA (PDF)</button>
     </div>
     <footer>
         DOCUMENTO OPERACIONAL - EDITAVEL - DADOS SALVOS LOCALMENTE
@@ -512,111 +515,70 @@
 </div>
 
 <script>
-    // lista de campos a serem salvos
+    // lista de campos a serem salvos (exceto imagem que é base64)
     const fieldIds = [
         'unidadeField', 'vida', 'defB', 'defE', 'municao', 'mov1', 'mov2',
         'inv1', 'inv2', 'inv3', 'inv4', 'inventarioExtra',
         'hab1', 'hab2', 'hab3', 'hab4', 'obsHabilidades',
-        'nomePersonagem', 'arquivoID', 'patente', 'infoExtra', 'dataMissao', 'notasPlano',
-        'imageUrlInput'
+        'nomePersonagem', 'arquivoID', 'patente', 'infoExtra', 'dataMissao', 'notasPlano'
     ];
-
+    
     // elementos da imagem
     const previewImage = document.getElementById('previewImage');
     const noImageText = document.getElementById('noImageText');
-    const imageUrlInput = document.getElementById('imageUrlInput');
+    const imageUploadInput = document.getElementById('imageUploadInput');
+    let currentImageBase64 = null; // armazenar base64 da imagem
 
-    // Função para atualizar a imagem com proporções corretas
-    function updateImagePreview() {
-        const url = imageUrlInput.value.trim();
+    // FUNÇÃO PARA CARREGAR IMAGEM LOCALMENTE (Arquivo)
+    function handleImageUpload(file) {
+        if (!file) return;
         
-        if (url && (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:') || url.startsWith('blob:'))) {
-            // Testar se a imagem carrega corretamente
-            const img = new Image();
-            img.onload = function() {
-                previewImage.src = url;
-                previewImage.style.display = 'block';
-                noImageText.style.display = 'none';
-                previewImage.style.objectFit = 'contain';
-                previewImage.style.width = '100%';
-                previewImage.style.height = '100%';
-                saveToLocalStorage();
-            };
-            img.onerror = function() {
-                // Se falhar ao carregar, mostrar mensagem de erro
-                previewImage.style.display = 'none';
-                noImageText.style.display = 'flex';
-                noImageText.innerHTML = 'ERRO: IMAGEM INVALIDA';
-                noImageText.style.alignItems = 'center';
-                noImageText.style.justifyContent = 'center';
-                noImageText.style.height = '100%';
-                setTimeout(() => {
-                    if (noImageText.innerHTML === 'ERRO: IMAGEM INVALIDA') {
-                        noImageText.innerHTML = 'SEM IMAGEM';
-                    }
-                }, 2000);
-                saveToLocalStorage();
-            };
-            img.src = url;
-        } else if (url && url.length > 0) {
-            // URL inválida
-            previewImage.style.display = 'none';
-            noImageText.style.display = 'flex';
-            noImageText.innerHTML = 'URL INVALIDA';
-            noImageText.style.alignItems = 'center';
-            noImageText.style.justifyContent = 'center';
-            noImageText.style.height = '100%';
-            setTimeout(() => {
-                if (noImageText.innerHTML === 'URL INVALIDA') {
-                    noImageText.innerHTML = 'SEM IMAGEM';
-                }
-            }, 2000);
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const base64 = e.target.result;
+            currentImageBase64 = base64;
+            previewImage.src = base64;
+            previewImage.style.display = 'block';
+            noImageText.style.display = 'none';
             saveToLocalStorage();
-        } else {
-            // Sem imagem
-            previewImage.style.display = 'none';
-            noImageText.style.display = 'flex';
-            noImageText.innerHTML = 'SEM IMAGEM';
-            noImageText.style.alignItems = 'center';
-            noImageText.style.justifyContent = 'center';
-            noImageText.style.height = '100%';
-            saveToLocalStorage();
-        }
+            showToast("IMAGEM CARREGADA");
+        };
+        reader.onerror = function() {
+            showToast("ERRO AO CARREGAR IMAGEM");
+        };
+        reader.readAsDataURL(file);
     }
 
-    // Função para carregar imagem manualmente pelo botão
-    function loadImageFromUrl() {
-        const url = imageUrlInput.value.trim();
-        if (!url) {
-            showToast("INSIRA UMA URL DE IMAGEM");
-            return;
-        }
-        updateImagePreview();
-        showToast("CARREGANDO IMAGEM...");
-    }
-
-    // Função para limpar a imagem
+    // Limpar imagem
     function clearImage() {
-        imageUrlInput.value = '';
+        currentImageBase64 = null;
+        previewImage.src = '';
         previewImage.style.display = 'none';
         noImageText.style.display = 'flex';
-        noImageText.innerHTML = 'SEM IMAGEM';
-        noImageText.style.alignItems = 'center';
-        noImageText.style.justifyContent = 'center';
-        noImageText.style.height = '100%';
+        noImageText.innerHTML = 'SEM IMAGEM<br>CLIQUE PARA SELECIONAR';
+        if (imageUploadInput) imageUploadInput.value = '';
         saveToLocalStorage();
         showToast("IMAGEM REMOVIDA");
     }
 
-    // salvar no localStorage
+    // abrir seletor de arquivos
+    function openFileSelector() {
+        if (imageUploadInput) {
+            imageUploadInput.click();
+        }
+    }
+
+    // salvar no localStorage (incluindo imagem base64)
     function saveToLocalStorage() {
         const data = {};
         for (let id of fieldIds) {
             const el = document.getElementById(id);
             if (el) data[id] = el.value;
         }
+        // salvar imagem base64 também
+        data.imageBase64 = currentImageBase64;
         localStorage.setItem('fichaMilitarData', JSON.stringify(data));
-        showToast("DADOS SALVOS", 1000);
+        // toast rápido sem excesso
     }
 
     function showToast(msg, duration = 1500) {
@@ -649,12 +611,22 @@
         try {
             const data = JSON.parse(saved);
             for (let id in data) {
-                const el = document.getElementById(id);
-                if (el && data.hasOwnProperty(id)) {
-                    el.value = data[id];
+                if (id === 'imageBase64') {
+                    if (data[id]) {
+                        currentImageBase64 = data[id];
+                        previewImage.src = currentImageBase64;
+                        previewImage.style.display = 'block';
+                        noImageText.style.display = 'none';
+                    } else {
+                        clearImage();
+                    }
+                } else {
+                    const el = document.getElementById(id);
+                    if (el && data.hasOwnProperty(id)) {
+                        el.value = data[id];
+                    }
                 }
             }
-            updateImagePreview();
             return true;
         } catch(e) { return false; }
     }
@@ -664,19 +636,9 @@
         for (let id of fieldIds) {
             const el = document.getElementById(id);
             if (el) {
-                el.addEventListener('input', () => {
-                    saveToLocalStorage();
-                });
-                el.addEventListener('change', () => {
-                    saveToLocalStorage();
-                });
+                el.addEventListener('input', () => saveToLocalStorage());
+                el.addEventListener('change', () => saveToLocalStorage());
             }
-        }
-        // Evento especial para o campo de URL da imagem
-        if (imageUrlInput) {
-            imageUrlInput.addEventListener('change', () => {
-                updateImagePreview();
-            });
         }
     }
 
@@ -709,40 +671,33 @@
         showToast("FICHA LIMPA");
     }
 
-    // Função ARQUIVAR FICHA - cria um arquivo de snapshot completo com timestamp
-    function archiveFicha() {
-        // Coletar todos os dados atuais
-        const archiveData = {};
-        for (let id of fieldIds) {
-            const el = document.getElementById(id);
-            if (el) archiveData[id] = el.value;
-        }
+    // FUNÇÃO ARQUIVAR FICHA - GERAR PDF DA PÁGINA (apenas o conteúdo do container)
+    async function archiveAsPDF() {
+        const element = document.getElementById('fichaContainer');
+        if (!element) return;
         
-        // Adicionar metadados do arquivamento
-        const timestamp = new Date();
-        const archiveRecord = {
-            metadata: {
-                arquivado_em: timestamp.toLocaleString(),
-                timestamp_unix: timestamp.getTime(),
-                versao: "1.0"
-            },
-            dados: archiveData
+        showToast("GERANDO PDF... AGUARDE");
+        
+        // Opções de configuração do PDF (estilo militar)
+        const opt = {
+            margin:        [0.5, 0.5, 0.5, 0.5], // margens em polegadas
+            filename:     `ficha_operacao_${new Date().getTime()}.pdf`,
+            image:        { type: 'jpeg', quality: 0.95 },
+            html2canvas:  { scale: 2, letterRendering: true, useCORS: true, logging: false },
+            jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
         };
         
-        // Gerar nome do arquivo baseado na unidade e codinome
-        const unidade = document.getElementById('unidadeField').value || "SEM_UNIDADE";
-        const codinome = document.getElementById('nomePersonagem').value || "SEM_CODINOME";
-        const sanitizedUnidade = unidade.replace(/[^a-z0-9]/gi, '_').substring(0, 20);
-        const sanitizedCodinome = codinome.replace(/[^a-z0-9]/gi, '_').substring(0, 20);
-        const filename = `arquivo_${sanitizedUnidade}_${sanitizedCodinome}_${timestamp.getTime()}.json`;
-        
-        // Criar e baixar o arquivo
-        const jsonStr = JSON.stringify(archiveRecord, null, 2);
-        downloadFile(filename, jsonStr);
-        showToast("FICHA ARQUIVADA COM SUCESSO");
+        try {
+            // Chamar html2pdf para gerar o PDF
+            await html2pdf().set(opt).from(element).save();
+            showToast("PDF ARQUIVADO COM SUCESSO");
+        } catch (error) {
+            console.error("Erro ao gerar PDF:", error);
+            showToast("ERRO AO GERAR PDF");
+        }
     }
 
-    // EXPORTAR SOMENTE TXT
+    // EXPORTAR TXT (resumo)
     function exportAsTxt() {
         let content = "=====================================================\n";
         content += "     RELATORIO OPERACIONAL - FICHA DE CAMPO\n";
@@ -780,23 +735,38 @@
 
     // inicialização
     window.addEventListener('DOMContentLoaded', () => {
-        const loaded = loadFromLocalStorage();
-        if (!loaded) {
-            if (!document.getElementById('vida').value) document.getElementById('vida').value = '30 / 30';
-            if (!document.getElementById('defB').value) document.getElementById('defB').value = '15';
-            if (!document.getElementById('defE').value) document.getElementById('defE').value = '12';
-            if (!document.getElementById('mov1').value) document.getElementById('mov1').value = '8m';
-            if (!document.getElementById('mov2').value) document.getElementById('mov2').value = '12m';
-            saveToLocalStorage();
-        }
+        loadFromLocalStorage();
         attachAutoSave();
-        updateImagePreview();
-
+        
+        // Configurar eventos da imagem
+        if (imageUploadInput) {
+            imageUploadInput.addEventListener('change', (e) => {
+                if (e.target.files && e.target.files[0]) {
+                    handleImageUpload(e.target.files[0]);
+                }
+            });
+        }
+        
+        const selectBtn = document.getElementById('selectImageBtn');
+        if (selectBtn) {
+            selectBtn.addEventListener('click', openFileSelector);
+        }
+        
+        const clearImgBtn = document.getElementById('clearImageBtn');
+        if (clearImgBtn) {
+            clearImgBtn.addEventListener('click', clearImage);
+        }
+        
+        // clicar no preview também pode abrir seletor
+        const previewContainer = document.getElementById('imagePreviewContainer');
+        if (previewContainer) {
+            previewContainer.addEventListener('click', openFileSelector);
+        }
+        
+        // Botões principais
         document.getElementById('resetBtn').addEventListener('click', resetAllFields);
         document.getElementById('exportTxtBtn').addEventListener('click', exportAsTxt);
-        document.getElementById('archiveBtn').addEventListener('click', archiveFicha);
-        document.getElementById('uploadImageBtn').addEventListener('click', loadImageFromUrl);
-        document.getElementById('clearImageBtn').addEventListener('click', clearImage);
+        document.getElementById('archiveBtn').addEventListener('click', archiveAsPDF);
     });
 </script>
 </body>
