@@ -3,307 +3,562 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>PIXEL XP - Sistema Militar Multiplayer</title>
+    <title>CMD_OS v5.0 - Sistema Tático Avançado</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            image-rendering: pixelated;
-            image-rendering: crisp-edges;
+            font-family: 'Courier New', 'Lucida Console', 'Fira Code', monospace;
+            user-select: none;
         }
 
         body {
-            font-family: 'Courier New', 'VT323', monospace;
-            background: #0a0f0a;
-            overflow: hidden;
+            background: #060a06;
             height: 100vh;
+            overflow: hidden;
         }
 
+        /* ANIMAÇÃO DE CARREGAMENTO */
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 5px #2a8a2a; }
+            50% { box-shadow: 0 0 15px #6aff8a; }
+        }
+
+        /* TELA DE LOGIN */
         .login-screen {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #0a2f1a 0%, #1a4f2a 100%);
+            inset: 0;
+            background: radial-gradient(ellipse at center, #0a120a 0%, #030603 100%);
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 2000;
+            z-index: 10000;
         }
 
-        .login-container {
-            background: #2a4a2a;
-            border: 4px solid #8affaa;
-            padding: 25px;
-            width: 380px;
-            box-shadow: 10px 10px 0 #0a1f0a;
+        .cmd-box {
+            background: #0a0f0a;
+            border: 2px solid #2a6a2a;
+            padding: 35px;
+            width: 460px;
+            box-shadow: 12px 12px 0 #051005;
+            animation: pulse 2s infinite;
+        }
+
+        .cmd-box pre {
+            color: #2a8a2a;
+            font-size: 12px;
+            margin-bottom: 25px;
             text-align: center;
+            letter-spacing: 2px;
         }
 
-        .login-container h2 {
-            color: #aaffaa;
-            text-shadow: 2px 2px 0 #0a3f0a;
-            font-size: 20px;
-            margin-bottom: 20px;
+        .cmd-box input {
+            width: 100%;
+            background: #0a120a;
+            border: 1px solid #2a6a2a;
+            color: #4aff6a;
+            padding: 12px;
+            margin: 10px 0;
+            font-size: 14px;
+            transition: 0.2s;
         }
 
-        .login-tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #6aaa4a;
+        .cmd-box input:focus {
+            outline: none;
+            border-color: #6aff8a;
+            box-shadow: 0 0 8px #2a8a2a;
         }
 
-        .tab-btn {
-            flex: 1;
-            background: #1a3a1a;
-            border: none;
-            color: #88aa88;
-            padding: 8px;
+        .cmd-btn {
+            background: #0a2a0a;
+            border: 1px solid #2a8a2a;
+            color: #6aff8a;
+            padding: 10px;
+            width: 100%;
             cursor: pointer;
-            font-family: monospace;
-            font-size: 14px;
-        }
-
-        .tab-btn.active {
-            background: #3a7a2a;
-            color: #ffffaa;
-            border-bottom: 2px solid #aaffaa;
-        }
-
-        .login-form, .register-form {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .login-form input, .register-form input {
-            width: 100%;
-            padding: 10px;
-            background: #1a2a15;
-            border: 2px solid #6aaa4a;
-            color: #8aff6a;
-            font-family: monospace;
-            font-size: 14px;
-        }
-
-        .login-container button {
-            width: 100%;
-            padding: 10px;
-            background: #3a7a2a;
-            color: #ffffaa;
-            border: 2px solid #aaffaa;
-            font-family: monospace;
+            text-align: center;
+            margin-top: 8px;
+            transition: 0.2s;
             font-weight: bold;
-            cursor: pointer;
-            margin-top: 5px;
         }
 
-        .login-container button:hover { background: #5a9a3a; }
-        .error-msg { color: #ffaa66; margin-top: 10px; font-size: 11px; }
-        .success-msg { color: #aaffaa; margin-top: 10px; font-size: 11px; }
+        .cmd-btn:hover {
+            background: #1a4a1a;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px #2a8a2a;
+        }
 
+        /* DESKTOP */
         .desktop {
             display: none;
             width: 100vw;
             height: 100vh;
-            background: linear-gradient(180deg, #1a6a3a 0%, #0a3a1a 100%);
+            background: #0a0f0a;
             position: relative;
             overflow: hidden;
         }
 
-        .desktop::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: radial-gradient(circle at 15% 20%, rgba(200,230,200,0.15) 8px, transparent 8px),
-                              radial-gradient(circle at 65% 15%, rgba(180,220,180,0.12) 12px, transparent 12px);
-            pointer-events: none;
-        }
-
-        .desktop::after {
-            content: "";
-            position: absolute;
-            bottom: 48px;
-            left: 0;
-            width: 100%;
-            height: 30px;
-            background: repeating-linear-gradient(90deg, #2a6a2a 0px, #2a6a2a 4px, #3a7a3a 4px, #3a7a3a 8px);
-            pointer-events: none;
-        }
-
+        /* BARRA DE TAREFAS */
         .taskbar {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 48px;
-            background: linear-gradient(180deg, #2a5a2a 0%, #1a4a1a 100%);
-            border-top: 2px solid #5aaa5a;
+            background: #0a120a;
+            border-top: 1px solid #2a6a2a;
+            height: 42px;
             display: flex;
             align-items: center;
-            padding: 0 8px;
+            padding: 0 15px;
             z-index: 100;
-            gap: 6px;
+            gap: 15px;
+            backdrop-filter: blur(4px);
         }
 
         .start-btn {
-            background: linear-gradient(180deg, #3a7a2a 0%, #2a5a1a 100%);
-            padding: 6px 14px;
-            font-weight: bold;
+            background: #0a2a0a;
+            padding: 6px 20px;
+            color: #6aff6a;
             cursor: pointer;
-            color: #ffffaa;
-            font-family: monospace;
-            border: 1px solid #7aaa5a;
+            border: 1px solid #2a6a2a;
             font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            font-weight: bold;
+            transition: 0.1s;
         }
 
-        .taskbar-apps { display: flex; gap: 4px; flex: 1; }
-        .taskbar-item { background: #2a5a2a; padding: 4px 10px; cursor: pointer; font-size: 11px; border: 1px solid #5aaa5a; color: #ccffcc; }
-        .taskbar-time { color: #aaffaa; background: #1a3a1a; padding: 4px 8px; font-size: 11px; border: 1px solid #4a8a4a; }
+        .start-btn:hover {
+            background: #1a4a1a;
+            transform: scale(1.02);
+        }
 
+        .taskbar-apps {
+            display: flex;
+            gap: 8px;
+            flex: 1;
+            overflow-x: auto;
+        }
+
+        .taskbar-item {
+            background: #0a1a0a;
+            padding: 4px 16px;
+            font-size: 11px;
+            cursor: pointer;
+            border-left: 3px solid #2a8a2a;
+            white-space: nowrap;
+            transition: 0.1s;
+        }
+
+        .taskbar-item:hover {
+            background: #1a2a1a;
+            border-left-color: #6aff8a;
+        }
+
+        /* ÍCONES DA ÁREA DE TRABALHO */
         .desktop-icons {
             position: absolute;
-            top: 15px;
-            left: 15px;
+            top: 20px;
+            left: 20px;
             display: flex;
             flex-direction: column;
-            gap: 18px;
+            gap: 20px;
             z-index: 10;
         }
 
         .desktop-icon {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            width: 80px;
+            width: 90px;
             cursor: pointer;
-            padding: 6px;
-            color: #ffffdd;
-            text-shadow: 1px 1px 0 #0a2a0a;
-            background: rgba(0,0,0,0.25);
+            padding: 10px 5px;
+            background: rgba(15, 24, 15, 0.8);
+            border: 1px solid #2a5a2a;
+            color: #8aff8a;
+            font-size: 11px;
+            text-align: center;
+            transition: all 0.15s ease;
+            backdrop-filter: blur(2px);
         }
-        .desktop-icon:hover { background: rgba(80,160,80,0.4); outline: 1px solid #aaffaa; }
-        .desktop-icon span:first-child { font-size: 36px; }
-        .desktop-icon span:last-child { font-size: 10px; text-align: center; margin-top: 4px; }
 
+        .desktop-icon:hover {
+            background: #1a2a1a;
+            border-color: #6aff6a;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(42, 138, 42, 0.3);
+        }
+
+        .desktop-icon span:first-child {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+
+        /* JANELAS */
         .window {
             position: absolute;
-            background: #3a5a3a;
-            border: 3px solid #8affaa;
-            box-shadow: 6px 6px 0 #0a1f0a;
+            background: rgba(10, 18, 10, 0.95);
+            border: 1px solid #2a6a2a;
+            box-shadow: 10px 10px 0 rgba(5, 16, 5, 0.5);
             display: none;
-            z-index: 50;
-            min-width: 480px;
-            min-height: 380px;
             flex-direction: column;
+            z-index: 50;
+            min-width: 500px;
+            min-height: 380px;
+            border-radius: 6px;
+            backdrop-filter: blur(2px);
         }
 
         .window-header {
-            background: linear-gradient(90deg, #1a4a2a 0%, #2a6a2a 100%);
-            padding: 6px 10px;
+            background: linear-gradient(90deg, #0a1a0a, #0f2a0f);
+            padding: 10px 14px;
             cursor: move;
             display: flex;
             justify-content: space-between;
-            color: #ffffaa;
+            border-bottom: 1px solid #2a6a2a;
+            font-size: 13px;
             font-weight: bold;
-            border-bottom: 1px solid #6aaa4a;
+            border-radius: 6px 6px 0 0;
         }
-        .window-content { flex: 1; background: #2a4a2a; padding: 12px; overflow: auto; color: #ccffcc; font-size: 12px; }
-        .close-btn { cursor: pointer; background: #5a2a2a; padding: 0 8px; border: 1px solid #aa6a6a; }
 
-        .folder-item { background: #3a5a3a; padding: 8px; margin: 6px 0; cursor: pointer; border-left: 4px solid #aaffaa; }
+        .window-content {
+            flex: 1;
+            padding: 18px;
+            overflow: auto;
+            color: #b0ffb0;
+            font-size: 12px;
+        }
 
-        .snake-grid { display: grid; grid-template-columns: repeat(20, 18px); gap: 1px; background: #1a3a1a; justify-content: center; }
-        .snake-cell { width: 18px; height: 18px; background: #2a5a2a; }
-        .snake-cell.snake { background: #aaffaa; }
-        .snake-cell.food { background: #ffaa66; }
-        .mine-cell { width: 32px; height: 32px; background: #4a6a4a; text-align: center; line-height: 30px; cursor: pointer; border: 1px solid #6a9a6a; font-weight: bold; }
-        .game-btn { background: #3a7a2a; padding: 4px 12px; margin: 4px; cursor: pointer; border: 1px solid #aaffaa; color: #ffffaa; font-family: monospace; }
-        input, textarea { background: #1a2a15; color: #aaffaa; border: 1px solid #6aaa4a; padding: 4px; font-family: monospace; }
+        .close-btn, .minimize-btn {
+            cursor: pointer;
+            margin-left: 15px;
+            background: #1a2a1a;
+            padding: 2px 10px;
+            border-radius: 4px;
+            transition: 0.1s;
+        }
 
-        .start-menu {
-            position: fixed;
-            bottom: 48px;
-            left: 8px;
-            width: 220px;
+        .close-btn:hover, .minimize-btn:hover {
             background: #2a4a2a;
-            border: 2px solid #8affaa;
+        }
+
+        /* COMPONENTES */
+        .folder-item {
+            background: #0f1a0f;
+            padding: 12px;
+            margin: 10px 0;
+            border-left: 4px solid #2a8a2a;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+
+        .folder-item:hover {
+            background: #1a2a1a;
+            transform: translateX(5px);
+        }
+
+        .snake-grid {
+            display: grid;
+            grid-template-columns: repeat(20, 18px);
+            gap: 1px;
+            background: #0a120a;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        .snake-cell {
+            width: 18px;
+            height: 18px;
+            background: #0f2a0f;
+            transition: 0.05s;
+        }
+
+        .snake-cell.snake {
+            background: linear-gradient(135deg, #6aff8a, #4aff6a);
+            box-shadow: inset 0 0 2px #fff;
+        }
+
+        .snake-cell.food {
+            background: #ffaa6a;
+            border-radius: 50%;
+            animation: pulse 0.5s infinite;
+        }
+
+        .mine-cell {
+            width: 34px;
+            height: 34px;
+            background: #1a2a1a;
+            text-align: center;
+            line-height: 32px;
+            cursor: pointer;
+            border: 1px solid #2a6a2a;
+            font-weight: bold;
+            font-size: 14px;
+            transition: 0.05s;
+        }
+
+        .mine-cell:hover {
+            background: #2a4a2a;
+        }
+
+        .naval-cell {
+            width: 36px;
+            height: 36px;
+            border: 1px solid #2a6a2a;
+            text-align: center;
+            line-height: 34px;
+            cursor: pointer;
+            background: #0f180f;
+            font-weight: bold;
+            transition: 0.05s;
+        }
+
+        .naval-cell:hover {
+            background: #1a2a1a;
+        }
+
+        .game-btn {
+            background: #0a2a0a;
+            border: 1px solid #2a8a2a;
+            color: #8aff8a;
+            padding: 8px 20px;
+            cursor: pointer;
+            margin: 6px;
+            font-family: monospace;
+            font-weight: bold;
+            transition: all 0.15s;
+        }
+
+        .game-btn:hover {
+            background: #1a4a1a;
+            transform: scale(1.02);
+            box-shadow: 0 2px 8px #2a8a2a;
+        }
+
+        input, textarea {
+            background: #0a120a;
+            border: 1px solid #2a6a2a;
+            color: #8aff8a;
+            padding: 8px;
+            font-family: monospace;
+            transition: 0.1s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #6aff8a;
+            box-shadow: 0 0 5px #2a8a2a;
+        }
+
+        /* MENU INICIAR */
+        .start-menu-cmd {
+            position: fixed;
+            bottom: 42px;
+            left: 10px;
+            width: 280px;
+            background: #0a120a;
+            border: 1px solid #2a6a2a;
             display: none;
+            flex-direction: column;
             z-index: 200;
+            backdrop-filter: blur(8px);
+        }
+
+        .start-menu-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid #1a3a1a;
+            color: #8affaa;
+            font-size: 12px;
+            transition: 0.1s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .start-menu-item:hover {
+            background: #1a2a1a;
+            padding-left: 22px;
+        }
+
+        /* CHAT */
+        .chat-area {
+            height: 350px;
+            display: flex;
             flex-direction: column;
         }
-        .start-menu-item { padding: 8px 12px; cursor: pointer; color: #ccffcc; border-bottom: 1px solid #4a7a4a; }
-        .start-menu-item:hover { background: #3a6a3a; }
 
-        .naval-cell { width: 35px; height: 35px; border: 1px solid #6a9a6a; text-align: center; line-height: 33px; cursor: pointer; font-weight: bold; background: #3a6a4a; }
-        .naval-cell.ship { background: #5a8a5a; }
-        .naval-cell.hit { background: #8a6a4a; }
-        .naval-cell.miss { background: #2a5a2a; }
-        .online-user { background: #3a7a2a; padding: 8px; margin: 5px; cursor: pointer; border: 1px solid #aaffaa; border-radius: 4px; }
-        .online-user:hover { background: #5a9a3a; }
-        .game-item { background: #2a5a2a; padding: 8px; margin: 5px; cursor: pointer; border: 1px solid #ffaa66; }
-        .notification { background: #ffaa66; color: #1a3a1a; padding: 5px; margin: 5px 0; border-radius: 3px; font-weight: bold; }
+        .chat-messages {
+            flex: 1;
+            background: #0a1a0a;
+            overflow-y: auto;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid #2a6a2a;
+            font-size: 11px;
+        }
+
+        .chat-message {
+            padding: 6px;
+            border-bottom: 1px solid #1a3a1a;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* MURAL */
+        .mural-post {
+            background: #0f1a0f;
+            padding: 14px;
+            margin: 12px 0;
+            border-left: 5px solid #6aff8a;
+            border-radius: 4px;
+            animation: fadeIn 0.3s;
+        }
+
+        /* GALERIA */
+        .img-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            max-height: 350px;
+            overflow-y: auto;
+            padding: 5px;
+        }
+
+        .img-card {
+            background: #0f1a0f;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #2a6a2a;
+            border-radius: 6px;
+            transition: 0.1s;
+        }
+
+        .img-card:hover {
+            transform: scale(1.02);
+            border-color: #6aff8a;
+        }
+
+        .img-card img {
+            max-width: 130px;
+            max-height: 110px;
+            border-radius: 4px;
+        }
+
+        /* TERMINAL */
+        .terminal-line {
+            color: #6aff8a;
+            font-family: monospace;
+            margin: 6px 0;
+            animation: fadeIn 0.2s;
+        }
+
+        /* RANKING */
+        .ranking-item {
+            background: #0a1a0a;
+            padding: 8px;
+            margin: 6px 0;
+            border-left: 3px solid #6aff8a;
+            transition: 0.1s;
+        }
+
+        /* TABELAS */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        td, th {
+            border: 1px solid #2a6a2a;
+            padding: 8px;
+            text-align: left;
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a120a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #2a6a2a;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4aff6a;
+        }
     </style>
 </head>
 <body>
 <div class="login-screen" id="loginScreen">
-    <div class="login-container">
-        <h2>⚡ PIXEL XP ⚡<br><small>MILITAR EDITION</small></h2>
-        <div class="login-tabs">
-            <button class="tab-btn active" id="tabLoginBtn">ENTRAR</button>
-            <button class="tab-btn" id="tabRegisterBtn">CRIAR CONTA</button>
-        </div>
-        <div id="loginForm" class="login-form">
-            <input type="text" id="loginUsername" placeholder="USUÁRIO">
-            <input type="password" id="loginPassword" placeholder="SENHA">
-            <button id="doLoginBtn">ACESSAR SISTEMA</button>
-            <div id="loginErrorMsg" class="error-msg"></div>
-        </div>
-        <div id="registerForm" class="register-form" style="display: none;">
-            <input type="text" id="regUsername" placeholder="NOVO USUÁRIO">
-            <input type="password" id="regPassword" placeholder="SENHA">
-            <input type="password" id="regConfirmPassword" placeholder="CONFIRMAR SENHA">
-            <button id="doRegisterBtn">CRIAR CONTA</button>
-            <div id="registerMsg" class="success-msg"></div>
-        </div>
+    <div class="cmd-box">
+        <pre>╔═══════════════════════════════╗
+║     CMD_OS v5.0 TÁTICO       ║
+║   ACESSO RESTRITO - NÍVEL 5  ║
+╚═══════════════════════════════╝</pre>
+        <input type="text" id="loginUser" placeholder="USUARIO" autocomplete="off">
+        <input type="password" id="loginPass" placeholder="SENHA">
+        <div class="cmd-btn" id="loginBtn">▶ LOGIN</div>
+        <div class="cmd-btn" id="registerBtn">▶ CRIAR CONTA</div>
+        <div id="loginFeedback" style="color:#ff8844; margin-top:12px; font-size:11px; text-align:center;"></div>
     </div>
 </div>
 
 <div class="desktop" id="desktop">
     <div class="taskbar">
-        <div class="start-btn" id="startMenuBtn"><span>🏁</span> INICIAR</div>
+        <div class="start-btn" id="startBtn">[ START ]</div>
         <div class="taskbar-apps" id="taskbarApps"></div>
-        <div class="taskbar-time" id="clock"></div>
+        <div id="clockCmd" style="color:#6aff6a; background:#0a120a; padding:5px 12px; font-size:12px; border:1px solid #2a6a2a;"></div>
     </div>
     <div class="desktop-icons" id="desktopIcons"></div>
     <div id="windowContainer"></div>
-    <div id="startMenu" class="start-menu">
-        <div class="start-menu-item" data-app="ficha">📁 MINHA FICHA</div>
+    <div id="startMenu" class="start-menu-cmd">
+        <div class="start-menu-item" data-app="ficha">📄 FICHA OPERACIONAL</div>
         <div class="start-menu-item" data-app="mines">💣 CAMPO MINADO</div>
-        <div class="start-menu-item" data-app="naval">⚓ BATALHA NAVAL (MULTIPLAYER)</div>
-        <div class="start-menu-item" data-app="snake">🐍 JOGO DA COBRA (WASD)</div>
+        <div class="start-menu-item" data-app="naval">⚓ BATALHA NAVAL (2P)</div>
+        <div class="start-menu-item" data-app="snake">🐍 JOGO DA COBRA</div>
         <div class="start-menu-item" data-app="dino">🦖 DINO RUN</div>
+        <div class="start-menu-item" data-app="chat">💬 CHAT GLOBAL</div>
+        <div class="start-menu-item" data-app="mural">📌 MURAL COLABORATIVO</div>
+        <div class="start-menu-item" data-app="gallery">🖼️ GALERIA TÁTICA</div>
+        <div class="start-menu-item" data-app="ranking">🏆 RANKING</div>
+        <div class="start-menu-item" data-app="editor">✏️ EDITOR DE TEXTO</div>
+        <div class="start-menu-item" data-app="calc">🧮 CALCULADORA</div>
+        <div class="start-menu-item" data-app="terminal">💻 TERMINAL CMD</div>
         <div class="start-menu-item" data-app="files">🗂️ ARQUIVOS</div>
-        <div class="start-menu-item" id="shutdownBtn">🔒 DESLIGAR</div>
+        <div class="start-menu-item" id="shutdownCmd">🔒 ENCERRAR SESSÃO</div>
     </div>
 </div>
 
 <script>
-    // ========== SISTEMA DE USUÁRIOS ==========
-    let usersDB = JSON.parse(localStorage.getItem('pixel_users')) || { admin: "1234" };
+    // ================== SISTEMA DE USUÁRIOS ==================
+    let usersDB = JSON.parse(localStorage.getItem('cmd_users')) || { admin: "1234" };
     let currentUser = null;
-    let onlineUsers = JSON.parse(localStorage.getItem('pixel_online')) || [];
+    let globalChat = JSON.parse(localStorage.getItem('cmd_chat')) || [];
+    let muralPosts = JSON.parse(localStorage.getItem('cmd_mural')) || [];
+    let imageGallery = JSON.parse(localStorage.getItem('cmd_gallery')) || [];
+    let onlineUsers = JSON.parse(localStorage.getItem('cmd_online')) || [];
+    let gameScores = JSON.parse(localStorage.getItem('cmd_scores')) || [];
     
-    function saveUsers() { localStorage.setItem('pixel_users', JSON.stringify(usersDB)); }
-    function saveOnline() { localStorage.setItem('pixel_online', JSON.stringify(onlineUsers)); }
+    function saveUsers() { localStorage.setItem('cmd_users', JSON.stringify(usersDB)); }
+    function saveChat() { localStorage.setItem('cmd_chat', JSON.stringify(globalChat)); }
+    function saveMural() { localStorage.setItem('cmd_mural', JSON.stringify(muralPosts)); }
+    function saveGallery() { localStorage.setItem('cmd_gallery', JSON.stringify(imageGallery)); }
+    function saveOnline() { localStorage.setItem('cmd_online', JSON.stringify(onlineUsers)); }
+    function saveScores() { localStorage.setItem('cmd_scores', JSON.stringify(gameScores)); }
     
     function updateOnlineStatus() {
         if (currentUser && !onlineUsers.includes(currentUser)) {
@@ -311,175 +566,489 @@
             saveOnline();
         }
     }
-    
-    function removeOnlineUser() {
+    function removeOnline() {
         onlineUsers = onlineUsers.filter(u => u !== currentUser);
         saveOnline();
     }
-
-    // ========== SISTEMA MULTIPLAYER ==========
-    let pendingChallenges = JSON.parse(localStorage.getItem('naval_challenges')) || [];
-    let activeGames = JSON.parse(localStorage.getItem('naval_games')) || [];
-    let notificationListener = null;
-    
-    function saveChallenges() { localStorage.setItem('naval_challenges', JSON.stringify(pendingChallenges)); }
-    function saveGames() { localStorage.setItem('naval_games', JSON.stringify(activeGames)); }
-    
-    function initEmptyBoard() { return Array(8).fill().map(() => Array(8).fill(false)); }
-    
-    function placeShips() {
-        let board = initEmptyBoard();
-        let ships = [[0,0], [2,3], [5,5], [7,1]];
-        ships.forEach(([r,c]) => { if(r<8 && c<8) board[r][c] = true; });
-        return board;
+    function addScore(game, score) {
+        gameScores.unshift({ user: currentUser, game: game, score: score, date: new Date().toLocaleString() });
+        gameScores = gameScores.slice(0, 100);
+        saveScores();
     }
-    
-    function checkAndNotifyChallenges() {
-        let myChallenges = pendingChallenges.filter(c => c.to === currentUser && c.status === 'pending');
-        if (myChallenges.length > 0 && notificationListener) {
-            myChallenges.forEach(challenge => {
-                notificationListener(challenge);
-            });
-        }
-    }
-    
-    setInterval(() => {
-        if (currentUser) {
-            let myChallenges = pendingChallenges.filter(c => c.to === currentUser && c.status === 'pending');
-            if (myChallenges.length > 0) {
-                checkAndNotifyChallenges();
-            }
-        }
-    }, 3000);
 
-    // ========== LOGIN ==========
-    document.getElementById('doLoginBtn').onclick = () => {
-        let user = document.getElementById('loginUsername').value.trim();
-        let pass = document.getElementById('loginPassword').value;
-        if (usersDB[user] && usersDB[user] === pass) {
-            currentUser = user;
+    // ================== LOGIN/REGISTRO ==================
+    document.getElementById('loginBtn').onclick = () => {
+        let u = document.getElementById('loginUser').value.trim();
+        let p = document.getElementById('loginPass').value;
+        if (usersDB[u] && usersDB[u] === p) {
+            currentUser = u;
             updateOnlineStatus();
-            document.getElementById('desktop').style.display = 'block';
             document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('desktop').style.display = 'block';
             initDesktop();
-        } else document.getElementById('loginErrorMsg').innerText = "❌ Usuário ou senha inválidos!";
+        } else document.getElementById('loginFeedback').innerHTML = "❌ ACESSO NEGADO! Credenciais inválidas.";
     };
-    
-    document.getElementById('doRegisterBtn').onclick = () => {
-        let user = document.getElementById('regUsername').value.trim();
-        let pass = document.getElementById('regPassword').value;
-        let confirm = document.getElementById('regConfirmPassword').value;
-        if (!user || !pass) { document.getElementById('registerMsg').innerText = "❌ Preencha todos os campos!"; return; }
-        if (pass !== confirm) { document.getElementById('registerMsg').innerText = "❌ Senhas não coincidem!"; return; }
-        if (usersDB[user]) { document.getElementById('registerMsg').innerText = "❌ Usuário já existe!"; return; }
-        usersDB[user] = pass;
+    document.getElementById('registerBtn').onclick = () => {
+        let u = document.getElementById('loginUser').value.trim();
+        let p = document.getElementById('loginPass').value;
+        if (!u || !p) { document.getElementById('loginFeedback').innerHTML = "❌ Preencha todos os campos!"; return; }
+        if (usersDB[u]) { document.getElementById('loginFeedback').innerHTML = "❌ Usuário já existe!"; return; }
+        usersDB[u] = p;
         saveUsers();
-        document.getElementById('registerMsg').innerText = "✅ Conta criada! Faça login.";
-        setTimeout(() => { document.getElementById('tabLoginBtn').click(); }, 1500);
+        document.getElementById('loginFeedback').innerHTML = "✅ Conta criada com sucesso! Faça login.";
+        document.getElementById('loginUser').value = '';
+        document.getElementById('loginPass').value = '';
     };
-    
-    document.getElementById('tabRegisterBtn').onclick = () => { document.getElementById('loginForm').style.display = 'none'; document.getElementById('registerForm').style.display = 'flex'; document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active')); };
-    document.getElementById('tabLoginBtn').onclick = () => { document.getElementById('registerForm').style.display = 'none'; document.getElementById('loginForm').style.display = 'flex'; document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active')); };
 
-    // ========== DESKTOP ==========
+    // ================== DESKTOP ==================
     function initDesktop() {
-        renderDesktopIcons();
+        renderIcons();
         updateClock();
         setInterval(updateClock, 1000);
         initStartMenu();
+        setInterval(() => {
+            let nc = JSON.parse(localStorage.getItem('cmd_chat')) || [];
+            if (nc.length !== globalChat.length) { globalChat = nc; }
+        }, 2000);
     }
-    
-    function updateClock() { document.getElementById('clock').innerText = new Date().toLocaleTimeString() + "  " + new Date().toLocaleDateString(); }
-    
+    function updateClock() { 
+        let now = new Date();
+        document.getElementById('clockCmd').innerText = now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR');
+    }
     function initStartMenu() {
-        let startBtn = document.getElementById('startMenuBtn');
-        let startMenu = document.getElementById('startMenu');
-        startBtn.onclick = (e) => { e.stopPropagation(); startMenu.style.display = startMenu.style.display === 'flex' ? 'none' : 'flex'; };
-        document.body.onclick = () => { startMenu.style.display = 'none'; };
-        document.querySelectorAll('.start-menu-item[data-app]').forEach(el => { el.onclick = () => { openApp(el.dataset.app); startMenu.style.display = 'none'; }; });
-        document.getElementById('shutdownBtn').onclick = () => { removeOnlineUser(); document.getElementById('desktop').style.display = 'none'; document.getElementById('loginScreen').style.display = 'flex'; startMenu.style.display = 'none'; };
+        let startBtn = document.getElementById('startBtn');
+        let menu = document.getElementById('startMenu');
+        startBtn.onclick = (e) => { e.stopPropagation(); menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex'; };
+        document.body.onclick = () => { menu.style.display = 'none'; };
+        document.querySelectorAll('.start-menu-item[data-app]').forEach(el => {
+            el.onclick = () => { openApp(el.dataset.app); menu.style.display = 'none'; };
+        });
+        document.getElementById('shutdownCmd').onclick = () => { removeOnline(); location.reload(); };
     }
 
-    const icons = [
-        { name: "MINHA FICHA", icon: "📁", action: "ficha" },
+    const iconsList = [
+        { name: "FICHA", icon: "📄", action: "ficha" },
         { name: "CAMPO MINADO", icon: "💣", action: "mines" },
         { name: "BATALHA NAVAL", icon: "⚓", action: "naval" },
-        { name: "COBRA (WASD)", icon: "🐍", action: "snake" },
-        { name: "DINO RUN", icon: "🦖", action: "dino" },
+        { name: "COBRA", icon: "🐍", action: "snake" },
+        { name: "DINO", icon: "🦖", action: "dino" },
+        { name: "CHAT", icon: "💬", action: "chat" },
+        { name: "MURAL", icon: "📌", action: "mural" },
+        { name: "GALERIA", icon: "🖼️", action: "gallery" },
+        { name: "RANKING", icon: "🏆", action: "ranking" },
+        { name: "EDITOR", icon: "✏️", action: "editor" },
+        { name: "CALC", icon: "🧮", action: "calc" },
+        { name: "TERMINAL", icon: "💻", action: "terminal" },
         { name: "ARQUIVOS", icon: "🗂️", action: "files" }
     ];
-    
-    function renderDesktopIcons() {
+    function renderIcons() {
         const container = document.getElementById('desktopIcons');
-        container.innerHTML = icons.map(icon => `<div class="desktop-icon" data-action="${icon.action}"><span>${icon.icon}</span><span>${icon.name}</span></div>`).join('');
-        document.querySelectorAll('.desktop-icon').forEach(el => { el.addEventListener('click', () => openApp(el.dataset.action)); });
+        container.innerHTML = iconsList.map(ic => `<div class="desktop-icon" data-app="${ic.action}"><span>${ic.icon}</span><span>${ic.name}</span></div>`).join('');
+        document.querySelectorAll('.desktop-icon').forEach(el => el.addEventListener('click', () => openApp(el.dataset.action)));
     }
 
-    let militarData = JSON.parse(localStorage.getItem('pixel_ficha')) || { unidade: "FORCA ALFA", codinome: "FANTASMA", id: "FT-210", patente: "SGT", vida: "32/32", defB: "16", defE: "14", municao: "90/120", mov1: "8m", mov2: "12m", inv1: "Fuzil M4", inv2: "Granada", inv3: "Kit Medico", inv4: "Radio", hab1: "Precisao", hab2: "Demolicao", hab3: "Furtivo", hab4: "Lideranca", missao: "OP: TERRA", data: "16/05", notas: "Extracao Norte" };
-    function saveFicha() { localStorage.setItem('pixel_ficha', JSON.stringify(militarData)); }
+    // ================== FICHA MILITAR ==================
+    let militarData = JSON.parse(localStorage.getItem('cmd_ficha')) || {
+        unidade: "FORCA ALFA", codinome: "FANTASMA", id: "FT-210", patente: "SGT",
+        vida: "32/32", defB: "16", defE: "14", municao: "90/120", mov1: "8m", mov2: "12m",
+        inv1: "Fuzil M4", inv2: "Granada", inv3: "Kit Medico", inv4: "Radio",
+        hab1: "Precisao", hab2: "Demolicao", hab3: "Furtivo", hab4: "Lideranca",
+        missao: "OP: TERRA", data: "16/05", notas: "Extracao Norte"
+    };
+    function saveFicha() { localStorage.setItem('cmd_ficha', JSON.stringify(militarData)); }
 
-    let windowZ = 100, openWindows = [];
-    function createWindow(title, contentHtml, width = 520, height = 420) {
-        const winId = 'win_' + Date.now() + Math.random();
-        const winDiv = document.createElement('div'); winDiv.className = 'window'; winDiv.id = winId;
-        winDiv.style.width = width + 'px'; winDiv.style.height = height + 'px';
-        winDiv.style.left = (50 + openWindows.length * 25) + 'px'; winDiv.style.top = (50 + openWindows.length * 25) + 'px';
-        winDiv.style.zIndex = windowZ++;
-        winDiv.innerHTML = `<div class="window-header"><span>${title}</span><span class="close-btn">X</span></div><div class="window-content">${contentHtml}</div>`;
+    // ================== GERENCIADOR DE JANELAS ==================
+    let windowsList = [], zIdx = 1000;
+    function createWin(title, content, w = 560, h = 460) {
+        let id = 'win_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
+        let winDiv = document.createElement('div');
+        winDiv.className = 'window';
+        winDiv.id = id;
+        winDiv.style.width = w + 'px';
+        winDiv.style.height = h + 'px';
+        winDiv.style.left = (50 + windowsList.length * 30) + 'px';
+        winDiv.style.top = (50 + windowsList.length * 25) + 'px';
+        winDiv.style.zIndex = zIdx++;
+        winDiv.innerHTML = `
+            <div class="window-header">
+                <span>${title}</span>
+                <div><span class="minimize-btn">━</span><span class="close-btn">✕</span></div>
+            </div>
+            <div class="window-content">${content}</div>
+        `;
         document.getElementById('windowContainer').appendChild(winDiv);
         winDiv.style.display = 'flex';
-        winDiv.querySelector('.close-btn').onclick = () => { winDiv.remove(); openWindows = openWindows.filter(w => w !== winId); updateTaskbar(); };
-        let drag = false, offsetX, offsetY;
-        winDiv.querySelector('.window-header').addEventListener('mousedown', (e) => { if(e.target.classList.contains('close-btn')) return; drag = true; offsetX = e.clientX - winDiv.offsetLeft; offsetY = e.clientY - winDiv.offsetTop; winDiv.style.zIndex = windowZ++; });
-        window.addEventListener('mousemove', (e) => { if(drag) { winDiv.style.left = (e.clientX - offsetX) + 'px'; winDiv.style.top = (e.clientY - offsetY) + 'px'; } });
+        let minimized = false;
+        winDiv.querySelector('.close-btn').onclick = () => { winDiv.remove(); windowsList = windowsList.filter(w => w !== id); updateTaskbar(); };
+        winDiv.querySelector('.minimize-btn').onclick = () => { minimized = !minimized; winDiv.style.display = minimized ? 'none' : 'flex'; updateTaskbar(); };
+        let drag = false, ox, oy;
+        winDiv.querySelector('.window-header').addEventListener('mousedown', (e) => {
+            if(e.target.classList.contains('close-btn') || e.target.classList.contains('minimize-btn')) return;
+            drag = true; ox = e.clientX - winDiv.offsetLeft; oy = e.clientY - winDiv.offsetTop;
+            winDiv.style.zIndex = zIdx++;
+        });
+        window.addEventListener('mousemove', (e) => { if(drag) { winDiv.style.left = (e.clientX - ox) + 'px'; winDiv.style.top = (e.clientY - oy) + 'px'; } });
         window.addEventListener('mouseup', () => { drag = false; });
-        openWindows.push(winId); updateTaskbar();
+        windowsList.push(id);
+        updateTaskbar();
         return winDiv;
     }
-    
     function updateTaskbar() {
         let container = document.getElementById('taskbarApps');
-        container.innerHTML = openWindows.map(id => `<div class="taskbar-item" data-win="${id}">📄 ${document.getElementById(id)?.querySelector('.window-header span:first-child')?.innerText || 'Janela'}</div>`).join('');
-        document.querySelectorAll('.taskbar-item').forEach(el => { el.onclick = () => { let win = document.getElementById(el.dataset.win); if(win) { win.style.zIndex = windowZ++; win.style.display = 'flex'; } }; });
-    }
-    
-    function openApp(action) {
-        if(action === 'ficha') openFicha();
-        else if(action === 'mines') openMines();
-        else if(action === 'naval') openNavalMultiplayer();
-        else if(action === 'snake') openSnake();
-        else if(action === 'dino') openDino();
-        else if(action === 'files') openFiles();
+        container.innerHTML = windowsList.map(id => `<div class="taskbar-item" data-win="${id}">📄 ${document.getElementById(id)?.querySelector('.window-header span:first-child')?.innerText || 'Janela'}</div>`).join('');
+        document.querySelectorAll('.taskbar-item').forEach(el => { el.onclick = () => { let w = document.getElementById(el.dataset.win); if(w) { w.style.display = 'flex'; w.style.zIndex = zIdx++; updateTaskbar(); } }; });
     }
 
-    function openFicha() {
-        let html = `<div><h3>📋 FICHA MILITAR - ${currentUser}</h3>
-            <div>UNIDADE: <input id="f_unidade" value="${militarData.unidade}"></div>
-            <div>CODINOME: <input id="f_cod" value="${militarData.codinome}"> ID: <input id="f_id" value="${militarData.id}"></div>
-            <div>PATENTE: <input id="f_pat" value="${militarData.patente}"></div>
-            <hr><b>ESTATÍSTICAS</b><br>VIDA: <input id="f_vida" size="6" value="${militarData.vida}"> DEF.BAL: <input id="f_defb" size="4" value="${militarData.defB}"> DEF.EXP: <input id="f_defe" size="4" value="${militarData.defE}"><br>
-            MUNIÇÃO: <input id="f_mun" value="${militarData.municao}"> MOV: <input id="f_m1" size="3" value="${militarData.mov1}"> / <input id="f_m2" size="3" value="${militarData.mov2}"><br>
-            <b>INVENTÁRIO</b><br>1:<input id="f_i1" value="${militarData.inv1}"> 2:<input id="f_i2" value="${militarData.inv2}"><br>3:<input id="f_i3" value="${militarData.inv3}"> 4:<input id="f_i4" value="${militarData.inv4}"><br>
-            <b>HABILIDADES</b><br>1:<input id="f_h1" value="${militarData.hab1}"> 2:<input id="f_h2" value="${militarData.hab2}"><br>3:<input id="f_h3" value="${militarData.hab3}"> 4:<input id="f_h4" value="${militarData.hab4}"><br>
-            <b>MISSÃO</b><br><input id="f_miss" value="${militarData.missao}"> DATA: <input id="f_data" value="${militarData.data}"><br>
-            NOTAS: <textarea id="f_notas" rows="2">${militarData.notas}</textarea><br>
-            <button id="saveBtn" class="game-btn">SALVAR</button></div>`;
-        createWindow("MINHA FICHA", html, 550, 520);
-        setTimeout(() => { document.getElementById('saveBtn').onclick = () => { Object.keys(militarData).forEach(k => { let el = document.getElementById(`f_${k}`); if(el) militarData[k] = el.value; }); saveFicha(); alert("Ficha salva!"); }; }, 10);
+    function openApp(app) {
+        if(app === 'ficha') openFicha();
+        else if(app === 'mines') openMines();
+        else if(app === 'naval') openNaval();
+        else if(app === 'snake') openSnake();
+        else if(app === 'dino') openDino();
+        else if(app === 'chat') openChat();
+        else if(app === 'mural') openMural();
+        else if(app === 'gallery') openGallery();
+        else if(app === 'ranking') openRanking();
+        else if(app === 'editor') openEditor();
+        else if(app === 'calc') openCalc();
+        else if(app === 'terminal') openTerminal();
+        else if(app === 'files') openFiles();
     }
-    
-    function openFiles() {
-        let html = `<div><h3>📁 ARQUIVOS</h3><div class="folder-item" id="showUsers">🔐 USUÁRIOS</div><div class="folder-item" id="showLogs">📜 LOGS</div><div id="fileView"></div></div>`;
-        createWindow("EXPLORADOR", html, 480, 400);
+
+    // ================== FICHA COMPLETA ==================
+    function openFicha() {
+        let html = `<div style="max-height:450px; overflow-y:auto;">
+            <h3>📋 FICHA OPERACIONAL - ${currentUser}</h3>
+            <table style="width:100%; margin:12px 0;">
+                <tr><th>UNIDADE</th><td colspan="3"><input id="f_unidade" value="${militarData.unidade}" style="width:100%;"></td></tr>
+                <tr><th>CODINOME</th><td><input id="f_cod" value="${militarData.codinome}"></td><th>ID</th><td><input id="f_id" value="${militarData.id}"></td></tr>
+                <tr><th>PATENTE</th><td colspan="3"><input id="f_pat" value="${militarData.patente}"></td></tr>
+            </table>
+            <hr><h4>📊 ESTATÍSTICAS</h4>
+            <table><tr><th>VIDA</th><td><input id="f_vida" value="${militarData.vida}"></td><th>DEF.BAL</th><td><input id="f_defb" value="${militarData.defB}"></td></tr>
+            <tr><th>DEF.EXP</th><td><input id="f_defe" value="${militarData.defE}"></td><th>MUNIÇÃO</th><td><input id="f_mun" value="${militarData.municao}"></td></tr>
+            <tr><th>MOVIMENTO</th><td colspan="3"><input id="f_m1" style="width:70px;" value="${militarData.mov1}"> / <input id="f_m2" style="width:70px;" value="${militarData.mov2}"></td></tr></table>
+            <h4>🎒 INVENTÁRIO</h4>
+            <table><tr><th>1</th><td><input id="f_i1" value="${militarData.inv1}"></td><th>2</th><td><input id="f_i2" value="${militarData.inv2}"></td></tr>
+            <tr><th>3</th><td><input id="f_i3" value="${militarData.inv3}"></td><th>4</th><td><input id="f_i4" value="${militarData.inv4}"></td></tr></table>
+            <h4>⚡ HABILIDADES</h4>
+            <table><tr><th>1</th><td><input id="f_h1" value="${militarData.hab1}"></td><th>2</th><td><input id="f_h2" value="${militarData.hab2}"></td></tr>
+            <tr><th>3</th><td><input id="f_h3" value="${militarData.hab3}"></td><th>4</th><td><input id="f_h4" value="${militarData.hab4}"></td></tr></table>
+            <h4>🎯 MISSÃO ATUAL</h4>
+            <div>MISSÃO: <input id="f_miss" value="${militarData.missao}" style="width:70%;"></div>
+            <div>DATA: <input id="f_data" value="${militarData.data}"></div>
+            <div>NOTAS: <textarea id="f_notas" rows="2" style="width:100%;">${militarData.notas}</textarea></div>
+            <button id="saveFichaBtn" class="game-btn">💾 SALVAR ALTERAÇÕES</button>
+        </div>`;
+        createWin("FICHA OPERACIONAL", html, 650, 580);
         setTimeout(() => {
-            document.getElementById('showUsers').onclick = () => document.getElementById('fileView').innerHTML = `<pre>${JSON.stringify(usersDB, null, 2)}</pre><p>Online agora: ${onlineUsers.join(', ') || 'Ninguém'}</p>`;
-            document.getElementById('showLogs').onclick = () => document.getElementById('fileView').innerHTML = `<pre>Usuário atual: ${currentUser}</pre>`;
+            document.getElementById('saveFichaBtn').onclick = () => {
+                militarData.unidade = document.getElementById('f_unidade').value;
+                militarData.codinome = document.getElementById('f_cod').value;
+                militarData.id = document.getElementById('f_id').value;
+                militarData.patente = document.getElementById('f_pat').value;
+                militarData.vida = document.getElementById('f_vida').value;
+                militarData.defB = document.getElementById('f_defb').value;
+                militarData.defE = document.getElementById('f_defe').value;
+                militarData.municao = document.getElementById('f_mun').value;
+                militarData.mov1 = document.getElementById('f_m1').value;
+                militarData.mov2 = document.getElementById('f_m2').value;
+                militarData.inv1 = document.getElementById('f_i1').value;
+                militarData.inv2 = document.getElementById('f_i2').value;
+                militarData.inv3 = document.getElementById('f_i3').value;
+                militarData.inv4 = document.getElementById('f_i4').value;
+                militarData.hab1 = document.getElementById('f_h1').value;
+                militarData.hab2 = document.getElementById('f_h2').value;
+                militarData.hab3 = document.getElementById('f_h3').value;
+                militarData.hab4 = document.getElementById('f_h4').value;
+                militarData.missao = document.getElementById('f_miss').value;
+                militarData.data = document.getElementById('f_data').value;
+                militarData.notas = document.getElementById('f_notas').value;
+                saveFicha();
+                alert("✅ Ficha salva com sucesso!");
+            };
         }, 50);
     }
 
+    // ================== CHAT GLOBAL ==================
+    function openChat() {
+        let html = `<div class="chat-area">
+            <div class="chat-messages" id="chatMsgs" style="height:320px;"></div>
+            <div style="display:flex; gap:10px;">
+                <input type="text" id="chatInput" placeholder="Digite sua mensagem..." style="flex:1;">
+                <button id="sendChat" class="game-btn">📤 ENVIAR</button>
+            </div>
+            <div style="margin-top:10px; font-size:11px; color:#6aff8a;">🟢 USUÁRIOS ONLINE: <span id="onlineCount"></span></div>
+        </div>`;
+        createWin("CHAT GLOBAL - REDE TÁTICA", html, 600, 500);
+        function refreshChat() {
+            let container = document.getElementById('chatMsgs');
+            if (!container) return;
+            container.innerHTML = globalChat.slice(-60).map(m => `<div class="chat-message"><b style="color:#aaffaa;">${m.user}</b> <span style="color:#6a8a6a;">[${m.time}]</span><br>${m.text}</div>`).join('');
+            document.getElementById('onlineCount').innerHTML = onlineUsers.join(', ') || currentUser;
+            container.scrollTop = container.scrollHeight;
+        }
+        function sendMessage() {
+            let input = document.getElementById('chatInput');
+            if (!input.value.trim()) return;
+            globalChat.push({ user: currentUser, text: input.value, time: new Date().toLocaleTimeString() });
+            saveChat();
+            refreshChat();
+            input.value = '';
+        }
+        refreshChat();
+        setInterval(refreshChat, 2000);
+        setTimeout(() => {
+            document.getElementById('sendChat').onclick = sendMessage;
+            document.getElementById('chatInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
+        }, 100);
+    }
+
+    // ================== MURAL COLABORATIVO ==================
+    function openMural() {
+        let html = `<div style="max-height:480px; overflow-y:auto;">
+            <h3>📌 MURAL COLABORATIVO - RPG</h3>
+            <div id="muralPosts" style="max-height:340px; overflow-y:auto;"></div>
+            <textarea id="newMuralPost" rows="3" style="width:100%; margin:12px 0;" placeholder="Nova anotação, ideia, lore..."></textarea>
+            <button id="addMuralPost" class="game-btn">📌 ADICIONAR AO MURAL</button>
+        </div>`;
+        createWin("MURAL COLABORATIVO", html, 620, 550);
+        function renderMural() {
+            let container = document.getElementById('muralPosts');
+            if (!container) return;
+            container.innerHTML = muralPosts.slice(0, 40).map(p => `<div class="mural-post"><b>📌 ${p.author}</b> <span style="color:#6a8a6a;">[${p.date}]</span><br>${p.text}</div>`).join('');
+        }
+        renderMural();
+        setTimeout(() => {
+            document.getElementById('addMuralPost').onclick = () => {
+                let text = document.getElementById('newMuralPost').value.trim();
+                if (!text) return;
+                muralPosts.unshift({ author: currentUser, text: text, date: new Date().toLocaleString() });
+                saveMural();
+                renderMural();
+                document.getElementById('newMuralPost').value = '';
+            };
+        }, 50);
+        setInterval(renderMural, 3000);
+    }
+
+    // ================== GALERIA DE IMAGENS ==================
+    function openGallery() {
+        let html = `<div>
+            <h3>🖼️ GALERIA TÁTICA</h3>
+            <div class="img-gallery" id="galleryGrid" style="max-height:350px; overflow-y:auto;"></div>
+            <div style="margin-top:18px; display:flex; gap:10px;">
+                <input type="text" id="imgUrl" placeholder="URL da imagem (jpg/png/gif)" style="flex:1;">
+                <button id="addImage" class="game-btn">➕ ADICIONAR</button>
+            </div>
+            <p style="font-size:10px; margin-top:10px; color:#6a8a6a;">* As imagens ficam salvas localmente no seu navegador</p>
+        </div>`;
+        createWin("GALERIA DE IMAGENS", html, 680, 550);
+        function renderGallery() {
+            let grid = document.getElementById('galleryGrid');
+            if (!grid) return;
+            grid.innerHTML = imageGallery.map(img => `<div class="img-card"><img src="${img.url}" alt="img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22100%22 viewBox=%220 0 120 100%22%3E%3Crect width=%22120%22 height=%22100%22 fill=%22%232a6a2a%22/%3E%3Ctext x=%2260%22 y=%2250%22 text-anchor=%22middle%22 fill=%22%236aff8a%22%3EERRO%3C/text%3E%3C/svg%3E'"><div style="margin-top:6px;">${img.name}</div><button class="game-btn" data-id="${img.id}" style="margin-top:8px; padding:4px 12px;">🗑️ REMOVER</button></div>`).join('');
+            document.querySelectorAll('[data-id]').forEach(btn => {
+                btn.onclick = () => { imageGallery = imageGallery.filter(i => i.id != btn.dataset.id); saveGallery(); renderGallery(); };
+            });
+        }
+        renderGallery();
+        setTimeout(() => {
+            document.getElementById('addImage').onclick = () => {
+                let url = document.getElementById('imgUrl').value.trim();
+                if (!url) return;
+                imageGallery.push({ id: Date.now(), url: url, name: `Imagem_${imageGallery.length+1}` });
+                saveGallery();
+                renderGallery();
+                document.getElementById('imgUrl').value = '';
+            };
+        }, 50);
+    }
+
+    // ================== RANKING ==================
+    function openRanking() {
+        let html = `<div>
+            <h3>🏆 RANKING DE PONTUAÇÕES</h3>
+            <div id="rankingList" style="max-height:380px; overflow-y:auto;"></div>
+            <p style="margin-top:10px; font-size:10px;">* Pontuações registradas em jogos</p>
+        </div>`;
+        createWin("RANKING", html, 520, 480);
+        function renderRanking() {
+            let container = document.getElementById('rankingList');
+            if (!container) return;
+            let sorted = [...gameScores].slice(0, 30);
+            container.innerHTML = sorted.map((s, i) => `<div class="ranking-item">${i+1}º - <b>${s.user}</b> | 🎮 ${s.game} | 🏆 ${s.score} pts | 📅 ${s.date}</div>`).join('');
+            if(sorted.length === 0) container.innerHTML = "<p style='margin:20px; text-align:center;'>Sem pontuações ainda. Jogue e registre seus recordes!</p>";
+        }
+        renderRanking();
+        setInterval(renderRanking, 3000);
+    }
+
+    // ================== EDITOR DE TEXTO ==================
+    function openEditor() {
+        let savedText = localStorage.getItem(`cmd_editor_${currentUser}`) || '';
+        let html = `<div>
+            <h3>✏️ EDITOR DE TEXTO TÁTICO</h3>
+            <textarea id="editorContent" rows="16" style="width:100%; background:#0a1a0a; color:#8aff8a; border:1px solid #2a6a2a; padding:10px; font-family:monospace; font-size:12px;">${savedText}</textarea>
+            <div style="display:flex; gap:12px; margin-top:12px;">
+                <button id="saveEditor" class="game-btn">💾 SALVAR</button>
+                <button id="clearEditor" class="game-btn">🗑️ LIMPAR</button>
+            </div>
+            <p style="font-size:10px; margin-top:10px;">* Documento salvo localmente para este usuário</p>
+        </div>`;
+        createWin("EDITOR DE TEXTO", html, 650, 550);
+        setTimeout(() => {
+            document.getElementById('saveEditor').onclick = () => {
+                let content = document.getElementById('editorContent').value;
+                localStorage.setItem(`cmd_editor_${currentUser}`, content);
+                alert("✅ Documento salvo com sucesso!");
+            };
+            document.getElementById('clearEditor').onclick = () => {
+                document.getElementById('editorContent').value = '';
+                localStorage.setItem(`cmd_editor_${currentUser}`, '');
+                alert("Documento limpo!");
+            };
+        }, 50);
+    }
+
+    // ================== CALCULADORA ==================
+    function openCalc() {
+        let html = `<div>
+            <h3>🧮 CALCULADORA TÁTICA</h3>
+            <input type="text" id="calcDisplay" readonly style="width:100%; padding:14px; font-size:20px; text-align:right; margin-bottom:12px; background:#0a1a0a; color:#6aff8a; border:1px solid #2a6a2a;">
+            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px;">
+                <button class="game-btn calc-btn" data-val="7">7</button><button class="game-btn calc-btn" data-val="8">8</button><button class="game-btn calc-btn" data-val="9">9</button><button class="game-btn calc-btn" data-op="/">/</button>
+                <button class="game-btn calc-btn" data-val="4">4</button><button class="game-btn calc-btn" data-val="5">5</button><button class="game-btn calc-btn" data-val="6">6</button><button class="game-btn calc-btn" data-op="*">*</button>
+                <button class="game-btn calc-btn" data-val="1">1</button><button class="game-btn calc-btn" data-val="2">2</button><button class="game-btn calc-btn" data-val="3">3</button><button class="game-btn calc-btn" data-op="-">-</button>
+                <button class="game-btn calc-btn" data-val="0">0</button><button class="game-btn calc-btn" data-val=".">.</button><button class="game-btn calc-btn" id="calcEqual">=</button><button class="game-btn calc-btn" data-op="+">+</button>
+                <button class="game-btn calc-btn" id="calcClear">C</button><button class="game-btn calc-btn" id="calcBackspace">⌫</button>
+            </div>
+        </div>`;
+        createWin("CALCULADORA", html, 380, 450);
+        let calcDisplay = document.getElementById('calcDisplay');
+        let currentExpr = '';
+        setTimeout(() => {
+            document.querySelectorAll('.calc-btn[data-val]').forEach(btn => {
+                btn.onclick = () => { currentExpr += btn.dataset.val; calcDisplay.value = currentExpr; };
+            });
+            document.querySelectorAll('.calc-btn[data-op]').forEach(btn => {
+                btn.onclick = () => { currentExpr += btn.dataset.op; calcDisplay.value = currentExpr; };
+            });
+            document.getElementById('calcEqual').onclick = () => {
+                try { let result = eval(currentExpr); currentExpr = String(result); calcDisplay.value = currentExpr; }
+                catch(e) { calcDisplay.value = "ERRO"; currentExpr = ''; }
+            };
+            document.getElementById('calcClear').onclick = () => { currentExpr = ''; calcDisplay.value = ''; };
+            document.getElementById('calcBackspace').onclick = () => { currentExpr = currentExpr.slice(0,-1); calcDisplay.value = currentExpr; };
+        }, 50);
+    }
+
+    // ================== TERMINAL CMD ==================
+    function openTerminal() {
+        let history = [];
+        let html = `<div>
+            <h3>💻 TERMINAL DE COMANDOS</h3>
+            <div id="terminalOutput" style="height:340px; background:#0a1a0a; border:1px solid #2a6a2a; overflow-y:auto; padding:10px; font-family:monospace; font-size:11px;"></div>
+            <div style="display:flex; margin-top:10px; gap:8px;">
+                <span style="color:#6aff8a;">$></span>
+                <input type="text" id="terminalInput" style="flex:1; background:#0a1a0a; border:1px solid #2a6a2a; color:#8aff8a; padding:8px;">
+                <button id="terminalExec" class="game-btn">EXEC</button>
+            </div>
+        </div>`;
+        createWin("TERMINAL CMD", html, 650, 520);
+        function addOutput(text) {
+            let output = document.getElementById('terminalOutput');
+            output.innerHTML += `<div class="terminal-line">${text}</div>`;
+            output.scrollTop = output.scrollHeight;
+        }
+        function executeCommand(cmd) {
+            let lower = cmd.toLowerCase().trim();
+            if (lower === 'help' || lower === '?') {
+                addOutput("═ COMANDOS DISPONÍVEIS ═");
+                addOutput("help, ?        - Mostra esta ajuda");
+                addOutput("date           - Exibe data e hora atual");
+                addOutput("user           - Mostra usuário atual");
+                addOutput("online         - Lista usuários online");
+                addOutput("clear, cls     - Limpa o terminal");
+                addOutput("list           - Lista arquivos do sistema");
+                addOutput("ficha          - Exibe resumo da ficha");
+                addOutput("chat           - Últimas mensagens do chat");
+                addOutput("say [texto]    - Envia mensagem ao chat");
+                addOutput("rank           - Mostra ranking");
+                addOutput("whoami         - Alias para user");
+            } else if (lower === 'date') {
+                addOutput(`📅 ${new Date().toString()}`);
+            } else if (lower === 'user' || lower === 'whoami') {
+                addOutput(`👤 Usuário atual: ${currentUser}`);
+            } else if (lower === 'online') {
+                addOutput(`🟢 Usuários online: ${onlineUsers.join(', ')}`);
+            } else if (lower === 'clear' || lower === 'cls') {
+                document.getElementById('terminalOutput').innerHTML = '';
+            } else if (lower === 'list') {
+                let keys = Object.keys(localStorage).filter(k => k.startsWith('cmd_'));
+                addOutput(`📁 Arquivos do sistema (${keys.length}): ${keys.join(', ')}`);
+            } else if (lower === 'ficha') {
+                addOutput(`📋 Ficha de ${currentUser}:`);
+                addOutput(`  Unidade: ${militarData.unidade}`);
+                addOutput(`  Codinome: ${militarData.codinome}`);
+                addOutput(`  Patente: ${militarData.patente}`);
+                addOutput(`  Missão: ${militarData.missao}`);
+            } else if (lower === 'chat') {
+                addOutput(`💬 Últimas mensagens:`);
+                globalChat.slice(-5).forEach(m => addOutput(`  ${m.user}: ${m.text}`));
+            } else if (lower === 'rank') {
+                addOutput(`🏆 Top 5 pontuações:`);
+                gameScores.slice(0,5).forEach((s,i) => addOutput(`  ${i+1}. ${s.user} - ${s.game}: ${s.score}`));
+            } else if (cmd.startsWith('say ')) {
+                let msg = cmd.substring(4);
+                globalChat.push({ user: `[CMD]${currentUser}`, text: msg, time: new Date().toLocaleTimeString() });
+                saveChat();
+                addOutput(`📨 Mensagem enviada ao chat: "${msg}"`);
+            } else if (cmd) {
+                addOutput(`❌ Comando não reconhecido: "${cmd}". Digite "help" para ajuda.`);
+            }
+        }
+        setTimeout(() => {
+            let input = document.getElementById('terminalInput');
+            let btn = document.getElementById('terminalExec');
+            btn.onclick = () => { executeCommand(input.value); input.value = ''; };
+            input.addEventListener('keypress', (e) => { if(e.key === 'Enter') { executeCommand(input.value); input.value = ''; } });
+            addOutput("═ TERMINAL CMD OS v5.0 ═");
+            addOutput(`Bem-vindo, ${currentUser}. Digite 'help' para comandos disponíveis.`);
+        }, 50);
+    }
+
+    // ================== ARQUIVOS ==================
+    function openFiles() {
+        let html = `<div>
+            <div class="folder-item" id="showUsers">🔐 USUÁRIOS CADASTRADOS</div>
+            <div class="folder-item" id="showOnline">🟢 USUÁRIOS ONLINE</div>
+            <div class="folder-item" id="showChat">💬 ÚLTIMAS MENSAGENS</div>
+            <div class="folder-item" id="showScores">🏆 RANKING DE PONTOS</div>
+            <div class="folder-item" id="showStorage">💾 ARMAZENAMENTO</div>
+            <div id="fileView" style="margin-top:18px; background:#0a1a0a; padding:12px; border:1px solid #2a6a2a; max-height:260px; overflow-y:auto;"></div>
+        </div>`;
+        createWin("ARQUIVOS DO SISTEMA", html, 580, 560);
+        setTimeout(() => {
+            document.getElementById('showUsers').onclick = () => document.getElementById('fileView').innerHTML = `<pre style="color:#8aff8a;">${JSON.stringify(usersDB, null, 2)}</pre>`;
+            document.getElementById('showOnline').onclick = () => document.getElementById('fileView').innerHTML = `<pre style="color:#8aff8a;">Online: ${onlineUsers.join(', ') || 'Nenhum'}\nTotal: ${onlineUsers.length} usuário(s)</pre>`;
+            document.getElementById('showChat').onclick = () => document.getElementById('fileView').innerHTML = `<pre style="color:#8aff8a;">${globalChat.slice(-15).map(m => `${m.user} [${m.time}]: ${m.text}`).join('\n')}</pre>`;
+            document.getElementById('showScores').onclick = () => document.getElementById('fileView').innerHTML = `<pre style="color:#8aff8a;">${gameScores.slice(0,20).map(s => `${s.user} - ${s.game}: ${s.score} (${s.date})`).join('\n') || 'Nenhuma pontuação registrada'}</pre>`;
+            document.getElementById('showStorage').onclick = () => {
+                let items = [];
+                for(let i = 0; i < localStorage.length; i++) {
+                    let key = localStorage.key(i);
+                    if(key && key.startsWith('cmd_')) items.push(`${key}: ${localStorage.getItem(key).substring(0, 60)}...`);
+                }
+                document.getElementById('fileView').innerHTML = `<pre style="color:#8aff8a;">${items.join('\n') || 'Nenhum dado armazenado'}</pre>`;
+            };
+        }, 50);
+    }
+
+    // ================== CAMPO MINADO ==================
     function openMines() {
-        let html = `<div><h3>💣 CAMPO MINADO</h3><div id="minesDiv"></div><div id="mineStatus" style="margin-top:10px;font-weight:bold;"></div><button id="newMine" class="game-btn">NOVO JOGO</button></div>`;
-        createWindow("CAMPO MINADO", html, 450, 500);
+        let html = `<div><div id="minesDiv" style="display:flex; justify-content:center; margin:10px 0;"></div><div id="mineMsg" style="text-align:center; margin:12px; font-weight:bold;"></div><button id="newMineBtn" class="game-btn">🔄 NOVO JOGO</button></div>`;
+        createWin("CAMPO MINADO", html, 450, 530);
         let size = 8, mines = 10, board, revealed, gameOver = false;
         function initGame() {
             gameOver = false;
@@ -490,20 +1059,19 @@
             for (let [r, c] of minePos) board[r][c] = 'M';
             for (let r = 0; r < size; r++) for (let c = 0; c < size; c++) if (board[r][c] !== 'M') { let cnt = 0; for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) { let nr = r + dr, nc = c + dc; if (nr >= 0 && nr < size && nc >= 0 && nc < size && board[nr][nc] === 'M') cnt++; } board[r][c] = cnt; }
             render();
-            document.getElementById('mineStatus').innerText = '';
+            document.getElementById('mineMsg').innerHTML = '';
         }
         function render() {
             let cont = document.getElementById('minesDiv'); if (!cont) return;
-            cont.style.display = 'grid'; cont.style.gridTemplateColumns = `repeat(${size}, 35px)`;
+            cont.style.display = 'grid'; cont.style.gridTemplateColumns = `repeat(${size}, 36px)`;
             cont.innerHTML = '';
             for (let i = 0; i < size; i++) for (let j = 0; j < size; j++) {
                 let cell = document.createElement('div'); cell.className = 'mine-cell';
-                cell.style.background = revealed[i][j] ? '#5a8a5a' : '#3a5a3a';
+                cell.style.background = revealed[i][j] ? '#1a3a1a' : '#0a1a0a';
                 if (revealed[i][j]) cell.innerText = board[i][j] === 'M' ? '💣' : (board[i][j] || '');
                 if (!gameOver && !revealed[i][j]) cell.onclick = () => {
                     if (board[i][j] === 'M') {
-                        gameOver = true;
-                        document.getElementById('mineStatus').innerText = '💥 DERROTA! Você explodiu uma mina! 💥';
+                        gameOver = true; document.getElementById('mineMsg').innerHTML = '💥 DERROTA! Você explodiu uma mina! 💥';
                         for (let x = 0; x < size; x++) for (let y = 0; y < size; y++) if (board[x][y] === 'M') revealed[x][y] = true;
                         render();
                     } else { revealed[i][j] = true; render(); }
@@ -512,282 +1080,116 @@
             }
         }
         initGame();
-        document.getElementById('newMine')?.addEventListener('click', () => initGame());
+        document.getElementById('newMineBtn')?.addEventListener('click', () => initGame());
     }
 
-    // ========== BATALHA NAVAL MULTIPLAYER COMPLETO ==========
-    function openNavalMultiplayer() {
-        let refreshInterval;
-        
-        function renderNavalLobby() {
-            let onlineList = onlineUsers.filter(u => u !== currentUser);
-            let myGames = activeGames.filter(g => g.player1 === currentUser || g.player2 === currentUser);
-            
-            let html = `<div>
-                <h3>⚓ BATALHA NAVAL MULTIPLAYER</h3>
-                <div style="background:#1a3a1a; padding:10px; margin:10px 0;">
-                    <h4>👥 USUÁRIOS ONLINE (${onlineList.length})</h4>
-                    <div id="onlineUsersList">${onlineList.map(u => `<div class="online-user" data-user="${u}">🎯 DESAFIAR ${u}</div>`).join('') || '<p>Nenhum outro usuário online</p>'}</div>
-                </div>
-                <div style="background:#1a3a1a; padding:10px; margin:10px 0;">
-                    <h4>🎮 SUAS PARTIDAS ATIVAS (${myGames.length})</h4>
-                    <div id="activeGamesList">${myGames.map(g => `<div class="game-item" data-game='${JSON.stringify(g)}'>⚔️ ${g.player1} vs ${g.player2} - ${g.gameOver ? `VENCEDOR: ${g.winner}` : `Turno: ${g.turn === currentUser ? 'SUA VEZ!' : 'AGUARDANDO...'}`}</div>`).join('') || '<p>Nenhuma partida ativa</p>'}</div>
-                </div>
-                <div id="gameBoardContainer" style="margin-top:15px;"></div>
-            </div>`;
-            
-            let win = createWindow("BATALHA NAVAL MULTIPLAYER", html, 850, 650);
-            
-            setTimeout(() => {
-                document.querySelectorAll('.online-user').forEach(el => {
-                    el.onclick = () => {
-                        let opponent = el.dataset.user;
-                        if (confirm(`Enviar desafio para ${opponent}?`)) {
-                            let challengeId = Date.now() + Math.random();
-                            pendingChallenges.push({
-                                id: challengeId,
-                                from: currentUser,
-                                to: opponent,
-                                status: 'pending',
-                                timestamp: Date.now()
-                            });
-                            saveChallenges();
-                            alert(`✅ Desafio enviado para ${opponent}! Aguardando resposta...`);
-                            renderNavalLobby();
-                        }
-                    };
-                });
-                
-                document.querySelectorAll('[data-game]').forEach(el => {
-                    el.onclick = () => {
-                        let game = JSON.parse(el.dataset.game);
-                        renderGameBoard(game);
-                    };
-                });
-                
-                // Verificar desafios recebidos
-                let myChallenges = pendingChallenges.filter(c => c.to === currentUser && c.status === 'pending');
-                myChallenges.forEach(challenge => {
-                    if (confirm(`🔔 ${challenge.from} desafiou você para uma BATALHA NAVAL! Aceitar?`)) {
-                        challenge.status = 'accepted';
-                        let newGame = {
-                            id: challenge.id,
-                            player1: challenge.from,
-                            player2: challenge.to,
-                            turn: challenge.from,
-                            board1: placeShips(),
-                            board2: placeShips(),
-                            ships1: placeShips(),
-                            ships2: placeShips(),
-                            hits1: initEmptyBoard(),
-                            hits2: initEmptyBoard(),
-                            gameOver: false,
-                            winner: null
-                        };
-                        activeGames.push(newGame);
-                        saveGames();
-                        saveChallenges();
-                        alert(`🎯 Desafio aceito! Partida iniciada contra ${challenge.from}`);
-                        renderNavalLobby();
-                    }
-                });
-            }, 50);
-            
-            refreshInterval = setInterval(() => {
-                if (document.getElementById('windowContainer').children.length > 0) {
-                    onlineList = onlineUsers.filter(u => u !== currentUser);
-                    myGames = activeGames.filter(g => g.player1 === currentUser || g.player2 === currentUser);
-                    let gamesDiv = document.getElementById('activeGamesList');
-                    if (gamesDiv) {
-                        gamesDiv.innerHTML = myGames.map(g => `<div class="game-item" data-game='${JSON.stringify(g)}'>⚔️ ${g.player1} vs ${g.player2} - ${g.gameOver ? `VENCEDOR: ${g.winner}` : `Turno: ${g.turn === currentUser ? 'SUA VEZ!' : 'AGUARDANDO...'}`}</div>`).join('') || '<p>Nenhuma partida ativa</p>';
-                        document.querySelectorAll('[data-game]').forEach(el => {
-                            el.onclick = () => { renderGameBoard(JSON.parse(el.dataset.game)); };
-                        });
-                    }
-                } else {
-                    clearInterval(refreshInterval);
-                }
-            }, 2000);
-        }
-        
-        function renderGameBoard(game) {
-            let container = document.getElementById('gameBoardContainer');
-            if (!container) return;
-            
-            let isMyTurn = game.turn === currentUser;
-            let amIPlayer1 = game.player1 === currentUser;
-            let myShips = amIPlayer1 ? game.ships1 : game.ships2;
-            let myHits = amIPlayer1 ? game.hits1 : game.hits2;
-            let opponentShips = amIPlayer1 ? game.ships2 : game.ships1;
-            let opponentHits = amIPlayer1 ? game.hits2 : game.hits1;
-            let opponentName = amIPlayer1 ? game.player2 : game.player1;
-            
-            let myScore = myHits.flat().filter((v, i) => v && opponentShips.flat()[i]).length;
-            let opponentScore = opponentHits.flat().filter((v, i) => v && myShips.flat()[i]).length;
-            
-            container.innerHTML = `
-                <div style="display:flex; gap:30px; flex-wrap:wrap; justify-content:center;">
-                    <div>
-                        <h3>🌊 SEU CAMPO (${currentUser})</h3>
-                        <div id="myBoard" style="display:grid; grid-template-columns:repeat(8,35px); gap:2px;"></div>
-                        <p>Navios restantes: ${4 - myScore}/4</p>
-                    </div>
-                    <div>
-                        <h3>🎯 ATAQUE A ${opponentName}</h3>
-                        <div id="attackBoard" style="display:grid; grid-template-columns:repeat(8,35px); gap:2px;"></div>
-                        <p>Acertos: ${opponentScore}/4</p>
-                    </div>
-                </div>
-                <div style="text-align:center; margin-top:15px;">
-                    ${game.gameOver ? `<p class="notification">🏆 VENCEDOR: ${game.winner} 🏆</p>` : (isMyTurn ? '<p class="notification">✅ SUA VEZ DE ATACAR!</p>' : '<p>⏳ AGUARDANDO OPONENTE...</p>')}
-                    <button id="refreshGameBtn" class="game-btn">ATUALIZAR</button>
-                    <button id="backToLobbyBtn" class="game-btn">VOLTAR AO LOBBY</button>
-                </div>
-            `;
-            
-            let myBoardDiv = document.getElementById('myBoard');
-            let attackBoardDiv = document.getElementById('attackBoard');
-            
-            for (let i = 0; i < 8; i++) {
-                for (let j = 0; j < 8; j++) {
-                    let myCell = document.createElement('div');
-                    myCell.className = 'naval-cell';
-                    if (myShips[i][j]) myCell.classList.add('ship');
-                    if (opponentHits[i][j]) myCell.classList.add('hit');
-                    myCell.innerText = opponentHits[i][j] ? (myShips[i][j] ? '💥' : '❌') : (myShips[i][j] ? '⬛' : '🌊');
-                    myBoardDiv.appendChild(myCell);
-                    
-                    let attackCell = document.createElement('div');
-                    attackCell.className = 'naval-cell';
-                    if (myHits[i][j]) attackCell.classList.add(myHits[i][j] && opponentShips[i][j] ? 'hit' : 'miss');
-                    attackCell.innerText = myHits[i][j] ? (opponentShips[i][j] ? '💥' : '❌') : '?';
-                    if (!game.gameOver && isMyTurn && !myHits[i][j]) {
-                        attackCell.style.cursor = 'pointer';
-                        attackCell.onclick = () => makeAttack(game, i, j, amIPlayer1, opponentName);
-                    }
-                    attackBoardDiv.appendChild(attackCell);
-                }
+    // ================== BATALHA NAVAL 2P ==================
+    function openNaval() {
+        let html = `<div id="navalContainer" style="display:flex; flex-direction:column; align-items:center;"></div>`;
+        createWin("BATALHA NAVAL (2 JOGADORES)", html, 780, 620);
+        let playerTurn = 1, p1Score = 0, p2Score = 0, gameOver = false;
+        let board1 = Array(8).fill().map(() => Array(8).fill(false));
+        let board2 = Array(8).fill().map(() => Array(8).fill(false));
+        let hits1 = Array(8).fill().map(() => Array(8).fill(false));
+        let hits2 = Array(8).fill().map(() => Array(8).fill(false));
+        let ships = [[0,0],[2,3],[5,5],[7,1],[1,6],[3,4]];
+        ships.forEach(([r,c]) => { if(r<8 && c<8) { board1[r][c] = true; board2[r][c] = true; } });
+        function renderNaval() {
+            let cont = document.getElementById('navalContainer'); if (!cont) return;
+            cont.innerHTML = `<div style="display:flex; gap:40px; flex-wrap:wrap; justify-content:center;">
+                <div style="text-align:center;"><h3>⚓ ${currentUser}</h3><div id="b1" style="display:grid; grid-template-columns:repeat(8,38px); gap:3px;"></div><p style="margin-top:8px;">🎯 Acertos: ${p1Score}/${ships.length}</p></div>
+                <div style="text-align:center;"><h3>⚓ OPONENTE</h3><div id="b2" style="display:grid; grid-template-columns:repeat(8,38px); gap:3px;"></div><p style="margin-top:8px;">🎯 Acertos: ${p2Score}/${ships.length}</p></div>
+            </div><div id="turnMsg" style="margin:18px; font-weight:bold; text-align:center;"></div><button id="resetNav" class="game-btn">🔄 NOVO JOGO</button>`;
+            let b1 = document.getElementById('b1'), b2 = document.getElementById('b2');
+            for (let i = 0; i < 8; i++) for (let j = 0; j < 8; j++) {
+                let c1 = document.createElement('div'); c1.className = 'naval-cell'; 
+                c1.innerText = hits1[i][j] ? (board1[i][j] ? '💥' : '❌') : '~';
+                c1.style.background = hits1[i][j] ? (board1[i][j] ? '#8a4a4a' : '#2a4a2a') : '#0f180f';
+                b1.appendChild(c1);
+                let c2 = document.createElement('div'); c2.className = 'naval-cell'; 
+                c2.innerText = hits2[i][j] ? (board2[i][j] ? '💥' : '❌') : '~';
+                c2.style.background = hits2[i][j] ? (board2[i][j] ? '#8a4a4a' : '#2a4a2a') : '#0f180f';
+                if (!gameOver && !hits2[i][j] && playerTurn === 1) c2.onclick = () => { 
+                    if (!gameOver && playerTurn === 1 && !hits2[i][j]) { 
+                        hits2[i][j] = true; 
+                        if (board2[i][j]) p1Score++; 
+                        playerTurn = 2; 
+                        renderNaval(); 
+                        if(p1Score === ships.length) { gameOver = true; alert(`🏆 ${currentUser} VENCEU A BATALHA NAVAL! 🏆`); renderNaval(); }
+                    } 
+                };
+                if (!gameOver && !hits1[i][j] && playerTurn === 2) c1.onclick = () => { 
+                    if (!gameOver && playerTurn === 2 && !hits1[i][j]) { 
+                        hits1[i][j] = true; 
+                        if (board1[i][j]) p2Score++; 
+                        playerTurn = 1; 
+                        renderNaval(); 
+                        if(p2Score === ships.length) { gameOver = true; alert(`🏆 OPONENTE VENCEU A BATALHA NAVAL! 🏆`); renderNaval(); }
+                    } 
+                };
+                b2.appendChild(c2);
             }
-            
-            document.getElementById('refreshGameBtn').onclick = () => {
-                let updatedGame = activeGames.find(g => g.id === game.id);
-                if (updatedGame) renderGameBoard(updatedGame);
-                else container.innerHTML = '<p>Partida finalizada ou não encontrada.</p>';
-            };
-            document.getElementById('backToLobbyBtn').onclick = () => { renderNavalLobby(); };
+            let msg = p1Score === ships.length ? `🏆 ${currentUser} VENCEU!` : (p2Score === ships.length ? `🏆 OPONENTE VENCEU!` : `🎯 VEZ DO ${playerTurn === 1 ? currentUser : "OPONENTE"} ATACAR!`);
+            document.getElementById('turnMsg').innerHTML = `<span style="color:#6aff8a; font-size:14px;">${msg}</span>`;
         }
-        
-        function makeAttack(game, row, col, amIPlayer1, opponentName) {
-            let currentGame = activeGames.find(g => g.id === game.id);
-            if (!currentGame || currentGame.gameOver) return;
-            if (currentGame.turn !== currentUser) { alert("Não é sua vez!"); return; }
-            
-            let myHits = amIPlayer1 ? currentGame.hits1 : currentGame.hits2;
-            let opponentShips = amIPlayer1 ? currentGame.ships2 : currentGame.ships1;
-            
-            if (myHits[row][col]) { alert("Você já atacou esta posição!"); return; }
-            
-            myHits[row][col] = true;
-            let hit = opponentShips[row][col];
-            
-            let totalShips = 4;
-            let hitsCount = myHits.flat().filter((v, i) => v && opponentShips.flat()[i]).length;
-            
-            if (hitsCount === totalShips) {
-                currentGame.gameOver = true;
-                currentGame.winner = currentUser;
-                alert(`🎉 PARABÉNS! ${currentUser} venceu a batalha naval! 🎉`);
-            } else {
-                currentGame.turn = opponentName;
-            }
-            
-            saveGames();
-            renderGameBoard(currentGame);
-        }
-        
-        renderNavalLobby();
+        renderNaval();
+        setTimeout(() => document.getElementById('resetNav')?.addEventListener('click', () => { location.reload(); }), 50);
     }
 
-    // ========== JOGO DA COBRA ==========
+    // ================== JOGO DA COBRA ==================
     function openSnake() {
-        let html = `<div><h3>🐍 JOGO DA COBRA (WASD)</h3><div id="snakeGrid" class="snake-grid"></div><button id="startSnakeBtn" class="game-btn">INICIAR</button><p>Score: <span id="snakeScore">0</span></p><p style="font-size:10px;">Use W A S D para mover</p></div>`;
-        createWindow("SNAKE", html, 450, 500);
-        let snakeBody = [[10,10]], dir = "RIGHT", food = [15,15], gameOn = false, score = 0, interval;
-        function buildGrid() {
+        let html = `<div style="text-align:center;"><div id="snakeGrid" class="snake-grid"></div><button id="startSnake" class="game-btn">🐍 INICIAR JOGO</button><p style="margin-top:10px;">🏆 SCORE: <span id="snakeScore" style="color:#6aff8a; font-weight:bold;">0</span></p><p style="font-size:11px;">⬆️ W | ⬇️ S | ⬅️ A | ➡️ D</p></div>`;
+        createWin("JOGO DA COBRA", html, 480, 550);
+        let snake = [[10,10]], dir = "RIGHT", food = [15,15], game = false, score = 0, interval;
+        function build() {
             let grid = document.getElementById('snakeGrid'); if (!grid) return;
             grid.innerHTML = '';
             for (let i = 0; i < 20; i++) for (let j = 0; j < 20; j++) {
                 let cell = document.createElement('div'); cell.className = 'snake-cell';
-                if (snakeBody.some(s => s[0] === i && s[1] === j)) cell.classList.add('snake');
+                if (snake.some(s => s[0] === i && s[1] === j)) cell.classList.add('snake');
                 if (food[0] === i && food[1] === j) cell.classList.add('food');
                 grid.appendChild(cell);
             }
         }
-        function update() {
-            if (!gameOn) return;
-            let head = snakeBody[0], newHead = [...head];
+        function updateSnake() {
+            if (!game) return;
+            let head = snake[0], newHead = [...head];
             if (dir === 'RIGHT') newHead[1]++; if (dir === 'LEFT') newHead[1]--; if (dir === 'UP') newHead[0]--; if (dir === 'DOWN') newHead[0]++;
-            if (newHead[0] < 0 || newHead[0] >= 20 || newHead[1] < 0 || newHead[1] >= 20 || snakeBody.some(s => s[0] === newHead[0] && s[1] === newHead[1])) {
-                gameOn = false; clearInterval(interval); alert("GAME OVER!"); return;
+            if (newHead[0] < 0 || newHead[0] >= 20 || newHead[1] < 0 || newHead[1] >= 20 || snake.some(s => s[0] === newHead[0] && s[1] === newHead[1])) { 
+                game = false; clearInterval(interval); addScore("JOGO DA COBRA", score); alert(`🐍 GAME OVER! Pontuação final: ${score}`); return; 
             }
-            snakeBody.unshift(newHead);
-            if (newHead[0] === food[0] && newHead[1] === food[1]) { score++; document.getElementById('snakeScore').innerText = score; food = [Math.floor(Math.random() * 20), Math.floor(Math.random() * 20)]; }
-            else snakeBody.pop();
-            buildGrid();
+            snake.unshift(newHead);
+            if (newHead[0] === food[0] && newHead[1] === food[1]) { score++; document.getElementById('snakeScore').innerText = score; food = [Math.floor(Math.random() * 20), Math.floor(Math.random() * 20)]; } else snake.pop();
+            build();
         }
-        document.getElementById('startSnakeBtn')?.addEventListener('click', () => {
-            if (interval) clearInterval(interval);
-            snakeBody = [[10,10]]; dir = "RIGHT"; score = 0; food = [15,15]; gameOn = true;
-            document.getElementById('snakeScore').innerText = '0'; buildGrid();
-            interval = setInterval(update, 150);
-        });
-        window.addEventListener('keydown', (e) => {
-            if (!gameOn) return;
-            let key = e.key.toLowerCase();
-            if (key === 'w' && dir !== 'DOWN') dir = 'UP';
-            else if (key === 's' && dir !== 'UP') dir = 'DOWN';
-            else if (key === 'a' && dir !== 'RIGHT') dir = 'LEFT';
-            else if (key === 'd' && dir !== 'LEFT') dir = 'RIGHT';
-        });
-        buildGrid();
+        document.getElementById('startSnake')?.addEventListener('click', () => { if (interval) clearInterval(interval); snake = [[10,10]]; dir = "RIGHT"; score = 0; food = [15,15]; game = true; document.getElementById('snakeScore').innerText = '0'; build(); interval = setInterval(updateSnake, 130); });
+        window.addEventListener('keydown', (e) => { if (!game) return; let k = e.key.toLowerCase(); if (k === 'w' && dir !== 'DOWN') dir = 'UP'; if (k === 's' && dir !== 'UP') dir = 'DOWN'; if (k === 'a' && dir !== 'RIGHT') dir = 'LEFT'; if (k === 'd' && dir !== 'LEFT') dir = 'RIGHT'; });
+        build();
     }
 
-    // ========== DINO GAME ==========
+    // ================== DINO RUN ==================
     function openDino() {
-        let html = `<div><h3>🦖 DINO RUN</h3><div id="dinoArea" style="height:150px;background:#2a4a2a;position:relative;margin:10px;overflow:hidden;">
-            <div id="dino" style="position:absolute;bottom:0;left:50px;width:25px;height:25px;background:#aaffaa;"></div>
-            <div id="obs" style="position:absolute;bottom:0;right:0;width:20px;height:25px;background:#aa8a6a;"></div>
-        </div><p>Score: <span id="dinoScore">0</span></p><button id="startDinoBtn" class="game-btn">CORRER</button><p style="font-size:10px;">Pressione ESPAÇO para pular</p></div>`;
-        createWindow("DINO RUN", html, 480, 350);
-        let dinoRun = false, score = 0, obsX = 300, jump = false, yPos = 0, loop;
-        function gameLoop() {
-            if (!dinoRun) return;
-            obsX -= 6;
-            if (obsX < 0) { obsX = 280; score++; document.getElementById('dinoScore').innerText = score; }
-            document.getElementById('obs').style.right = (300 - obsX) + 'px';
-            let dinoElem = document.getElementById('dino');
-            if (!jump && yPos === 0 && Math.abs(obsX - 50) < 25) {
-                dinoRun = false; clearInterval(loop);
-                alert("💀 GAME OVER! Pontuação: " + score);
+        let html = `<div style="text-align:center;"><div id="dinoArea" style="height:160px;background:#0a1a0a;position:relative;margin:15px;overflow:hidden;border:2px solid #2a6a2a;border-radius:6px;">
+            <div id="dinoC" style="position:absolute;bottom:0;left:55px;width:28px;height:28px;background:linear-gradient(135deg,#6aff8a,#4aff6a);border-radius:4px;"></div>
+            <div id="obsC" style="position:absolute;bottom:0;right:0;width:22px;height:28px;background:#8a6a4a;border-radius:2px;"></div>
+        </div><p>🏆 SCORE: <span id="dinoScore" style="color:#6aff8a; font-weight:bold;">0</span></p><button id="startDino" class="game-btn">🦖 CORRER</button><p style="font-size:11px;">🔘 PRESSIONE ESPAÇO PARA PULAR</p></div>`;
+        createWin("DINO RUN", html, 530, 430);
+        let run = false, score = 0, obsX = 320, jump = false, y = 0, loop;
+        function gameLoopD() {
+            if (!run) return;
+            obsX -= 7; if (obsX < 0) { obsX = 300; score++; document.getElementById('dinoScore').innerText = score; }
+            document.getElementById('obsC').style.right = (320 - obsX) + 'px';
+            let d = document.getElementById('dinoC');
+            if (!jump && y === 0 && Math.abs(obsX - 60) < 28) { 
+                run = false; clearInterval(loop); addScore("DINO RUN", score); alert(`🦖 GAME OVER! Pontuação: ${score}`); 
             }
-            if (jump) {
-                yPos -= 1.5;
-                if (yPos <= -25) { jump = false; yPos = 0; }
-                dinoElem.style.bottom = yPos + 20 + 'px';
-            } else dinoElem.style.bottom = '0px';
+            if (jump) { y -= 1.4; if (y <= -26) { jump = false; y = 0; } d.style.bottom = y + 24 + 'px'; } else d.style.bottom = '0px';
         }
-        document.getElementById('startDinoBtn')?.addEventListener('click', () => {
-            if (loop) clearInterval(loop);
-            obsX = 300; score = 0; dinoRun = true; jump = false; yPos = 0;
-            document.getElementById('dinoScore').innerText = '0';
-            loop = setInterval(gameLoop, 30);
-        });
-        window.addEventListener('keydown', (e) => {
-            if (e.code === 'Space' && dinoRun && !jump) { e.preventDefault(); jump = true; yPos = 20; }
-        });
+        document.getElementById('startDino')?.addEventListener('click', () => { if (loop) clearInterval(loop); obsX = 320; score = 0; run = true; jump = false; y = 0; document.getElementById('dinoScore').innerText = '0'; loop = setInterval(gameLoopD, 26); });
+        window.addEventListener('keydown', (e) => { if (e.code === 'Space' && run && !jump) { e.preventDefault(); jump = true; y = 22; } });
     }
-    
-    window.addEventListener('beforeunload', () => { if(currentUser) removeOnlineUser(); });
+
+    window.addEventListener('beforeunload', () => { if(currentUser) removeOnline(); });
 </script>
 </body>
 </html>
