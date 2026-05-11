@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Editor de Ficha - OPERAÇÃO: FICHA MUTO FODA</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #2b2e3a;
+            font-family: 'Segoe UI', 'Roboto', 'Courier New', monospace;
+            margin: 0;
+            padding: 24px 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* container estilo folha de personagem */
+        .sheet {
+            max-width: 1100px;
+            width: 100%;
+            background: #fef7e0;
+            background-image: linear-gradient(to bottom, #fff8e7, #fef0cf);
+            border-radius: 24px;
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.4), 0 0 0 1px #d4b87a inset;
+            padding: 28px 30px 40px;
+            transition: all 0.2s;
+        }
+
+        /* cabeçalho brutal */
+        .header {
+            text-align: center;
+            border-bottom: 4px solid #c49a6c;
+            margin-bottom: 28px;
+            padding-bottom: 12px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #3b2a1f;
+            text-shadow: 2px 2px 0 #e9cf9e;
+            margin: 0;
+            font-family: 'Courier New', monospace;
+            word-break: break-word;
+        }
+
+        .header h1 small {
+            font-size: 0.9rem;
+            font-weight: normal;
+            background: #00000020;
+            padding: 2px 8px;
+            border-radius: 40px;
+        }
+
+        .unidade-box {
+            background: #e5d5b0;
+            margin-top: 16px;
+            padding: 10px 16px;
+            border-radius: 40px;
+            display: inline-block;
+            font-weight: bold;
+            color: #2c2116;
+        }
+
+        /* grade de estatísticas */
+        .stats-grid {
+            background: #d9c48b80;
+            border-radius: 28px;
+            padding: 20px 20px;
+            margin: 25px 0;
+            border: 1px solid #c7a86b;
+            box-shadow: inset 0 0 0 1px #fff9e6, 0 6px 12px rgba(0,0,0,0.1);
+        }
+
+        .row-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px 28px;
+            justify-content: space-between;
+        }
+
+        .stat {
+            flex: 1 1 160px;
+            background: #fff3df;
+            padding: 8px 12px;
+            border-radius: 32px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .stat label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: #5e3a22;
+            background: #f7e5ca;
+            padding: 4px 10px;
+            border-radius: 30px;
+            letter-spacing: 0.5px;
+        }
+
+        .stat input, .stat .slash-input {
+            background: #fffef7;
+            border: 1px solid #c0a062;
+            border-radius: 28px;
+            padding: 6px 12px;
+            font-weight: bold;
+            font-family: monospace;
+            font-size: 0.95rem;
+            width: 100px;
+            transition: 0.1s;
+        }
+
+        .stat input:focus {
+            outline: none;
+            border-color: #a5652c;
+            box-shadow: 0 0 0 2px #ffcf9a;
+        }
+
+        .slash-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #fffef7;
+            border-radius: 40px;
+            padding: 2px 8px;
+        }
+
+        .slash-group input {
+            width: 65px;
+            text-align: center;
+        }
+
+        /* inventário especial e campos grandes */
+        .inventario-area, .habilidades-area {
+            background: #f6efdf;
+            border-radius: 24px;
+            margin: 28px 0;
+            padding: 12px 18px 18px;
+            border: 1px solid #ddbc88;
+        }
+
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            font-family: monospace;
+            background: #c9aa77;
+            display: inline-block;
+            padding: 0 20px;
+            border-radius: 60px;
+            color: #221d12;
+            margin-top: -26px;
+            margin-bottom: 18px;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 5px #00000020;
+        }
+
+        textarea {
+            width: 100%;
+            background: #fffdf5;
+            border: 2px solid #cfb二十七;
+            border-radius: 18px;
+            padding: 14px 18px;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            resize: vertical;
+            font-weight: 500;
+            transition: 0.1s;
+        }
+
+        textarea:focus {
+            border-color: #b8723a;
+            outline: none;
+            box-shadow: 0 0 0 3px #f7dcb0;
+        }
+
+        .inventario-row {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .item-line {
+            background: #ffffffb3;
+            border-radius: 28px;
+            padding: 10px 15px;
+        }
+
+        /* habilidades numeradas */
+        .habilidades-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .hab-item {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            background: #faf2e2;
+            border-radius: 60px;
+            padding: 8px 18px;
+            border-left: 8px solid #cb8b4a;
+        }
+
+        .hab-num {
+            font-weight: 900;
+            font-size: 1.4rem;
+            min-width: 45px;
+            color: #a55627;
+        }
+
+        .hab-item input {
+            flex: 1;
+            background: #fffef5;
+            border: 1px solid #cfb284;
+            border-radius: 60px;
+            padding: 12px 18px;
+            font-size: 1rem;
+            font-family: monospace;
+            font-weight: bold;
+        }
+
+        /* botões de ação */
+        .action-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background: #332418;
+            border: none;
+            color: #ffefcf;
+            padding: 10px 28px;
+            font-weight: bold;
+            font-size: 1rem;
+            border-radius: 60px;
+            cursor: pointer;
+            font-family: monospace;
+            transition: 0.1s linear;
+            box-shadow: 0 3px 0 #120b06;
+        }
+
+        button:hover {
+            background: #5c3f2a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 0 #120b06;
+        }
+
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #120b06;
+        }
+
+        .export-btn {
+            background: #2f6b47;
+            box-shadow: 0 3px 0 #1b402b;
+        }
+
+        .reset-btn {
+            background: #7a4c2c;
+        }
+
+        footer {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 25px;
+            color: #7a6233;
+        }
+
+        @media (max-width: 680px) {
+            .sheet {
+                padding: 16px;
+            }
+            .stat {
+                flex: 1 1 100%;
+            }
+            .hab-item {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="sheet">
+    <div class="header">
+        <h1>⚡ OPERAÇÃO: FICHA MUTO FODA ⚡</h1>
+        <div class="unidade-box">
+            <strong>UNIDADE:</strong> 
+            <input type="text" id="unidadeField" placeholder="Esquadrão Pressure" style="background:transparent;border:none;border-bottom:2px dotted #a55929;font-weight:bold;width:180px;font-family:monospace;">
+        </div>
+        <div style="margin-top: 8px; font-size:0.8rem;">📄 Ficha editável — RPG tático intenso</div>
+    </div>
+
+    <!-- ESTATÍSTICA DE CAMPO -->
+    <div class="stats-grid">
+        <div style="font-weight:800; margin-bottom:16px; font-size:1.3rem;">📊 ESTATÍSTICA DE CAMPO</div>
+        <div class="row-stats">
+            <div class="stat"><label>💚 VIDA (PV):</label> <input type="text" id="vida" placeholder="ex: 42 / 42" value="28 / 28"></div>
+            <div class="stat"><label>🛡️ DEFESA BALÍSTICA:</label> <input type="text" id="defB" placeholder="DEF B" value="14"></div>
+            <div class="stat"><label>💥 DEFESA EXPLOSÃO:</label> <input type="text" id="defE" placeholder="DEF E" value="10"></div>
+            <div class="stat"><label>🔫 MUNIÇÃO GERAL:</label> <input type="text" id="municao" placeholder="munição" value="30/90"></div>
+            <div class="stat"><label>🏃 MOVIMENTO:</label> <div class="slash-group"><input type="text" id="mov1" placeholder="base" value="8m"> / <input type="text" id="mov2" placeholder="corrida" value="12m"></div></div>
+        </div>
+    </div>
+
+    <!-- INVENTÁRIO (estilo expansivo com 4 slots e campos extras extraídos do PDF original) -->
+    <div class="inventario-area">
+        <div class="section-title">🎒 INVENTÁRIO</div>
+        <div class="inventario-row">
+            <div class="item-line"><strong>1.</strong> <input type="text" id="inv1" style="width:90%; background:#fff9ea; border-radius:30px; border:1px solid #c0a062; padding:10px 16px;" placeholder="Ex: Fuzil AR-15, 3 carregadores" value="Fuzil de assalto + Mira laser"></div>
+            <div class="item-line"><strong>2.</strong> <input type="text" id="inv2" style="width:90%; background:#fff9ea; border-radius:30px; border:1px solid #c0a062; padding:10px 16px;" placeholder="Granada de fragmentação" value="Granada fragmentação (x2)"></div>
+            <div class="item-line"><strong>3.</strong> <input type="text" id="inv3" style="width:90%; background:#fff9ea; border-radius:30px; border:1px solid #c0a062; padding:10px 16px;" placeholder="Kit médico" value="Kit tático + bandagens"></div>
+            <div class="item-line"><strong>4.</strong> <input type="text" id="inv4" style="width:90%; background:#fff9ea; border-radius:30px; border:1px solid #c0a062; padding:10px 16px;" placeholder="item especial" value="Carregador extra / coldre"></div>
+        </div>
+        <!-- campo extra de "Munição geral" já incluso nas stats, mas adicionamos um campo para anotações extras -->
+        <div style="margin-top: 18px;">
+            <textarea id="inventarioExtra" rows="2" placeholder="🔧 Equipamentos adicionais, granadas, acessórios...">C4 (1 unidade), Rádio tático, Visão noturna</textarea>
+        </div>
+    </div>
+
+    <!-- HABILIDADES ESPECIAIS (4 habilidades enumeradas, conforme página 2) -->
+    <div class="habilidades-area">
+        <div class="section-title">⚡ HABILIDADES ESPECIAIS</div>
+        <div class="habilidades-list">
+            <div class="hab-item"><span class="hab-num">1.</span> <input type="text" id="hab1" placeholder="Ex: Tiro suprimido" value="Furtividade máxima + dano crítico"></div>
+            <div class="hab-item"><span class="hab-num">2.</span> <input type="text" id="hab2" placeholder="Especialista explosivos" value="Especialista explosivos (Carga alta)"></div>
+            <div class="hab-item"><span class="hab-num">3.</span> <input type="text" id="hab3" placeholder="Adrenalina" value="Modo berserker: +4 PV temporário"></div>
+            <div class="hab-item"><span class="hab-num">4.</span> <input type="text" id="hab4" placeholder="Tática de grupo" value="Liderança tática + bônus de iniciativa"></div>
+        </div>
+        <!-- Lembrando que no PDF há um "T" perdido, mas mantemos a essência: campo extra para nota -->
+        <div style="margin-top: 24px;">
+            <textarea id="obsHabilidades" rows="2" placeholder="Anotações táticas adicionais (ex: vantagem em combate corpo a corpo)">• +2 em Defesa balística quando coberto • Ação especial: disparo de supressão</textarea>
+        </div>
+    </div>
+
+    <!-- INFORMAÇÕES BÁSICAS e ARTIDAO? mantendo coerência com o arquivo original, adicionamos bloco extra -->
+    <div style="background:#e7dabc; border-radius: 28px; padding: 12px 20px; margin: 16px 0;">
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between;">
+            <div><strong>🎖️ NOME/CODINOME:</strong> <input type="text" id="nomePersonagem" placeholder="Operador" value="Capitão Muto"></div>
+            <div><strong>📋 ARQUIVO:</strong> <input type="text" id="arquivoID" placeholder="ID" value="MUTO-77"></div>
+            <div><strong>🔰 PATENTE:</strong> <input type="text" id="patente" placeholder="Especialista" value="Força Tática"></div>
+        </div>
+        <div style="margin-top: 12px;"><strong>📝 INFORMAÇÕES ADICIONAIS / MISSÃO:</strong> <input type="text" id="infoExtra" style="width:100%; margin-top:6px; padding:8px; border-radius:60px; border:1px solid #bb954f;" value="Operação: Ficha Muto - Zona de Risco Alto"></div>
+    </div>
+
+    <div class="action-bar">
+        <button id="resetBtn" class="reset-btn">⟳ LIMPAR TODOS OS CAMPOS</button>
+        <button id="exportJsonBtn" class="export-btn">📋 EXPORTAR DADOS (JSON)</button>
+        <button id="exportTxtBtn">📄 EXPORTAR TEXTO RESUMO</button>
+        <button id="fillExampleBtn">🔫 CARREGAR EXEMPLO TÁTICO</button>
+    </div>
+    <footer>
+        ✦ Ficha editável — clique nos campos, edite livremente. Todos os dados ficam salvos no seu navegador (LocalStorage) automaticamente. ✦
+    </footer>
+</div>
+
+<script>
+    // Mapeamento de todos os campos editáveis
+    const fieldIds = [
+        'unidadeField', 'vida', 'defB', 'defE', 'municao', 'mov1', 'mov2',
+        'inv1', 'inv2', 'inv3', 'inv4', 'inventarioExtra',
+        'hab1', 'hab2', 'hab3', 'hab4', 'obsHabilidades',
+        'nomePersonagem', 'arquivoID', 'patente', 'infoExtra'
+    ];
+
+    // Função para salvar tudo no localStorage
+    function saveToLocalStorage() {
+        const data = {};
+        for (let id of fieldIds) {
+            const el = document.getElementById(id);
+            if (el) {
+                data[id] = el.value;
+            }
+        }
+        localStorage.setItem('fichaMutoData', JSON.stringify(data));
+        // feedback sutil
+        showToast("✓ Dados salvos automaticamente!");
+    }
+
+    function showToast(msg, duration = 1500) {
+        let toast = document.getElementById('dynamicToast');
+        if(!toast) {
+            toast = document.createElement('div');
+            toast.id = 'dynamicToast';
+            toast.style.position = 'fixed';
+            toast.style.bottom = '20px';
+            toast.style.left = '50%';
+            toast.style.transform = 'translateX(-50%)';
+            toast.style.backgroundColor = '#1f2a1b';
+            toast.style.color = '#f9e2b7';
+            toast.style.padding = '8px 20px';
+            toast.style.borderRadius = '60px';
+            toast.style.fontWeight = 'bold';
+            toast.style.fontFamily = 'monospace';
+            toast.style.zIndex = '9999';
+            toast.style.boxShadow = '0 4px 12px black';
+            toast.style.pointerEvents = 'none';
+            document.body.appendChild(toast);
+        }
+        toast.textContent = msg;
+        toast.style.opacity = '1';
+        setTimeout(() => {
+            toast.style.opacity = '0';
+        }, duration);
+    }
+
+    // carregar do localStorage
+    function loadFromLocalStorage() {
+        const saved = localStorage.getItem('fichaMutoData');
+        if (!saved) return false;
+        try {
+            const data = JSON.parse(saved);
+            for (let id in data) {
+                const el = document.getElementById(id);
+                if (el && data.hasOwnProperty(id)) {
+                    el.value = data[id];
+                }
+            }
+            return true;
+        } catch(e) { console.warn(e); return false; }
+    }
+
+    // listener para salvar em qualquer alteração
+    function attachAutoSave() {
+        for (let id of fieldIds) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', () => saveToLocalStorage());
+                el.addEventListener('change', () => saveToLocalStorage());
+            }
+        }
+    }
+
+    // reset confiável: limpa todos os campos (com valores padrão opcionais mas deixaremos vazio ou padrão simples)
+    function resetAllFields() {
+        // valores vazios de limpeza total (mas mantém placeholders)
+        document.getElementById('unidadeField').value = '';
+        document.getElementById('vida').value = '';
+        document.getElementById('defB').value = '';
+        document.getElementById('defE').value = '';
+        document.getElementById('municao').value = '';
+        document.getElementById('mov1').value = '';
+        document.getElementById('mov2').value = '';
+        document.getElementById('inv1').value = '';
+        document.getElementById('inv2').value = '';
+        document.getElementById('inv3').value = '';
+        document.getElementById('inv4').value = '';
+        document.getElementById('inventarioExtra').value = '';
+        document.getElementById('hab1').value = '';
+        document.getElementById('hab2').value = '';
+        document.getElementById('hab3').value = '';
+        document.getElementById('hab4').value = '';
+        document.getElementById('obsHabilidades').value = '';
+        document.getElementById('nomePersonagem').value = '';
+        document.getElementById('arquivoID').value = '';
+        document.getElementById('patente').value = '';
+        document.getElementById('infoExtra').value = '';
+        saveToLocalStorage();
+        showToast("🗑️ Ficha resetada completamente!");
+    }
+
+    // Exemplo tático bacana baseado no espírito da ficha "FODA"
+    function loadExampleData() {
+        document.getElementById('unidadeField').value = 'ESQUADRÃO FÊNIX';
+        document.getElementById('vida').value = '48 / 48';
+        document.getElementById('defB').value = '22';
+        document.getElementById('defE').value = '18';
+        document.getElementById('municao').value = '120 / 150';
+        document.getElementById('mov1').value = '10m';
+        document.getElementById('mov2').value = '16m (sprint)';
+        document.getElementById('inv1').value = '🔫 Fuzil de precisão M110 + supressor';
+        document.getElementById('inv2').value = '💣 Mina terrestre tática (x2)';
+        document.getElementById('inv3').value = '🩸 Kit cirúrgico de campanha';
+        document.getElementById('inv4').value = '📡 Drone de reconhecimento';
+        document.getElementById('inventarioExtra').value = 'Granadas de fumaça (3), C4 (2kg), escopeta secundária';
+        document.getElementById('hab1').value = '🐺 Caçador noturno: dano +50% em emboscada';
+        document.getElementById('hab2').value = '💥 Especialista em demolições: explosivos ignoram 10 de DEF E';
+        document.getElementById('hab3').value = '🏃 Movimento tático: após matar inimigo, ganha ação extra';
+        document.getElementById('hab4').value = '🧠 Liderança de pelotão: aliados ganham +2 em iniciativa';
+        document.getElementById('obsHabilidades').value = 'Coordenação com sniper, tiro de cobertura e regeneração rápida';
+        document.getElementById('nomePersonagem').value = 'SGT. "MUTO" RODRIGUES';
+        document.getElementById('arquivoID').value = 'MVP-OP-666';
+        document.getElementById('patente').value = 'Sargento de Operações Especiais';
+        document.getElementById('infoExtra').value = 'Missão: Extrair HVTs - Zona de Guerra Alpha. Recompensa: 50k';
+        saveToLocalStorage();
+        showToast("🔥 Exemplo tático carregado com sucesso!");
+    }
+
+    // Exportar como JSON (dados brutos)
+    function exportAsJSON() {
+        const data = {};
+        for (let id of fieldIds) {
+            const el = document.getElementById(id);
+            if (el) data[id] = el.value;
+        }
+        // incluir também estatisticas especiais de forma legível
+        const jsonStr = JSON.stringify(data, null, 2);
+        downloadFile('ficha_muto_export.json', jsonStr);
+        showToast('📁 JSON exportado!');
+    }
+
+    // Exportar como TXT resumo formatado
+    function exportAsTxt() {
+        let content = "══════════════ OPERAÇÃO: FICHA MUTO FODA ══════════════\n";
+        content += `UNIDADE: ${document.getElementById('unidadeField').value}\n`;
+        content += `NOME: ${document.getElementById('nomePersonagem').value} | ID: ${document.getElementById('arquivoID').value} | PATENTE: ${document.getElementById('patente').value}\n`;
+        content += `\n📊 ESTATÍSTICAS:\n`;
+        content += `▶ VIDA: ${document.getElementById('vida').value}\n`;
+        content += `▶ DEFESA BALÍSTICA: ${document.getElementById('defB').value}  |  DEFESA EXPLOSÃO: ${document.getElementById('defE').value}\n`;
+        content += `▶ MUNIÇÃO GERAL: ${document.getElementById('municao').value}\n`;
+        content += `▶ MOVIMENTO: ${document.getElementById('mov1').value} / ${document.getElementById('mov2').value}\n`;
+        content += `\n🎒 INVENTÁRIO:\n1. ${document.getElementById('inv1').value}\n2. ${document.getElementById('inv2').value}\n3. ${document.getElementById('inv3').value}\n4. ${document.getElementById('inv4').value}\n+ Extra: ${document.getElementById('inventarioExtra').value}\n`;
+        content += `\n⚡ HABILIDADES ESPECIAIS:\n1. ${document.getElementById('hab1').value}\n2. ${document.getElementById('hab2').value}\n3. ${document.getElementById('hab3').value}\n4. ${document.getElementById('hab4').value}\nObservações: ${document.getElementById('obsHabilidades').value}\n`;
+        content += `\n📝 INFORMAÇÕES ADICIONAIS: ${document.getElementById('infoExtra').value}\n`;
+        content += `───────────────── Ficha exportada em ${new Date().toLocaleString()} ─────────────────`;
+        downloadFile('ficha_muto_resumo.txt', content);
+        showToast('📄 TXT resumo salvo!');
+    }
+
+    function downloadFile(filename, text) {
+        const blob = new Blob([text], {type: 'text/plain;charset=utf-8'});
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+        URL.revokeObjectURL(link.href);
+    }
+
+    // inicializar: carregar do storage + auto save
+    window.addEventListener('DOMContentLoaded', () => {
+        const loaded = loadFromLocalStorage();
+        if (!loaded) {
+            // preencher alguns valores padrão inspirados no espírito do PDF (PV, DEF, etc)
+            // mas sem sobrescrever caso já exista dados. Como não existe, definimos valores legais.
+            if(!document.getElementById('vida').value) document.getElementById('vida').value = '32 / 32';
+            if(!document.getElementById('defB').value) document.getElementById('defB').value = '15';
+            if(!document.getElementById('defE').value) document.getElementById('defE').value = '12';
+            if(!document.getElementById('municao').value) document.getElementById('municao').value = '60/120';
+            if(!document.getElementById('mov1').value) document.getElementById('mov1').value = '7m';
+            if(!document.getElementById('mov2').value) document.getElementById('mov2').value = '11m';
+            if(!document.getElementById('unidadeField').value) document.getElementById('unidadeField').value = 'Força Tática K9';
+            if(!document.getElementById('nomePersonagem').value) document.getElementById('nomePersonagem').value = 'Recruta Muto';
+            saveToLocalStorage();
+        }
+        attachAutoSave();
+        // eventos dos botões
+        document.getElementById('resetBtn').addEventListener('click', resetAllFields);
+        document.getElementById('exportJsonBtn').addEventListener('click', exportAsJSON);
+        document.getElementById('exportTxtBtn').addEventListener('click', exportAsTxt);
+        document.getElementById('fillExampleBtn').addEventListener('click', loadExampleData);
+    });
+</script>
+</body>
+</html>
