@@ -3,424 +3,491 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Editor de Ficha - OPERAÇÃO: FICHA TÁTICA</title>
+    <title>Ficha de Operações - Forças Táticas</title>
     <style>
         * {
             box-sizing: border-box;
         }
 
         body {
-            background: #2b2e3a;
-            font-family: 'Segoe UI', 'Roboto', 'Courier New', monospace;
+            background: #3a3e3f;
+            font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
             margin: 0;
-            padding: 24px 16px;
+            padding: 20px 16px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        /* container estilo folha de personagem */
+        /* container estilo documento militar */
         .sheet {
             max-width: 1100px;
             width: 100%;
-            background: #fef7e0;
-            background-image: linear-gradient(to bottom, #fff8e7, #fef0cf);
-            border-radius: 24px;
-            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.4), 0 0 0 1px #d4b87a inset;
-            padding: 28px 30px 40px;
-            transition: all 0.2s;
+            background: #e8e3d5;
+            background-image: none;
+            border: 2px solid #5a4a2e;
+            box-shadow: 12px 12px 0 rgba(0, 0, 0, 0.2);
+            padding: 20px 24px 32px;
+            position: relative;
         }
 
-        /* cabeçalho brutal */
-        .header {
-            text-align: center;
-            border-bottom: 4px solid #c49a6c;
-            margin-bottom: 28px;
+        /* selo / topo militar */
+        .military-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 3px solid #4a3a28;
             padding-bottom: 12px;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
-        .header h1 {
-            font-size: 2rem;
-            font-weight: 800;
-            letter-spacing: 2px;
-            color: #3b2a1f;
-            text-shadow: 2px 2px 0 #e9cf9e;
-            margin: 0;
+        .title-section {
+            flex: 2;
+        }
+
+        .title-section h1 {
+            font-size: 1.6rem;
+            font-weight: 900;
+            letter-spacing: 3px;
+            color: #2b4a2f;
+            margin: 0 0 6px 0;
             font-family: 'Courier New', monospace;
-            word-break: break-word;
+            text-transform: uppercase;
+            border-left: 8px solid #6b4c2c;
+            padding-left: 14px;
         }
 
-        .header h1 small {
-            font-size: 0.9rem;
-            font-weight: normal;
-            background: #00000020;
-            padding: 2px 8px;
-            border-radius: 40px;
+        .title-section .sub {
+            font-size: 0.8rem;
+            color: #4a3a2a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .unidade-box {
-            background: #e5d5b0;
-            margin-top: 16px;
-            padding: 10px 16px;
-            border-radius: 40px;
-            display: inline-block;
+        .image-slot {
+            background: #bcb09b;
+            border: 2px solid #4a3a28;
+            width: 110px;
+            height: 110px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #2c2b26;
             font-weight: bold;
-            color: #2c2116;
+            background-color: #d8ceb4;
+            box-shadow: inset 0 0 0 1px #f0ecd9, 3px 3px 0 rgba(0,0,0,0.1);
         }
 
-        /* grade de estatísticas */
+        .image-slot span {
+            background: #2f2a1f80;
+            padding: 4px 6px;
+            color: #1f2c15;
+            font-weight: bold;
+        }
+
+        .image-slot input {
+            width: 90%;
+            margin-top: 8px;
+            background: #fffcf0;
+            border: 1px solid #7c6846;
+            font-family: monospace;
+            font-size: 0.7rem;
+            padding: 4px;
+            text-align: center;
+        }
+
+        /* blocos de informações */
+        .info-bar {
+            background: #d6cdb2;
+            border: 1px solid #8b7a5b;
+            padding: 12px 18px;
+            margin-bottom: 22px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: space-between;
+            font-weight: bold;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .info-item label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            background: #5e4b30;
+            color: #efe3cd;
+            padding: 2px 10px;
+            letter-spacing: 1px;
+        }
+
+        .info-item input {
+            background: #fffef5;
+            border: 1px solid #7a6442;
+            padding: 5px 8px;
+            font-family: monospace;
+            font-weight: bold;
+            width: 160px;
+        }
+
+        /* estatísticas campo */
         .stats-grid {
-            background: #d9c48b80;
-            border-radius: 28px;
-            padding: 20px 20px;
-            margin: 25px 0;
-            border: 1px solid #c7a86b;
-            box-shadow: inset 0 0 0 1px #fff9e6, 0 6px 12px rgba(0,0,0,0.1);
+            background: #dbd0b5;
+            padding: 16px 20px;
+            margin: 20px 0;
+            border: 1px solid #8f7b56;
+            border-left: 8px solid #556b2f;
+        }
+
+        .stats-title {
+            font-weight: 900;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #8b744c;
+            display: inline-block;
+            padding-right: 20px;
         }
 
         .row-stats {
             display: flex;
             flex-wrap: wrap;
-            gap: 16px 28px;
-            justify-content: space-between;
+            gap: 18px 30px;
         }
 
         .stat {
-            flex: 1 1 160px;
-            background: #fff3df;
-            padding: 8px 12px;
-            border-radius: 32px;
-            font-weight: bold;
+            background: #f2ebd5;
+            padding: 6px 14px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            border: 1px solid #aa946b;
         }
 
         .stat label {
-            font-size: 0.85rem;
+            font-weight: 800;
+            font-size: 0.75rem;
             text-transform: uppercase;
-            color: #5e3a22;
-            background: #f7e5ca;
-            padding: 4px 10px;
-            border-radius: 30px;
-            letter-spacing: 0.5px;
         }
 
-        .stat input, .stat .slash-input {
-            background: #fffef7;
-            border: 1px solid #c0a062;
-            border-radius: 28px;
-            padding: 6px 12px;
-            font-weight: bold;
-            font-family: monospace;
-            font-size: 0.95rem;
+        .stat input {
+            background: white;
+            border: 1px solid #7e6843;
+            padding: 5px 8px;
             width: 100px;
-            transition: 0.1s;
-        }
-
-        .stat input:focus {
-            outline: none;
-            border-color: #a5652c;
-            box-shadow: 0 0 0 2px #ffcf9a;
+            font-family: monospace;
+            font-weight: bold;
         }
 
         .slash-group {
             display: flex;
-            align-items: center;
             gap: 6px;
-            background: #fffef7;
-            border-radius: 40px;
-            padding: 2px 8px;
+            align-items: center;
         }
 
         .slash-group input {
-            width: 65px;
+            width: 70px;
             text-align: center;
         }
 
-        /* inventário especial e campos grandes */
-        .inventario-area, .habilidades-area {
-            background: #f6efdf;
-            border-radius: 24px;
-            margin: 28px 0;
-            padding: 12px 18px 18px;
-            border: 1px solid #ddbc88;
+        /* inventário e habilidades */
+        .military-block {
+            background: #e2d9c2;
+            margin: 26px 0;
+            padding: 8px 18px 18px;
+            border: 1px solid #a48e64;
+            position: relative;
         }
 
-        .section-title {
-            font-size: 1.6rem;
-            font-weight: 800;
-            font-family: monospace;
-            background: #c9aa77;
+        .block-title {
+            background: #5f4c30;
             display: inline-block;
-            padding: 0 20px;
-            border-radius: 60px;
-            color: #221d12;
-            margin-top: -26px;
+            padding: 4px 24px;
+            color: #ffe5bf;
+            font-weight: bold;
+            letter-spacing: 2px;
+            font-size: 0.9rem;
+            margin-top: -14px;
             margin-bottom: 18px;
-            letter-spacing: 1px;
-            box-shadow: 0 2px 5px #00000020;
-        }
-
-        textarea {
-            width: 100%;
-            background: #fffdf5;
-            border: 2px solid #cfb二十七;
-            border-radius: 18px;
-            padding: 14px 18px;
-            font-family: 'Courier New', monospace;
-            font-size: 1rem;
-            resize: vertical;
-            font-weight: 500;
-            transition: 0.1s;
-        }
-
-        textarea:focus {
-            border-color: #b8723a;
-            outline: none;
-            box-shadow: 0 0 0 3px #f7dcb0;
+            text-transform: uppercase;
+            border-radius: 0px;
         }
 
         .inventario-row {
             display: flex;
             flex-direction: column;
-            gap: 18px;
+            gap: 14px;
         }
 
         .item-line {
-            background: #ffffffb3;
-            border-radius: 28px;
-            padding: 10px 15px;
+            background: #f6efde;
+            padding: 6px 12px;
+            border-left: 5px solid #6f4f2c;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        /* habilidades numeradas */
+        .item-line strong {
+            min-width: 28px;
+            font-size: 1rem;
+        }
+
+        .item-line input {
+            flex: 1;
+            background: #fffef5;
+            border: 1px solid #b7a06e;
+            padding: 8px 12px;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+
+        textarea {
+            width: 100%;
+            background: #fffcf0;
+            border: 1px solid #9f8960;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            resize: vertical;
+        }
+
         .habilidades-list {
             display: flex;
             flex-direction: column;
-            gap: 18px;
+            gap: 14px;
         }
 
         .hab-item {
+            background: #f2ead7;
             display: flex;
-            align-items: baseline;
+            align-items: center;
             gap: 12px;
-            background: #faf2e2;
-            border-radius: 60px;
-            padding: 8px 18px;
-            border-left: 8px solid #cb8b4a;
+            padding: 4px 12px;
+            border-bottom: 1px solid #cfbc93;
         }
 
         .hab-num {
             font-weight: 900;
-            font-size: 1.4rem;
-            min-width: 45px;
-            color: #a55627;
+            min-width: 40px;
+            font-size: 1.2rem;
         }
 
         .hab-item input {
             flex: 1;
-            background: #fffef5;
-            border: 1px solid #cfb284;
-            border-radius: 60px;
-            padding: 12px 18px;
-            font-size: 1rem;
+            background: #fffcf3;
+            border: 1px solid #b49966;
+            padding: 8px 10px;
             font-family: monospace;
             font-weight: bold;
         }
 
-        /* botões de ação */
+        /* botões militares */
         .action-bar {
             display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
+            gap: 16px;
             justify-content: center;
-            margin-top: 30px;
-            margin-bottom: 10px;
+            margin: 28px 0 12px;
+            flex-wrap: wrap;
         }
 
         button {
-            background: #332418;
+            background: #2e3820;
             border: none;
-            color: #ffefcf;
-            padding: 10px 28px;
+            color: #efe1c1;
+            font-family: 'Courier New', monospace;
             font-weight: bold;
-            font-size: 1rem;
-            border-radius: 60px;
+            padding: 8px 24px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             cursor: pointer;
-            font-family: monospace;
-            transition: 0.1s linear;
-            box-shadow: 0 3px 0 #120b06;
+            transition: 0.05s linear;
+            border-radius: 0px;
+            box-shadow: 3px 3px 0 #12140c;
         }
 
         button:hover {
-            background: #5c3f2a;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 0 #120b06;
+            background: #4f6236;
+            transform: translate(-1px, -1px);
+            box-shadow: 4px 4px 0 #12140c;
         }
 
         button:active {
-            transform: translateY(2px);
-            box-shadow: 0 1px 0 #120b06;
-        }
-
-        .export-btn {
-            background: #2f6b47;
-            box-shadow: 0 3px 0 #1b402b;
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 #12140c;
         }
 
         .reset-btn {
-            background: #7a4c2c;
+            background: #5c432a;
+        }
+
+        .export-txt-btn {
+            background: #2c5a3b;
         }
 
         footer {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             text-align: center;
-            margin-top: 25px;
-            color: #7a6233;
+            margin-top: 20px;
+            color: #5a4c32;
+            border-top: 1px dotted #bba16d;
+            padding-top: 12px;
+            text-transform: uppercase;
         }
 
-        @media (max-width: 680px) {
+        input, textarea, button {
+            outline: none;
+        }
+
+        @media (max-width: 700px) {
             .sheet {
                 padding: 16px;
             }
-            .stat {
-                flex: 1 1 100%;
-            }
-            .hab-item {
-                flex-wrap: wrap;
+            .image-slot {
+                width: 80px;
+                height: 80px;
             }
         }
     </style>
 </head>
 <body>
 <div class="sheet">
-    <div class="header">
-        <h1>⚡ OPERAÇÃO: FICHA TÁTICA ⚡</h1>
-        <div class="unidade-box">
-            <strong>UNIDADE:</strong> 
-            <input type="text" id="unidadeField" placeholder="Esquadrão Pressão" style="background:transparent;border:none;border-bottom:2px dotted #a55929;font-weight:bold;width:180px;font-family:monospace;">
+    <!-- cabeçalho com espaço para IMAGEM (canto superior direito) -->
+    <div class="military-header">
+        <div class="title-section">
+            <h1>FICHA DE OPERAÇÕES<br> COMANDO TÁTICO</h1>
+            <div class="sub">DOCUMENTO CLASSIFICADO // LIVRO DE CAMPO</div>
         </div>
-        <div style="margin-top: 8px; font-size:0.8rem;">📄 Ficha editável — RPG tático intenso</div>
+        <div class="image-slot" id="imageSlot">
+            <span>FOTO / INSÍGNIA</span>
+            <input type="text" id="imageUrlInput" placeholder="URL da imagem (opcional)">
+            <div id="imagePreview" style="margin-top: 5px; max-width: 90px; max-height: 50px; overflow: hidden;"></div>
+        </div>
+    </div>
+
+    <!-- INFORMAÇÕES BÁSICAS (estilo militar) -->
+    <div class="info-bar">
+        <div class="info-item"><label>UNIDADE</label> <input type="text" id="unidadeField" placeholder="Ex: 3º Batalhão" value="FORÇA ALFA"></div>
+        <div class="info-item"><label>CODINOME</label> <input type="text" id="nomePersonagem" placeholder="Operador" value="COMANDO FANTASMA"></div>
+        <div class="info-item"><label>ID / ARQUIVO</label> <input type="text" id="arquivoID" placeholder="Nº Registro" value="FT-210"></div>
+        <div class="info-item"><label>PATENTE</label> <input type="text" id="patente" placeholder="Graduação" value="SARGENTO"></div>
     </div>
 
     <!-- ESTATÍSTICA DE CAMPO -->
     <div class="stats-grid">
-        <div style="font-weight:800; margin-bottom:16px; font-size:1.3rem;">📊 ESTATÍSTICA DE CAMPO</div>
+        <div class="stats-title">ESTATÍSTICA DE CAMPO</div>
         <div class="row-stats">
-            <div class="stat"><label>💚 VIDA (PV):</label> <input type="text" id="vida" placeholder="ex: 42 / 42" value="28 / 28"></div>
-            <div class="stat"><label>🛡️ DEFESA BALÍSTICA:</label> <input type="text" id="defB" placeholder="DEF B" value="14"></div>
-            <div class="stat"><label>💥 DEFESA EXPLOSÃO:</label> <input type="text" id="defE" placeholder="DEF E" value="10"></div>
-            <div class="stat"><label>🔫 MUNIÇÃO GERAL:</label> <input type="text" id="municao" placeholder="munição" value="30/90"></div>
-            <div class="stat"><label>🏃 MOVIMENTO:</label> <div class="slash-group"><input type="text" id="mov1" placeholder="base" value="8m"> / <input type="text" id="mov2" placeholder="corrida" value="12m"></div></div>
+            <div class="stat"><label>VIDA (PV):</label> <input type="text" id="vida" value="32 / 32"></div>
+            <div class="stat"><label>DEFESA BALÍSTICA:</label> <input type="text" id="defB" value="16"></div>
+            <div class="stat"><label>DEFESA EXPLOSÃO:</label> <input type="text" id="defE" value="14"></div>
+            <div class="stat"><label>MUNIÇÃO GERAL:</label> <input type="text" id="municao" value="90 / 120"></div>
+            <div class="stat"><label>MOVIMENTO:</label> <div class="slash-group"><input type="text" id="mov1" value="8m"> / <input type="text" id="mov2" value="12m"></div></div>
         </div>
     </div>
 
-    <!-- INVENTÁRIO (estilo expansivo com 4 slots e campos extras extraídos do PDF original) -->
-    <div class="inventario-area">
-        <div class="section-title">🎒 INVENTÁRIO</div>
+    <!-- INVENTÁRIO -->
+    <div class="military-block">
+        <div class="block-title">INVENTÁRIO DE CAMPO</div>
         <div class="inventario-row">
-            <div class="item-line"><strong>1.</strong> <input type="text" id="inv1" style="width:90%; background:#fff9ea; border-radius:30px; border:1px solid #c0a062; padding:10px 16px;" placeholder="Ex: Fuzil AR-15, 3 carregadores" value="Fuzil de assalto + Mira laser"></div>
-            <div class="item-line"><strong>2.</strong> <input type="text" id="inv2" style="width:90%; background:#fff9ea; border-radius:30px; border:1px solid #c0a062; padding:10px 16px;" placeholder="Granada de fragmentação" value="Granada fragmentação (x2)"></div>
-            <div class="item-line"><strong>3.</strong> <input type="text" id="inv3" style="width:90%; background:#fff9ea; border-radius:30px; border:1px solid #c0a062; padding:10px 16px;" placeholder="Kit médico" value="Kit tático + bandagens"></div>
-            <div class="item-line"><strong>4.</strong> <input type="text" id="inv4" style="width:90%; background:#fff9ea; border-radius:30px; border:1px solid #c0a062; padding:10px 16px;" placeholder="item especial" value="Carregador extra / coldre"></div>
+            <div class="item-line"><strong>1.</strong> <input type="text" id="inv1" value="Fuzil M4 + carregador estendido"></div>
+            <div class="item-line"><strong>2.</strong> <input type="text" id="inv2" value="Granada de fragmentação x2"></div>
+            <div class="item-line"><strong>3.</strong> <input type="text" id="inv3" value="Kit médico tático"></div>
+            <div class="item-line"><strong>4.</strong> <input type="text" id="inv4" value="Rádio portátil / sinalizador"></div>
         </div>
-        <!-- campo extra de "Munição geral" já incluso nas stats, mas adicionamos um campo para anotações extras -->
-        <div style="margin-top: 18px;">
-            <textarea id="inventarioExtra" rows="2" placeholder="🔧 Equipamentos adicionais, granadas, acessórios...">C4 (1 unidade), Rádio tático, Visão noturna</textarea>
-        </div>
+        <textarea id="inventarioExtra" rows="2" placeholder="Equipamentos secundários, munição extra, ferramentas...">C4 (1kg), Óculos de visão noturna, coldre de perna</textarea>
     </div>
 
-    <!-- HABILIDADES ESPECIAIS (4 habilidades enumeradas, conforme página 2) -->
-    <div class="habilidades-area">
-        <div class="section-title">⚡ HABILIDADES ESPECIAIS</div>
+    <!-- HABILIDADES ESPECIAIS -->
+    <div class="military-block">
+        <div class="block-title">HABILIDADES OPERACIONAIS</div>
         <div class="habilidades-list">
-            <div class="hab-item"><span class="hab-num">1.</span> <input type="text" id="hab1" placeholder="Ex: Tiro suprimido" value="Furtividade máxima + dano crítico"></div>
-            <div class="hab-item"><span class="hab-num">2.</span> <input type="text" id="hab2" placeholder="Especialista explosivos" value="Especialista explosivos (Carga alta)"></div>
-            <div class="hab-item"><span class="hab-num">3.</span> <input type="text" id="hab3" placeholder="Adrenalina" value="Modo berserker: +4 PV temporário"></div>
-            <div class="hab-item"><span class="hab-num">4.</span> <input type="text" id="hab4" placeholder="Tática de grupo" value="Liderança tática + bônus de iniciativa"></div>
+            <div class="hab-item"><span class="hab-num">1.</span> <input type="text" id="hab1" value="Tiro de precisão avançado"></div>
+            <div class="hab-item"><span class="hab-num">2.</span> <input type="text" id="hab2" value="Especialista em demolições"></div>
+            <div class="hab-item"><span class="hab-num">3.</span> <input type="text" id="hab3" value="Movimento furtivo (camuflagem)"></div>
+            <div class="hab-item"><span class="hab-num">4.</span> <input type="text" id="hab4" value="Liderança tática + bônus de grupo"></div>
         </div>
-        <!-- Lembrando que no PDF há um "T" perdido, mas mantemos a essência: campo extra para nota -->
-        <div style="margin-top: 24px;">
-            <textarea id="obsHabilidades" rows="2" placeholder="Anotações táticas adicionais (ex: vantagem em combate corpo a corpo)">• +2 em Defesa balística quando coberto • Ação especial: disparo de supressão</textarea>
-        </div>
+        <textarea id="obsHabilidades" rows="2" placeholder="Observações táticas / especializações adicionais">Treinamento em combate CQB, sobrevivência em selva.</textarea>
     </div>
 
-    <!-- INFORMAÇÕES BÁSICAS e ARTIDAO? mantendo coerência com o arquivo original, adicionamos bloco extra -->
-    <div style="background:#e7dabc; border-radius: 28px; padding: 12px 20px; margin: 16px 0;">
+    <!-- INFORMAÇÕES ADICIONAIS / MISSÃO ATUAL -->
+    <div style="background:#cbc09e; border-left:6px solid #425c2c; padding: 12px 20px; margin: 12px 0;">
         <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between;">
-            <div><strong>🎖️ NOME/CODINOME:</strong> <input type="text" id="nomePersonagem" placeholder="Operador" value="Capitão Tático"></div>
-            <div><strong>📋 ARQUIVO:</strong> <input type="text" id="arquivoID" placeholder="ID" value="TAC-77"></div>
-            <div><strong>🔰 PATENTE:</strong> <input type="text" id="patente" placeholder="Especialista" value="Força Tática"></div>
+            <div><strong>MISSÃO ATUAL:</strong> <input type="text" id="infoExtra" style="background:#fff3e0; border:1px solid #a48149; padding:5px 10px; width: 280px;" value="OPERAÇÃO: TERRA QUEIMADA"></div>
+            <div><strong>DATA:</strong> <input type="text" id="dataMissao" placeholder="DD/MM/AAAA" style="background:#fff3e0; border:1px solid #a48149; padding:5px 10px;" value="16/05/2026"></div>
         </div>
-        <div style="margin-top: 12px;"><strong>📝 INFORMAÇÕES ADICIONAIS / MISSÃO:</strong> <input type="text" id="infoExtra" style="width:100%; margin-top:6px; padding:8px; border-radius:60px; border:1px solid #bb954f;" value="Operação: Ficha Tática - Zona de Risco Alto"></div>
+        <div style="margin-top: 12px;"><strong>NOTAS DE PLANEJAMENTO:</strong> <input type="text" id="notasPlano" style="width:100%; background:#fffcf0; border:1px solid #af8e58; padding:6px;" value="Ponto de extração - zona norte. Código vermelho."></div>
     </div>
 
     <div class="action-bar">
-        <button id="resetBtn" class="reset-btn">⟳ LIMPAR TODOS OS CAMPOS</button>
-        <button id="exportJsonBtn" class="export-btn">📋 EXPORTAR DADOS (JSON)</button>
-        <button id="exportTxtBtn">📄 EXPORTAR TEXTO RESUMO</button>
-        <button id="fillExampleBtn">🔫 CARREGAR EXEMPLO TÁTICO</button>
+        <button id="resetBtn" class="reset-btn">LIMPAR FICHA</button>
+        <button id="exportTxtBtn" class="export-txt-btn">EXPORTAR RELATÓRIO (TXT)</button>
+        <button id="fillExampleBtn">CARREGAR PERFIL TÁTICO</button>
     </div>
     <footer>
-        ✦ Ficha editável — clique nos campos, edite livremente. Todos os dados ficam salvos no seu navegador (LocalStorage) automaticamente. ✦
+        DOCUMENTO OPERACIONAL - EDITÁVEL - DADOS SALVOS LOCALMENTE
     </footer>
 </div>
 
 <script>
-    // Mapeamento de todos os campos editáveis
+    // lista de campos a serem salvos (sem JSON manual nas exportações, apenas txt)
     const fieldIds = [
         'unidadeField', 'vida', 'defB', 'defE', 'municao', 'mov1', 'mov2',
         'inv1', 'inv2', 'inv3', 'inv4', 'inventarioExtra',
         'hab1', 'hab2', 'hab3', 'hab4', 'obsHabilidades',
-        'nomePersonagem', 'arquivoID', 'patente', 'infoExtra'
+        'nomePersonagem', 'arquivoID', 'patente', 'infoExtra', 'dataMissao', 'notasPlano',
+        'imageUrlInput'
     ];
 
-    // Função para salvar tudo no localStorage
+    // salvar no localStorage
     function saveToLocalStorage() {
         const data = {};
         for (let id of fieldIds) {
             const el = document.getElementById(id);
-            if (el) {
-                data[id] = el.value;
-            }
+            if (el) data[id] = el.value;
         }
-        localStorage.setItem('fichaTaticaData', JSON.stringify(data));
-        // feedback sutil
-        showToast("✓ Dados salvos automaticamente!");
+        localStorage.setItem('fichaMilitarData', JSON.stringify(data));
+        showToast("DADOS SALVOS AUTOMATICAMENTE");
     }
 
     function showToast(msg, duration = 1500) {
-        let toast = document.getElementById('dynamicToast');
-        if(!toast) {
+        let toast = document.getElementById('militaryToast');
+        if (!toast) {
             toast = document.createElement('div');
-            toast.id = 'dynamicToast';
+            toast.id = 'militaryToast';
             toast.style.position = 'fixed';
             toast.style.bottom = '20px';
             toast.style.left = '50%';
             toast.style.transform = 'translateX(-50%)';
-            toast.style.backgroundColor = '#1f2a1b';
-            toast.style.color = '#f9e2b7';
-            toast.style.padding = '8px 20px';
-            toast.style.borderRadius = '60px';
-            toast.style.fontWeight = 'bold';
+            toast.style.backgroundColor = '#2b2a25';
+            toast.style.color = '#dad2b0';
+            toast.style.padding = '6px 18px';
             toast.style.fontFamily = 'monospace';
+            toast.style.fontWeight = 'bold';
+            toast.style.border = '1px solid #988e6e';
             toast.style.zIndex = '9999';
-            toast.style.boxShadow = '0 4px 12px black';
-            toast.style.pointerEvents = 'none';
+            toast.style.fontSize = '0.8rem';
             document.body.appendChild(toast);
         }
         toast.textContent = msg;
         toast.style.opacity = '1';
-        setTimeout(() => {
-            toast.style.opacity = '0';
-        }, duration);
+        setTimeout(() => { toast.style.opacity = '0'; }, duration);
     }
 
-    // carregar do localStorage
     function loadFromLocalStorage() {
-        const saved = localStorage.getItem('fichaTaticaData');
+        const saved = localStorage.getItem('fichaMilitarData');
         if (!saved) return false;
         try {
             const data = JSON.parse(saved);
@@ -430,24 +497,44 @@
                     el.value = data[id];
                 }
             }
+            updateImagePreview();
             return true;
-        } catch(e) { console.warn(e); return false; }
+        } catch(e) { return false; }
     }
 
-    // listener para salvar em qualquer alteração
-    function attachAutoSave() {
-        for (let id of fieldIds) {
-            const el = document.getElementById(id);
-            if (el) {
-                el.addEventListener('input', () => saveToLocalStorage());
-                el.addEventListener('change', () => saveToLocalStorage());
+    function updateImagePreview() {
+        const urlInput = document.getElementById('imageUrlInput');
+        const previewDiv = document.getElementById('imagePreview');
+        if (urlInput && previewDiv) {
+            const url = urlInput.value.trim();
+            if (url && (url.startsWith('http') || url.startsWith('data:'))) {
+                previewDiv.innerHTML = `<img src="${url}" style="max-width:80px; max-height:60px; border:1px solid #4f3e25;">`;
+            } else if(url) {
+                previewDiv.innerHTML = `<span style="font-size:9px;">link inválido</span>`;
+            } else {
+                previewDiv.innerHTML = '';
             }
         }
     }
 
-    // reset confiável: limpa todos os campos (com valores padrão opcionais mas deixaremos vazio ou padrão simples)
+    // auto-save e preview de imagem
+    function attachAutoSave() {
+        for (let id of fieldIds) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', () => {
+                    saveToLocalStorage();
+                    if (id === 'imageUrlInput') updateImagePreview();
+                });
+                el.addEventListener('change', () => {
+                    saveToLocalStorage();
+                    if (id === 'imageUrlInput') updateImagePreview();
+                });
+            }
+        }
+    }
+
     function resetAllFields() {
-        // valores vazios de limpeza total (mas mantém placeholders)
         document.getElementById('unidadeField').value = '';
         document.getElementById('vida').value = '';
         document.getElementById('defB').value = '';
@@ -469,66 +556,69 @@
         document.getElementById('arquivoID').value = '';
         document.getElementById('patente').value = '';
         document.getElementById('infoExtra').value = '';
+        document.getElementById('dataMissao').value = '';
+        document.getElementById('notasPlano').value = '';
+        document.getElementById('imageUrlInput').value = '';
+        updateImagePreview();
         saveToLocalStorage();
-        showToast("🗑️ Ficha resetada completamente!");
+        showToast("FICHA LIMPA");
     }
 
-    // Exemplo tático bacana baseado no espírito da ficha
     function loadExampleData() {
-        document.getElementById('unidadeField').value = 'ESQUADRÃO FÊNIX';
+        document.getElementById('unidadeField').value = '7º BATALHÃO DE FORÇAS ESPECIAIS';
         document.getElementById('vida').value = '48 / 48';
         document.getElementById('defB').value = '22';
-        document.getElementById('defE').value = '18';
-        document.getElementById('municao').value = '120 / 150';
+        document.getElementById('defE').value = '19';
+        document.getElementById('municao').value = '210 / 240';
         document.getElementById('mov1').value = '10m';
-        document.getElementById('mov2').value = '16m (sprint)';
-        document.getElementById('inv1').value = '🔫 Fuzil de precisão M110 + supressor';
-        document.getElementById('inv2').value = '💣 Mina terrestre tática (x2)';
-        document.getElementById('inv3').value = '🩸 Kit cirúrgico de campanha';
-        document.getElementById('inv4').value = '📡 Drone de reconhecimento';
-        document.getElementById('inventarioExtra').value = 'Granadas de fumaça (3), C4 (2kg), escopeta secundária';
-        document.getElementById('hab1').value = '🐺 Caçador noturno: dano +50% em emboscada';
-        document.getElementById('hab2').value = '💥 Especialista em demolições: explosivos ignoram 10 de DEF E';
-        document.getElementById('hab3').value = '🏃 Movimento tático: após matar inimigo, ganha ação extra';
-        document.getElementById('hab4').value = '🧠 Liderança de pelotão: aliados ganham +2 em iniciativa';
-        document.getElementById('obsHabilidades').value = 'Coordenação com sniper, tiro de cobertura e regeneração rápida';
-        document.getElementById('nomePersonagem').value = 'SGT. RODRIGUES';
-        document.getElementById('arquivoID').value = 'MVP-OP-666';
-        document.getElementById('patente').value = 'Sargento de Operações Especiais';
-        document.getElementById('infoExtra').value = 'Missão: Extrair HVTs - Zona de Guerra Alpha. Recompensa: 50k';
+        document.getElementById('mov2').value = '18m (SPRINT)';
+        document.getElementById('inv1').value = 'Fuzil SCAR-H + mira holográfica';
+        document.getElementById('inv2').value = 'Lança-granadas M320 (3 granadas)';
+        document.getElementById('inv3').value = 'Kit cirúrgico avançado + torniquetes';
+        document.getElementById('inv4').value = 'Drone de reconhecimento RQ-11';
+        document.getElementById('inventarioExtra').value = 'Carga de demolição (2kg), mina antipessoal, GPS tático';
+        document.getElementById('hab1').value = 'ATIRADOR DE ELITE: precisão em alcance estendido';
+        document.getElementById('hab2').value = 'DEMOLIÇÕES: ignora 10 pontos de DEF E';
+        document.getElementById('hab3').value = 'INFILTRAÇÃO: movimentação silenciosa e camuflagem';
+        document.getElementById('hab4').value = 'COMANDO DE CAMPO: aliados recebem +1 em testes táticos';
+        document.getElementById('obsHabilidades').value = 'Certificação em resgate em combate (TCCC). Especialista em brechas';
+        document.getElementById('nomePersonagem').value = 'CAPITÃO HENRIQUE "FANTASMA"';
+        document.getElementById('arquivoID').value = 'BR-OP/88-ALPHA';
+        document.getElementById('patente').value = 'CAPITÃO';
+        document.getElementById('infoExtra').value = 'OPERAÇÃO: NEXUS - Neutralizar alvo de alta prioridade';
+        document.getElementById('dataMissao').value = '22/06/2026';
+        document.getElementById('notasPlano').value = 'Ponto de extração HELIPONTO SUL. Sinal de fumaça verde.';
+        document.getElementById('imageUrlInput').value = '';
+        updateImagePreview();
         saveToLocalStorage();
-        showToast("🔥 Exemplo tático carregado com sucesso!");
+        showToast("PERFIL TÁTICO CARREGADO");
     }
 
-    // Exportar como JSON (dados brutos)
-    function exportAsJSON() {
-        const data = {};
-        for (let id of fieldIds) {
-            const el = document.getElementById(id);
-            if (el) data[id] = el.value;
-        }
-        // incluir também estatisticas especiais de forma legível
-        const jsonStr = JSON.stringify(data, null, 2);
-        downloadFile('ficha_tatica_export.json', jsonStr);
-        showToast('📁 JSON exportado!');
-    }
-
-    // Exportar como TXT resumo formatado
+    // EXPORTAR SOMENTE TXT (sem json)
     function exportAsTxt() {
-        let content = "══════════════ OPERAÇÃO: FICHA TÁTICA ══════════════\n";
+        let content = "=====================================================\n";
+        content += "     RELATÓRIO OPERACIONAL - FICHA DE CAMPO\n";
+        content += "=====================================================\n";
         content += `UNIDADE: ${document.getElementById('unidadeField').value}\n`;
-        content += `NOME: ${document.getElementById('nomePersonagem').value} | ID: ${document.getElementById('arquivoID').value} | PATENTE: ${document.getElementById('patente').value}\n`;
-        content += `\n📊 ESTATÍSTICAS:\n`;
-        content += `▶ VIDA: ${document.getElementById('vida').value}\n`;
-        content += `▶ DEFESA BALÍSTICA: ${document.getElementById('defB').value}  |  DEFESA EXPLOSÃO: ${document.getElementById('defE').value}\n`;
-        content += `▶ MUNIÇÃO GERAL: ${document.getElementById('municao').value}\n`;
-        content += `▶ MOVIMENTO: ${document.getElementById('mov1').value} / ${document.getElementById('mov2').value}\n`;
-        content += `\n🎒 INVENTÁRIO:\n1. ${document.getElementById('inv1').value}\n2. ${document.getElementById('inv2').value}\n3. ${document.getElementById('inv3').value}\n4. ${document.getElementById('inv4').value}\n+ Extra: ${document.getElementById('inventarioExtra').value}\n`;
-        content += `\n⚡ HABILIDADES ESPECIAIS:\n1. ${document.getElementById('hab1').value}\n2. ${document.getElementById('hab2').value}\n3. ${document.getElementById('hab3').value}\n4. ${document.getElementById('hab4').value}\nObservações: ${document.getElementById('obsHabilidades').value}\n`;
-        content += `\n📝 INFORMAÇÕES ADICIONAIS: ${document.getElementById('infoExtra').value}\n`;
-        content += `───────────────── Ficha exportada em ${new Date().toLocaleString()} ─────────────────`;
-        downloadFile('ficha_tatica_resumo.txt', content);
-        showToast('📄 TXT resumo salvo!');
+        content += `CODINOME: ${document.getElementById('nomePersonagem').value} | ID: ${document.getElementById('arquivoID').value} | PATENTE: ${document.getElementById('patente').value}\n`;
+        content += `DATA MISSÃO: ${document.getElementById('dataMissao').value}\n`;
+        content += "\n--- ESTATÍSTICAS DE COMBATE ---\n";
+        content += `VIDA (PV): ${document.getElementById('vida').value}\n`;
+        content += `DEFESA BALÍSTICA: ${document.getElementById('defB').value} | DEFESA EXPLOSÃO: ${document.getElementById('defE').value}\n`;
+        content += `MUNIÇÃO GERAL: ${document.getElementById('municao').value}\n`;
+        content += `MOVIMENTO: ${document.getElementById('mov1').value} / ${document.getElementById('mov2').value}\n`;
+        content += "\n--- INVENTÁRIO ---\n";
+        content += `1. ${document.getElementById('inv1').value}\n2. ${document.getElementById('inv2').value}\n3. ${document.getElementById('inv3').value}\n4. ${document.getElementById('inv4').value}\n`;
+        content += `EQUIPAMENTOS ADICIONAIS: ${document.getElementById('inventarioExtra').value}\n`;
+        content += "\n--- HABILIDADES OPERACIONAIS ---\n";
+        content += `1. ${document.getElementById('hab1').value}\n2. ${document.getElementById('hab2').value}\n3. ${document.getElementById('hab3').value}\n4. ${document.getElementById('hab4').value}\n`;
+        content += `OBSERVAÇÕES: ${document.getElementById('obsHabilidades').value}\n`;
+        content += `\n--- MISSÃO E NOTAS ---\n`;
+        content += `MISSÃO ATUAL: ${document.getElementById('infoExtra').value}\n`;
+        content += `NOTAS DE PLANEJAMENTO: ${document.getElementById('notasPlano').value}\n`;
+        content += `\n[FIM DO REGISTRO] - ${new Date().toLocaleString()}\n`;
+        downloadFile('relatorio_operacao.txt', content);
+        showToast("RELATÓRIO TXT EXPORTADO");
     }
 
     function downloadFile(filename, text) {
@@ -540,26 +630,22 @@
         URL.revokeObjectURL(link.href);
     }
 
-    // inicializar: carregar do storage + auto save
+    // inicialização
     window.addEventListener('DOMContentLoaded', () => {
         const loaded = loadFromLocalStorage();
         if (!loaded) {
-            // preencher alguns valores padrão inspirados no espírito do PDF (PV, DEF, etc)
-            // mas sem sobrescrever caso já exista dados. Como não existe, definimos valores legais.
-            if(!document.getElementById('vida').value) document.getElementById('vida').value = '32 / 32';
-            if(!document.getElementById('defB').value) document.getElementById('defB').value = '15';
-            if(!document.getElementById('defE').value) document.getElementById('defE').value = '12';
-            if(!document.getElementById('municao').value) document.getElementById('municao').value = '60/120';
-            if(!document.getElementById('mov1').value) document.getElementById('mov1').value = '7m';
-            if(!document.getElementById('mov2').value) document.getElementById('mov2').value = '11m';
-            if(!document.getElementById('unidadeField').value) document.getElementById('unidadeField').value = 'Força Tática K9';
-            if(!document.getElementById('nomePersonagem').value) document.getElementById('nomePersonagem').value = 'Recruta Tático';
+            // valores padrão de fallback
+            if (!document.getElementById('vida').value) document.getElementById('vida').value = '30 / 30';
+            if (!document.getElementById('defB').value) document.getElementById('defB').value = '15';
+            if (!document.getElementById('defE').value) document.getElementById('defE').value = '12';
+            if (!document.getElementById('mov1').value) document.getElementById('mov1').value = '8m';
+            if (!document.getElementById('mov2').value) document.getElementById('mov2').value = '12m';
             saveToLocalStorage();
         }
         attachAutoSave();
-        // eventos dos botões
+        updateImagePreview();
+
         document.getElementById('resetBtn').addEventListener('click', resetAllFields);
-        document.getElementById('exportJsonBtn').addEventListener('click', exportAsJSON);
         document.getElementById('exportTxtBtn').addEventListener('click', exportAsTxt);
         document.getElementById('fillExampleBtn').addEventListener('click', loadExampleData);
     });
