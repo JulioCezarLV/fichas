@@ -392,6 +392,10 @@
             background: #2c5a3b;
         }
 
+        .archive-btn {
+            background: #3a4a6e;
+        }
+
         footer {
             font-size: 0.65rem;
             text-align: center;
@@ -500,7 +504,7 @@
     <div class="action-bar">
         <button id="resetBtn" class="reset-btn">LIMPAR FICHA</button>
         <button id="exportTxtBtn" class="export-txt-btn">EXPORTAR RELATORIO (TXT)</button>
-        <button id="fillExampleBtn">CARREGAR PERFIL TATICO</button>
+        <button id="archiveBtn" class="archive-btn">ARQUIVAR FICHA</button>
     </div>
     <footer>
         DOCUMENTO OPERACIONAL - EDITAVEL - DADOS SALVOS LOCALMENTE
@@ -705,34 +709,37 @@
         showToast("FICHA LIMPA");
     }
 
-    function loadExampleData() {
-        document.getElementById('unidadeField').value = '7º BATALHAO DE FORCAS ESPECIAIS';
-        document.getElementById('vida').value = '48 / 48';
-        document.getElementById('defB').value = '22';
-        document.getElementById('defE').value = '19';
-        document.getElementById('municao').value = '210 / 240';
-        document.getElementById('mov1').value = '10m';
-        document.getElementById('mov2').value = '18m (SPRINT)';
-        document.getElementById('inv1').value = 'Fuzil SCAR-H + mira holografica';
-        document.getElementById('inv2').value = 'Lanca-granadas M320 (3 granadas)';
-        document.getElementById('inv3').value = 'Kit cirurgico avancado + torniquetes';
-        document.getElementById('inv4').value = 'Drone de reconhecimento RQ-11';
-        document.getElementById('inventarioExtra').value = 'Carga de demolicao (2kg), mina antipessoal, GPS tatico';
-        document.getElementById('hab1').value = 'ATIRADOR DE ELITE: precisao em alcance estendido';
-        document.getElementById('hab2').value = 'DEMOLICOES: ignora 10 pontos de DEF E';
-        document.getElementById('hab3').value = 'INFILTRACAO: movimentacao silenciosa e camuflagem';
-        document.getElementById('hab4').value = 'COMANDO DE CAMPO: aliados recebem +1 em testes taticos';
-        document.getElementById('obsHabilidades').value = 'Certificacao em resgate em combate (TCCC). Especialista em brechas';
-        document.getElementById('nomePersonagem').value = 'CAPITAO HENRIQUE "FANTASMA"';
-        document.getElementById('arquivoID').value = 'BR-OP/88-ALPHA';
-        document.getElementById('patente').value = 'CAPITAO';
-        document.getElementById('infoExtra').value = 'OPERACAO: NEXUS - Neutralizar alvo de alta prioridade';
-        document.getElementById('dataMissao').value = '22/06/2026';
-        document.getElementById('notasPlano').value = 'Ponto de extracao HELIPONTO SUL. Sinal de fumaca verde.';
-        imageUrlInput.value = '';
-        updateImagePreview();
-        saveToLocalStorage();
-        showToast("PERFIL TATICO CARREGADO");
+    // Função ARQUIVAR FICHA - cria um arquivo de snapshot completo com timestamp
+    function archiveFicha() {
+        // Coletar todos os dados atuais
+        const archiveData = {};
+        for (let id of fieldIds) {
+            const el = document.getElementById(id);
+            if (el) archiveData[id] = el.value;
+        }
+        
+        // Adicionar metadados do arquivamento
+        const timestamp = new Date();
+        const archiveRecord = {
+            metadata: {
+                arquivado_em: timestamp.toLocaleString(),
+                timestamp_unix: timestamp.getTime(),
+                versao: "1.0"
+            },
+            dados: archiveData
+        };
+        
+        // Gerar nome do arquivo baseado na unidade e codinome
+        const unidade = document.getElementById('unidadeField').value || "SEM_UNIDADE";
+        const codinome = document.getElementById('nomePersonagem').value || "SEM_CODINOME";
+        const sanitizedUnidade = unidade.replace(/[^a-z0-9]/gi, '_').substring(0, 20);
+        const sanitizedCodinome = codinome.replace(/[^a-z0-9]/gi, '_').substring(0, 20);
+        const filename = `arquivo_${sanitizedUnidade}_${sanitizedCodinome}_${timestamp.getTime()}.json`;
+        
+        // Criar e baixar o arquivo
+        const jsonStr = JSON.stringify(archiveRecord, null, 2);
+        downloadFile(filename, jsonStr);
+        showToast("FICHA ARQUIVADA COM SUCESSO");
     }
 
     // EXPORTAR SOMENTE TXT
@@ -787,7 +794,7 @@
 
         document.getElementById('resetBtn').addEventListener('click', resetAllFields);
         document.getElementById('exportTxtBtn').addEventListener('click', exportAsTxt);
-        document.getElementById('fillExampleBtn').addEventListener('click', loadExampleData);
+        document.getElementById('archiveBtn').addEventListener('click', archiveFicha);
         document.getElementById('uploadImageBtn').addEventListener('click', loadImageFromUrl);
         document.getElementById('clearImageBtn').addEventListener('click', clearImage);
     });
