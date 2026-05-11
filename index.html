@@ -3,532 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>CMD_OS v5.0 - Sistema Tático Avançado</title>
+    <title>CMD_OS v5.0 - P2P Multiplayer Completo | Sistema Tático</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Courier New', 'Lucida Console', 'Fira Code', monospace;
-            user-select: none;
-        }
-
-        body {
-            background: #060a06;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* ANIMAÇÃO DE CARREGAMENTO */
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 5px #2a8a2a; }
-            50% { box-shadow: 0 0 15px #6aff8a; }
-        }
-
-        /* TELA DE LOGIN */
-        .login-screen {
-            position: fixed;
-            inset: 0;
-            background: radial-gradient(ellipse at center, #0a120a 0%, #030603 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-        }
-
-        .cmd-box {
-            background: #0a0f0a;
-            border: 2px solid #2a6a2a;
-            padding: 35px;
-            width: 460px;
-            box-shadow: 12px 12px 0 #051005;
-            animation: pulse 2s infinite;
-        }
-
-        .cmd-box pre {
-            color: #2a8a2a;
-            font-size: 12px;
-            margin-bottom: 25px;
-            text-align: center;
-            letter-spacing: 2px;
-        }
-
-        .cmd-box input {
-            width: 100%;
-            background: #0a120a;
-            border: 1px solid #2a6a2a;
-            color: #4aff6a;
-            padding: 12px;
-            margin: 10px 0;
-            font-size: 14px;
-            transition: 0.2s;
-        }
-
-        .cmd-box input:focus {
-            outline: none;
-            border-color: #6aff8a;
-            box-shadow: 0 0 8px #2a8a2a;
-        }
-
-        .cmd-btn {
-            background: #0a2a0a;
-            border: 1px solid #2a8a2a;
-            color: #6aff8a;
-            padding: 10px;
-            width: 100%;
-            cursor: pointer;
-            text-align: center;
-            margin-top: 8px;
-            transition: 0.2s;
-            font-weight: bold;
-        }
-
-        .cmd-btn:hover {
-            background: #1a4a1a;
-            transform: translateY(-2px);
-            box-shadow: 0 2px 8px #2a8a2a;
-        }
-
-        /* DESKTOP */
-        .desktop {
-            display: none;
-            width: 100vw;
-            height: 100vh;
-            background: #0a0f0a;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* BARRA DE TAREFAS */
-        .taskbar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: #0a120a;
-            border-top: 1px solid #2a6a2a;
-            height: 42px;
-            display: flex;
-            align-items: center;
-            padding: 0 15px;
-            z-index: 100;
-            gap: 15px;
-            backdrop-filter: blur(4px);
-        }
-
-        .start-btn {
-            background: #0a2a0a;
-            padding: 6px 20px;
-            color: #6aff6a;
-            cursor: pointer;
-            border: 1px solid #2a6a2a;
-            font-size: 13px;
-            font-weight: bold;
-            transition: 0.1s;
-        }
-
-        .start-btn:hover {
-            background: #1a4a1a;
-            transform: scale(1.02);
-        }
-
-        .taskbar-apps {
-            display: flex;
-            gap: 8px;
-            flex: 1;
-            overflow-x: auto;
-        }
-
-        .taskbar-item {
-            background: #0a1a0a;
-            padding: 4px 16px;
-            font-size: 11px;
-            cursor: pointer;
-            border-left: 3px solid #2a8a2a;
-            white-space: nowrap;
-            transition: 0.1s;
-        }
-
-        .taskbar-item:hover {
-            background: #1a2a1a;
-            border-left-color: #6aff8a;
-        }
-
-        /* ÍCONES DA ÁREA DE TRABALHO */
-        .desktop-icons {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            z-index: 10;
-        }
-
-        .desktop-icon {
-            display: flex;
-            flex-direction: column;
-            width: 90px;
-            cursor: pointer;
-            padding: 10px 5px;
-            background: rgba(15, 24, 15, 0.8);
-            border: 1px solid #2a5a2a;
-            color: #8aff8a;
-            font-size: 11px;
-            text-align: center;
-            transition: all 0.15s ease;
-            backdrop-filter: blur(2px);
-        }
-
-        .desktop-icon:hover {
-            background: #1a2a1a;
-            border-color: #6aff6a;
-            transform: translateY(-3px);
-            box-shadow: 0 4px 12px rgba(42, 138, 42, 0.3);
-        }
-
-        .desktop-icon span:first-child {
-            font-size: 32px;
-            margin-bottom: 5px;
-        }
-
-        /* JANELAS */
-        .window {
-            position: absolute;
-            background: rgba(10, 18, 10, 0.95);
-            border: 1px solid #2a6a2a;
-            box-shadow: 10px 10px 0 rgba(5, 16, 5, 0.5);
-            display: none;
-            flex-direction: column;
-            z-index: 50;
-            min-width: 500px;
-            min-height: 380px;
-            border-radius: 6px;
-            backdrop-filter: blur(2px);
-        }
-
-        .window-header {
-            background: linear-gradient(90deg, #0a1a0a, #0f2a0f);
-            padding: 10px 14px;
-            cursor: move;
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid #2a6a2a;
-            font-size: 13px;
-            font-weight: bold;
-            border-radius: 6px 6px 0 0;
-        }
-
-        .window-content {
-            flex: 1;
-            padding: 18px;
-            overflow: auto;
-            color: #b0ffb0;
-            font-size: 12px;
-        }
-
-        .close-btn, .minimize-btn {
-            cursor: pointer;
-            margin-left: 15px;
-            background: #1a2a1a;
-            padding: 2px 10px;
-            border-radius: 4px;
-            transition: 0.1s;
-        }
-
-        .close-btn:hover, .minimize-btn:hover {
-            background: #2a4a2a;
-        }
-
-        /* COMPONENTES */
-        .folder-item {
-            background: #0f1a0f;
-            padding: 12px;
-            margin: 10px 0;
-            border-left: 4px solid #2a8a2a;
-            cursor: pointer;
-            transition: 0.1s;
-        }
-
-        .folder-item:hover {
-            background: #1a2a1a;
-            transform: translateX(5px);
-        }
-
-        .snake-grid {
-            display: grid;
-            grid-template-columns: repeat(20, 18px);
-            gap: 1px;
-            background: #0a120a;
-            justify-content: center;
-            margin: 15px 0;
-        }
-
-        .snake-cell {
-            width: 18px;
-            height: 18px;
-            background: #0f2a0f;
-            transition: 0.05s;
-        }
-
-        .snake-cell.snake {
-            background: linear-gradient(135deg, #6aff8a, #4aff6a);
-            box-shadow: inset 0 0 2px #fff;
-        }
-
-        .snake-cell.food {
-            background: #ffaa6a;
-            border-radius: 50%;
-            animation: pulse 0.5s infinite;
-        }
-
-        .mine-cell {
-            width: 34px;
-            height: 34px;
-            background: #1a2a1a;
-            text-align: center;
-            line-height: 32px;
-            cursor: pointer;
-            border: 1px solid #2a6a2a;
-            font-weight: bold;
-            font-size: 14px;
-            transition: 0.05s;
-        }
-
-        .mine-cell:hover {
-            background: #2a4a2a;
-        }
-
-        .naval-cell {
-            width: 36px;
-            height: 36px;
-            border: 1px solid #2a6a2a;
-            text-align: center;
-            line-height: 34px;
-            cursor: pointer;
-            background: #0f180f;
-            font-weight: bold;
-            transition: 0.05s;
-        }
-
-        .naval-cell:hover {
-            background: #1a2a1a;
-        }
-
-        .game-btn {
-            background: #0a2a0a;
-            border: 1px solid #2a8a2a;
-            color: #8aff8a;
-            padding: 8px 20px;
-            cursor: pointer;
-            margin: 6px;
-            font-family: monospace;
-            font-weight: bold;
-            transition: all 0.15s;
-        }
-
-        .game-btn:hover {
-            background: #1a4a1a;
-            transform: scale(1.02);
-            box-shadow: 0 2px 8px #2a8a2a;
-        }
-
-        input, textarea {
-            background: #0a120a;
-            border: 1px solid #2a6a2a;
-            color: #8aff8a;
-            padding: 8px;
-            font-family: monospace;
-            transition: 0.1s;
-        }
-
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: #6aff8a;
-            box-shadow: 0 0 5px #2a8a2a;
-        }
-
-        /* MENU INICIAR */
-        .start-menu-cmd {
-            position: fixed;
-            bottom: 42px;
-            left: 10px;
-            width: 280px;
-            background: #0a120a;
-            border: 1px solid #2a6a2a;
-            display: none;
-            flex-direction: column;
-            z-index: 200;
-            backdrop-filter: blur(8px);
-        }
-
-        .start-menu-item {
-            padding: 12px 16px;
-            cursor: pointer;
-            border-bottom: 1px solid #1a3a1a;
-            color: #8affaa;
-            font-size: 12px;
-            transition: 0.1s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .start-menu-item:hover {
-            background: #1a2a1a;
-            padding-left: 22px;
-        }
-
-        /* CHAT */
-        .chat-area {
-            height: 350px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .chat-messages {
-            flex: 1;
-            background: #0a1a0a;
-            overflow-y: auto;
-            padding: 12px;
-            margin-bottom: 12px;
-            border: 1px solid #2a6a2a;
-            font-size: 11px;
-        }
-
-        .chat-message {
-            padding: 6px;
-            border-bottom: 1px solid #1a3a1a;
-            animation: fadeIn 0.3s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* MURAL */
-        .mural-post {
-            background: #0f1a0f;
-            padding: 14px;
-            margin: 12px 0;
-            border-left: 5px solid #6aff8a;
-            border-radius: 4px;
-            animation: fadeIn 0.3s;
-        }
-
-        /* GALERIA */
-        .img-gallery {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 18px;
-            max-height: 350px;
-            overflow-y: auto;
-            padding: 5px;
-        }
-
-        .img-card {
-            background: #0f1a0f;
-            padding: 10px;
-            text-align: center;
-            border: 1px solid #2a6a2a;
-            border-radius: 6px;
-            transition: 0.1s;
-        }
-
-        .img-card:hover {
-            transform: scale(1.02);
-            border-color: #6aff8a;
-        }
-
-        .img-card img {
-            max-width: 130px;
-            max-height: 110px;
-            border-radius: 4px;
-        }
-
-        /* TERMINAL */
-        .terminal-line {
-            color: #6aff8a;
-            font-family: monospace;
-            margin: 6px 0;
-            animation: fadeIn 0.2s;
-        }
-
-        /* RANKING */
-        .ranking-item {
-            background: #0a1a0a;
-            padding: 8px;
-            margin: 6px 0;
-            border-left: 3px solid #6aff8a;
-            transition: 0.1s;
-        }
-
-        /* TABELAS */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 10px 0;
-        }
-
-        td, th {
-            border: 1px solid #2a6a2a;
-            padding: 8px;
-            text-align: left;
-        }
-
-        /* SCROLLBAR */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #0a120a;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #2a6a2a;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #4aff6a;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', 'Lucida Console', monospace; }
+        body { background: #060a06; height: 100vh; overflow: hidden; }
+        .login-screen { position: fixed; inset: 0; background: #0a0f0a; display: flex; justify-content: center; align-items: center; z-index: 10000; }
+        .cmd-box { background: #0a0f0a; border: 2px solid #2a6a2a; padding: 35px; width: 460px; box-shadow: 12px 12px 0 #051005; }
+        .cmd-box pre { color: #2a8a2a; text-align: center; margin-bottom: 20px; font-size: 11px; white-space: pre-wrap; }
+        .cmd-box input { width: 100%; background: #0a120a; border: 1px solid #2a6a2a; color: #4aff6a; padding: 12px; margin: 10px 0; }
+        .cmd-btn { background: #0a2a0a; border: 1px solid #2a8a2a; color: #6aff8a; padding: 10px; width: 100%; cursor: pointer; text-align: center; margin-top: 8px; transition: 0.2s; }
+        .cmd-btn:hover { background: #1a4a1a; transform: translateY(-2px); }
+        .desktop { display: none; width: 100vw; height: 100vh; background: #0a0f0a; position: relative; overflow: hidden; }
+        .taskbar { position: fixed; bottom: 0; left: 0; width: 100%; background: #0a120a; border-top: 1px solid #2a6a2a; height: 42px; display: flex; align-items: center; padding: 0 15px; z-index: 100; gap: 15px; }
+        .start-btn { background: #0a2a0a; padding: 6px 20px; color: #6aff6a; cursor: pointer; border: 1px solid #2a6a2a; font-weight: bold; }
+        .taskbar-apps { display: flex; gap: 8px; flex: 1; overflow-x: auto; }
+        .taskbar-item { background: #0a1a0a; padding: 4px 16px; font-size: 11px; cursor: pointer; border-left: 3px solid #2a8a2a; white-space: nowrap; }
+        .desktop-icons { position: absolute; top: 20px; left: 20px; display: flex; flex-direction: column; gap: 20px; z-index: 10; }
+        .desktop-icon { display: flex; flex-direction: column; width: 95px; cursor: pointer; padding: 10px 5px; background: rgba(15,24,15,0.85); border: 1px solid #2a5a2a; color: #8aff8a; text-align: center; transition: 0.1s; backdrop-filter: blur(2px); }
+        .desktop-icon:hover { background: #1a2a1a; transform: translateY(-3px); border-color: #6aff6a; }
+        .desktop-icon span:first-child { font-size: 32px; margin-bottom: 5px; }
+        .window { position: absolute; background: rgba(10,18,10,0.96); border: 1px solid #2a6a2a; box-shadow: 10px 10px 0 rgba(5,16,5,0.5); display: none; flex-direction: column; z-index: 50; min-width: 520px; min-height: 400px; border-radius: 6px; backdrop-filter: blur(2px); }
+        .window-header { background: linear-gradient(90deg, #0a1a0a, #0f2a0f); padding: 10px 14px; cursor: move; display: flex; justify-content: space-between; border-bottom: 1px solid #2a6a2a; font-weight: bold; border-radius: 6px 6px 0 0; }
+        .window-content { flex: 1; padding: 18px; overflow: auto; color: #b0ffb0; font-size: 12px; }
+        .close-btn, .minimize-btn { cursor: pointer; margin-left: 15px; background: #1a2a1a; padding: 2px 10px; border-radius: 4px; transition: 0.1s; }
+        .close-btn:hover, .minimize-btn:hover { background: #2a4a2a; }
+        .folder-item { background: #0f1a0f; padding: 12px; margin: 10px 0; border-left: 4px solid #2a8a2a; cursor: pointer; transition: 0.1s; }
+        .folder-item:hover { background: #1a2a1a; transform: translateX(5px); }
+        .snake-grid { display: grid; grid-template-columns: repeat(20, 18px); gap: 1px; background: #0a120a; justify-content: center; margin: 15px 0; }
+        .snake-cell { width: 18px; height: 18px; background: #0f2a0f; transition: 0.05s; }
+        .snake-cell.snake { background: linear-gradient(135deg, #6aff8a, #4aff6a); box-shadow: inset 0 0 2px #fff; }
+        .snake-cell.food { background: #ffaa6a; border-radius: 50%; animation: pulse 0.5s infinite; }
+        @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.2);} }
+        .mine-cell { width: 34px; height: 34px; background: #1a2a1a; text-align: center; line-height: 32px; cursor: pointer; border: 1px solid #2a6a2a; font-weight: bold; font-size: 14px; transition: 0.05s; }
+        .mine-cell:hover { background: #2a4a2a; }
+        .naval-cell { width: 36px; height: 36px; border: 1px solid #2a6a2a; text-align: center; line-height: 34px; cursor: pointer; background: #0f180f; font-weight: bold; transition: 0.05s; }
+        .naval-cell:hover { background: #1a2a1a; }
+        .game-btn { background: #0a2a0a; border: 1px solid #2a8a2a; color: #8aff8a; padding: 8px 20px; cursor: pointer; margin: 6px; font-family: monospace; font-weight: bold; transition: all 0.15s; }
+        .game-btn:hover { background: #1a4a1a; transform: scale(1.02); box-shadow: 0 2px 8px #2a8a2a; }
+        input, textarea { background: #0a120a; border: 1px solid #2a6a2a; color: #8aff8a; padding: 8px; font-family: monospace; transition: 0.1s; }
+        input:focus, textarea:focus { outline: none; border-color: #6aff8a; box-shadow: 0 0 5px #2a8a2a; }
+        .start-menu-cmd { position: fixed; bottom: 42px; left: 10px; width: 280px; background: #0a120a; border: 1px solid #2a6a2a; display: none; flex-direction: column; z-index: 200; backdrop-filter: blur(8px); }
+        .start-menu-item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #1a3a1a; color: #8affaa; font-size: 12px; transition: 0.1s; display: flex; align-items: center; gap: 10px; }
+        .start-menu-item:hover { background: #1a2a1a; padding-left: 22px; }
+        .chat-area { height: 350px; display: flex; flex-direction: column; }
+        .chat-messages { flex: 1; background: #0a1a0a; overflow-y: auto; padding: 12px; margin-bottom: 12px; border: 1px solid #2a6a2a; font-size: 11px; }
+        .chat-message { padding: 6px; border-bottom: 1px solid #1a3a1a; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        .mural-post { background: #0f1a0f; padding: 14px; margin: 12px 0; border-left: 5px solid #6aff8a; border-radius: 4px; }
+        .img-gallery { display: flex; flex-wrap: wrap; gap: 18px; max-height: 350px; overflow-y: auto; padding: 5px; }
+        .img-card { background: #0f1a0f; padding: 10px; text-align: center; border: 1px solid #2a6a2a; border-radius: 6px; transition: 0.1s; }
+        .img-card:hover { transform: scale(1.02); border-color: #6aff8a; }
+        .img-card img { max-width: 130px; max-height: 110px; border-radius: 4px; }
+        .terminal-line { color: #6aff8a; font-family: monospace; margin: 6px 0; animation: fadeIn 0.2s; }
+        .ranking-item { background: #0a1a0a; padding: 8px; margin: 6px 0; border-left: 3px solid #6aff8a; transition: 0.1s; }
+        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        td, th { border: 1px solid #2a6a2a; padding: 8px; text-align: left; }
+        .connection-status { position: fixed; top: 10px; right: 10px; background: #0a2a0a; padding: 5px 12px; border-radius: 20px; font-size: 10px; z-index: 1000; border: 1px solid #2a6a2a; }
+        .room-id-box { background: #0a1a0a; padding: 8px; margin: 10px 0; border: 1px solid #2a6a2a; text-align: center; border-radius: 4px; }
+        .room-id { color: #6aff8a; font-weight: bold; font-size: 16px; letter-spacing: 2px; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0a120a; }
+        ::-webkit-scrollbar-thumb { background: #2a6a2a; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4aff6a; }
     </style>
 </head>
 <body>
 <div class="login-screen" id="loginScreen">
     <div class="cmd-box">
-        <pre>╔═══════════════════════════════╗
-║     CMD_OS v5.0 TÁTICO       ║
-║   ACESSO RESTRITO - NÍVEL 5  ║
-╚═══════════════════════════════╝</pre>
-        <input type="text" id="loginUser" placeholder="USUARIO" autocomplete="off">
-        <input type="password" id="loginPass" placeholder="SENHA">
-        <div class="cmd-btn" id="loginBtn">▶ LOGIN</div>
-        <div class="cmd-btn" id="registerBtn">▶ CRIAR CONTA</div>
-        <div id="loginFeedback" style="color:#ff8844; margin-top:12px; font-size:11px; text-align:center;"></div>
+        <pre>╔═══════════════════════════════════════╗
+║     CMD_OS v5.0 - SISTEMA TÁTICO      ║
+║     MULTIPLAYER P2P - SEM SERVIDOR     ║
+║     TODOS OS JOGOS + CHAT + MURAL      ║
+╚═══════════════════════════════════════╝</pre>
+        <input type="text" id="loginUser" placeholder="SEU NOME" autocomplete="off">
+        <input type="text" id="roomId" placeholder="ID DA SALA (ex: OPERACAO01)" value="OPERACAO01" maxlength="30">
+        <div class="cmd-btn" id="createRoomBtn">🔗 CRIAR / ENTRAR NA SALA</div>
+        <div id="loginFeedback" style="color:#ff8844; margin-top:12px;"></div>
+        <div style="margin-top:15px; font-size:9px; color:#6a8a6a; text-align:center;">
+            📡 CONEXÃO PONTO A PONTO (P2P)<br>
+            🔗 COMPARTILHE O MESMO ID DA SALA COM SEUS AMIGOS<br>
+            💡 FUNCIONA NO GITHUB PAGES - SEM SERVIDOR
+        </div>
     </div>
 </div>
 
 <div class="desktop" id="desktop">
+    <div class="connection-status" id="connStatus">🔴 Desconectado</div>
     <div class="taskbar">
         <div class="start-btn" id="startBtn">[ START ]</div>
         <div class="taskbar-apps" id="taskbarApps"></div>
-        <div id="clockCmd" style="color:#6aff6a; background:#0a120a; padding:5px 12px; font-size:12px; border:1px solid #2a6a2a;"></div>
+        <div id="clockCmd" style="color:#6aff6a; background:#0a120a; padding:5px 12px;"></div>
     </div>
     <div class="desktop-icons" id="desktopIcons"></div>
     <div id="windowContainer"></div>
-    <div id="startMenu" class="start-menu-cmd">
+    <div id="startMenu" style="position:fixed; bottom:42px; left:10px; width:280px; background:#0a120a; border:1px solid #2a6a2a; display:none; flex-direction:column; z-index:200; border-radius:4px;">
         <div class="start-menu-item" data-app="ficha">📄 FICHA OPERACIONAL</div>
         <div class="start-menu-item" data-app="mines">💣 CAMPO MINADO</div>
-        <div class="start-menu-item" data-app="naval">⚓ BATALHA NAVAL (2P)</div>
+        <div class="start-menu-item" data-app="naval">⚓ BATALHA NAVAL (P2P)</div>
         <div class="start-menu-item" data-app="snake">🐍 JOGO DA COBRA</div>
         <div class="start-menu-item" data-app="dino">🦖 DINO RUN</div>
         <div class="start-menu-item" data-app="chat">💬 CHAT GLOBAL</div>
@@ -539,82 +110,209 @@
         <div class="start-menu-item" data-app="calc">🧮 CALCULADORA</div>
         <div class="start-menu-item" data-app="terminal">💻 TERMINAL CMD</div>
         <div class="start-menu-item" data-app="files">🗂️ ARQUIVOS</div>
+        <div class="start-menu-item" data-app="players">👥 JOGADORES</div>
         <div class="start-menu-item" id="shutdownCmd">🔒 ENCERRAR SESSÃO</div>
     </div>
 </div>
 
 <script>
-    // ================== SISTEMA DE USUÁRIOS ==================
-    let usersDB = JSON.parse(localStorage.getItem('cmd_users')) || { admin: "1234" };
+    // ================== P2P CONNECTION VIA WebRTC ==================
     let currentUser = null;
-    let globalChat = JSON.parse(localStorage.getItem('cmd_chat')) || [];
-    let muralPosts = JSON.parse(localStorage.getItem('cmd_mural')) || [];
-    let imageGallery = JSON.parse(localStorage.getItem('cmd_gallery')) || [];
-    let onlineUsers = JSON.parse(localStorage.getItem('cmd_online')) || [];
-    let gameScores = JSON.parse(localStorage.getItem('cmd_scores')) || [];
+    let currentRoom = null;
+    let peerConnection = null;
+    let dataChannel = null;
+    let connectedPeers = [];
+    let pendingNavalChallenges = [];
     
-    function saveUsers() { localStorage.setItem('cmd_users', JSON.stringify(usersDB)); }
-    function saveChat() { localStorage.setItem('cmd_chat', JSON.stringify(globalChat)); }
-    function saveMural() { localStorage.setItem('cmd_mural', JSON.stringify(muralPosts)); }
-    function saveGallery() { localStorage.setItem('cmd_gallery', JSON.stringify(imageGallery)); }
-    function saveOnline() { localStorage.setItem('cmd_online', JSON.stringify(onlineUsers)); }
-    function saveScores() { localStorage.setItem('cmd_scores', JSON.stringify(gameScores)); }
+    // Dados compartilhados
+    let globalChat = JSON.parse(localStorage.getItem('p2p_chat_' + (currentRoom || 'default'))) || [];
+    let muralPosts = JSON.parse(localStorage.getItem('p2p_mural_' + (currentRoom || 'default'))) || [];
+    let gameScores = JSON.parse(localStorage.getItem('p2p_scores')) || [];
+    let imageGallery = JSON.parse(localStorage.getItem('p2p_gallery')) || [];
     
-    function updateOnlineStatus() {
-        if (currentUser && !onlineUsers.includes(currentUser)) {
-            onlineUsers.push(currentUser);
-            saveOnline();
+    function saveLocalData() {
+        localStorage.setItem('p2p_chat_' + currentRoom, JSON.stringify(globalChat));
+        localStorage.setItem('p2p_mural_' + currentRoom, JSON.stringify(muralPosts));
+        localStorage.setItem('p2p_scores', JSON.stringify(gameScores));
+        localStorage.setItem('p2p_gallery', JSON.stringify(imageGallery));
+    }
+    
+    const configuration = {
+        iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' },
+            { urls: 'stun:stun2.l.google.com:19302' },
+            { urls: 'stun:stun3.l.google.com:19302' }
+        ]
+    };
+    
+    const channel = new BroadcastChannel('cmd_os_p2p_global');
+    
+    function createOrJoinRoom() {
+        let userName = document.getElementById('loginUser').value.trim();
+        let room = document.getElementById('roomId').value.trim().toUpperCase();
+        if (!userName) { document.getElementById('loginFeedback').innerHTML = "❌ Digite seu nome!"; return; }
+        if (!room) { document.getElementById('loginFeedback').innerHTML = "❌ Digite o ID da sala!"; return; }
+        
+        currentUser = userName;
+        currentRoom = room;
+        
+        // Carregar dados da sala
+        globalChat = JSON.parse(localStorage.getItem('p2p_chat_' + room)) || [];
+        muralPosts = JSON.parse(localStorage.getItem('p2p_mural_' + room)) || [];
+        
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('desktop').style.display = 'block';
+        initDesktop();
+        updateClock();
+        setInterval(updateClock, 1000);
+        initP2PConnection();
+        document.getElementById('connStatus').innerHTML = `🟡 Conectando à sala: ${room}...`;
+    }
+    
+    function initP2PConnection() {
+        peerConnection = new RTCPeerConnection(configuration);
+        dataChannel = peerConnection.createDataChannel('cmd_channel');
+        
+        dataChannel.onopen = () => {
+            document.getElementById('connStatus').innerHTML = `🟢 Conectado | Sala: ${currentRoom} | ${connectedPeers.length + 1} operadores`;
+            document.getElementById('connStatus').style.color = '#6aff8a';
+            broadcastPresence();
+        };
+        
+        dataChannel.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            handlePeerMessage(data);
+        };
+        
+        dataChannel.onclose = () => {
+            document.getElementById('connStatus').innerHTML = `🔴 Desconectado da sala`;
+            document.getElementById('connStatus').style.color = '#ff8844';
+        };
+        
+        peerConnection.onicecandidate = (event) => {
+            if (event.candidate) {
+                channel.postMessage({ type: 'ice-candidate', room: currentRoom, candidate: event.candidate, from: currentUser });
+            }
+        };
+        
+        createOffer();
+        
+        channel.onmessage = async (event) => {
+            const msg = event.data;
+            if (msg.room !== currentRoom) return;
+            
+            if (msg.type === 'offer' && msg.from !== currentUser) {
+                await handleOffer(msg);
+            } else if (msg.type === 'answer' && msg.to === currentUser) {
+                await handleAnswer(msg);
+            } else if (msg.type === 'ice-candidate' && msg.from !== currentUser) {
+                if (peerConnection) {
+                    try { await peerConnection.addIceCandidate(new RTCIceCandidate(msg.candidate)); } catch(e) {}
+                }
+            } else if (msg.type === 'presence') {
+                if (!connectedPeers.includes(msg.from) && msg.from !== currentUser) {
+                    connectedPeers.push(msg.from);
+                    updatePlayersUI();
+                    broadcastToPeers({ type: 'presence_response', user: currentUser });
+                }
+            } else if (msg.type === 'presence_response') {
+                if (!connectedPeers.includes(msg.user) && msg.user !== currentUser) {
+                    connectedPeers.push(msg.user);
+                    updatePlayersUI();
+                }
+            } else if (msg.type === 'naval_challenge') {
+                pendingNavalChallenges.push(msg);
+                updateNavalChallengesUI();
+            } else if (msg.type === 'naval_accept') {
+                startNavalGame(msg);
+            } else if (msg.type === 'naval_attack') {
+                handleNavalAttack(msg);
+            }
+        };
+    }
+    
+    async function createOffer() {
+        const offer = await peerConnection.createOffer();
+        await peerConnection.setLocalDescription(offer);
+        channel.postMessage({ type: 'offer', room: currentRoom, offer: offer, from: currentUser });
+    }
+    
+    async function handleOffer(msg) {
+        if (!peerConnection) {
+            peerConnection = new RTCPeerConnection(configuration);
+            peerConnection.ondatachannel = (event) => { dataChannel = event.channel; setupDataChannelHandlers(); };
+            peerConnection.onicecandidate = (event) => {
+                if (event.candidate) channel.postMessage({ type: 'ice-candidate', room: currentRoom, candidate: event.candidate, from: currentUser });
+            };
+        }
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(msg.offer));
+        const answer = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answer);
+        channel.postMessage({ type: 'answer', room: currentRoom, answer: answer, from: currentUser, to: msg.from });
+    }
+    
+    async function handleAnswer(msg) {
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(msg.answer));
+    }
+    
+    function setupDataChannelHandlers() {
+        dataChannel.onopen = () => { broadcastPresence(); };
+        dataChannel.onmessage = (event) => { handlePeerMessage(JSON.parse(event.data)); };
+    }
+    
+    function broadcastPresence() {
+        if (dataChannel && dataChannel.readyState === 'open') {
+            dataChannel.send(JSON.stringify({ type: 'presence', user: currentUser }));
         }
     }
-    function removeOnline() {
-        onlineUsers = onlineUsers.filter(u => u !== currentUser);
-        saveOnline();
+    
+    function broadcastToPeers(message) {
+        if (dataChannel && dataChannel.readyState === 'open') {
+            dataChannel.send(JSON.stringify(message));
+        }
     }
-    function addScore(game, score) {
-        gameScores.unshift({ user: currentUser, game: game, score: score, date: new Date().toLocaleString() });
+    
+    function handlePeerMessage(data) {
+        if (data.type === 'chat') {
+            globalChat.push({ user: data.user, text: data.text, time: data.time });
+            saveLocalData();
+            refreshChatUI();
+        } else if (data.type === 'mural') {
+            muralPosts.unshift({ user: data.user, text: data.text, time: data.time });
+            saveLocalData();
+            refreshMuralUI();
+        } else if (data.type === 'score') {
+            gameScores.unshift({ user: data.user, game: data.game, score: data.score, date: data.date });
+            gameScores = gameScores.slice(0, 100);
+            saveLocalData();
+            refreshRankingUI();
+        } else if (data.type === 'presence' || data.type === 'presence_response') {
+            if (!connectedPeers.includes(data.user) && data.user !== currentUser) {
+                connectedPeers.push(data.user);
+                updatePlayersUI();
+                if (data.type === 'presence') broadcastToPeers({ type: 'presence_response', user: currentUser });
+            }
+        }
+    }
+    
+    function addScoreToRanking(game, score) {
+        let scoreData = { type: 'score', user: currentUser, game: game, score: score, date: new Date().toLocaleString() };
+        gameScores.unshift(scoreData);
         gameScores = gameScores.slice(0, 100);
-        saveScores();
+        saveLocalData();
+        broadcastToPeers(scoreData);
+        refreshRankingUI();
     }
-
-    // ================== LOGIN/REGISTRO ==================
-    document.getElementById('loginBtn').onclick = () => {
-        let u = document.getElementById('loginUser').value.trim();
-        let p = document.getElementById('loginPass').value;
-        if (usersDB[u] && usersDB[u] === p) {
-            currentUser = u;
-            updateOnlineStatus();
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('desktop').style.display = 'block';
-            initDesktop();
-        } else document.getElementById('loginFeedback').innerHTML = "❌ ACESSO NEGADO! Credenciais inválidas.";
-    };
-    document.getElementById('registerBtn').onclick = () => {
-        let u = document.getElementById('loginUser').value.trim();
-        let p = document.getElementById('loginPass').value;
-        if (!u || !p) { document.getElementById('loginFeedback').innerHTML = "❌ Preencha todos os campos!"; return; }
-        if (usersDB[u]) { document.getElementById('loginFeedback').innerHTML = "❌ Usuário já existe!"; return; }
-        usersDB[u] = p;
-        saveUsers();
-        document.getElementById('loginFeedback').innerHTML = "✅ Conta criada com sucesso! Faça login.";
-        document.getElementById('loginUser').value = '';
-        document.getElementById('loginPass').value = '';
-    };
-
+    
     // ================== DESKTOP ==================
     function initDesktop() {
         renderIcons();
-        updateClock();
-        setInterval(updateClock, 1000);
         initStartMenu();
-        setInterval(() => {
-            let nc = JSON.parse(localStorage.getItem('cmd_chat')) || [];
-            if (nc.length !== globalChat.length) { globalChat = nc; }
-        }, 2000);
     }
-    function updateClock() { 
-        let now = new Date();
-        document.getElementById('clockCmd').innerText = now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR');
-    }
+    
+    function updateClock() { document.getElementById('clockCmd').innerText = new Date().toLocaleTimeString(); }
+    
     function initStartMenu() {
         let startBtn = document.getElementById('startBtn');
         let menu = document.getElementById('startMenu');
@@ -623,9 +321,9 @@
         document.querySelectorAll('.start-menu-item[data-app]').forEach(el => {
             el.onclick = () => { openApp(el.dataset.app); menu.style.display = 'none'; };
         });
-        document.getElementById('shutdownCmd').onclick = () => { removeOnline(); location.reload(); };
+        document.getElementById('shutdownCmd').onclick = () => { location.reload(); };
     }
-
+    
     const iconsList = [
         { name: "FICHA", icon: "📄", action: "ficha" },
         { name: "CAMPO MINADO", icon: "💣", action: "mines" },
@@ -639,28 +337,20 @@
         { name: "EDITOR", icon: "✏️", action: "editor" },
         { name: "CALC", icon: "🧮", action: "calc" },
         { name: "TERMINAL", icon: "💻", action: "terminal" },
-        { name: "ARQUIVOS", icon: "🗂️", action: "files" }
+        { name: "ARQUIVOS", icon: "🗂️", action: "files" },
+        { name: "JOGADORES", icon: "👥", action: "players" }
     ];
+    
     function renderIcons() {
         const container = document.getElementById('desktopIcons');
         container.innerHTML = iconsList.map(ic => `<div class="desktop-icon" data-app="${ic.action}"><span>${ic.icon}</span><span>${ic.name}</span></div>`).join('');
         document.querySelectorAll('.desktop-icon').forEach(el => el.addEventListener('click', () => openApp(el.dataset.action)));
     }
-
-    // ================== FICHA MILITAR ==================
-    let militarData = JSON.parse(localStorage.getItem('cmd_ficha')) || {
-        unidade: "FORCA ALFA", codinome: "FANTASMA", id: "FT-210", patente: "SGT",
-        vida: "32/32", defB: "16", defE: "14", municao: "90/120", mov1: "8m", mov2: "12m",
-        inv1: "Fuzil M4", inv2: "Granada", inv3: "Kit Medico", inv4: "Radio",
-        hab1: "Precisao", hab2: "Demolicao", hab3: "Furtivo", hab4: "Lideranca",
-        missao: "OP: TERRA", data: "16/05", notas: "Extracao Norte"
-    };
-    function saveFicha() { localStorage.setItem('cmd_ficha', JSON.stringify(militarData)); }
-
-    // ================== GERENCIADOR DE JANELAS ==================
+    
+    // Gerencia janelas
     let windowsList = [], zIdx = 1000;
     function createWin(title, content, w = 560, h = 460) {
-        let id = 'win_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
+        let id = 'win_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
         let winDiv = document.createElement('div');
         winDiv.className = 'window';
         winDiv.id = id;
@@ -669,13 +359,7 @@
         winDiv.style.left = (50 + windowsList.length * 30) + 'px';
         winDiv.style.top = (50 + windowsList.length * 25) + 'px';
         winDiv.style.zIndex = zIdx++;
-        winDiv.innerHTML = `
-            <div class="window-header">
-                <span>${title}</span>
-                <div><span class="minimize-btn">━</span><span class="close-btn">✕</span></div>
-            </div>
-            <div class="window-content">${content}</div>
-        `;
+        winDiv.innerHTML = `<div class="window-header"><span>${title}</span><div><span class="minimize-btn">━</span><span class="close-btn">✕</span></div></div><div class="window-content">${content}</div>`;
         document.getElementById('windowContainer').appendChild(winDiv);
         winDiv.style.display = 'flex';
         let minimized = false;
@@ -693,16 +377,17 @@
         updateTaskbar();
         return winDiv;
     }
+    
     function updateTaskbar() {
         let container = document.getElementById('taskbarApps');
         container.innerHTML = windowsList.map(id => `<div class="taskbar-item" data-win="${id}">📄 ${document.getElementById(id)?.querySelector('.window-header span:first-child')?.innerText || 'Janela'}</div>`).join('');
         document.querySelectorAll('.taskbar-item').forEach(el => { el.onclick = () => { let w = document.getElementById(el.dataset.win); if(w) { w.style.display = 'flex'; w.style.zIndex = zIdx++; updateTaskbar(); } }; });
     }
-
+    
     function openApp(app) {
         if(app === 'ficha') openFicha();
         else if(app === 'mines') openMines();
-        else if(app === 'naval') openNaval();
+        else if(app === 'naval') openNavalLobby();
         else if(app === 'snake') openSnake();
         else if(app === 'dino') openDino();
         else if(app === 'chat') openChat();
@@ -713,18 +398,26 @@
         else if(app === 'calc') openCalc();
         else if(app === 'terminal') openTerminal();
         else if(app === 'files') openFiles();
+        else if(app === 'players') openPlayers();
     }
-
+    
     // ================== FICHA COMPLETA ==================
+    let militarData = JSON.parse(localStorage.getItem('cmd_ficha_' + (currentUser || 'default'))) || {
+        unidade: "FORCA ALFA", codinome: "FANTASMA", id: "FT-210", patente: "SGT",
+        vida: "32/32", defB: "16", defE: "14", municao: "90/120", mov1: "8m", mov2: "12m",
+        inv1: "Fuzil M4", inv2: "Granada", inv3: "Kit Medico", inv4: "Radio",
+        hab1: "Precisao", hab2: "Demolicao", hab3: "Furtivo", hab4: "Lideranca",
+        missao: "OP: TERRA", data: "16/05", notas: "Extracao Norte"
+    };
+    function saveFicha() { localStorage.setItem('cmd_ficha_' + currentUser, JSON.stringify(militarData)); }
+    
     function openFicha() {
         let html = `<div style="max-height:450px; overflow-y:auto;">
             <h3>📋 FICHA OPERACIONAL - ${currentUser}</h3>
-            <table style="width:100%; margin:12px 0;">
-                <tr><th>UNIDADE</th><td colspan="3"><input id="f_unidade" value="${militarData.unidade}" style="width:100%;"></td></tr>
-                <tr><th>CODINOME</th><td><input id="f_cod" value="${militarData.codinome}"></td><th>ID</th><td><input id="f_id" value="${militarData.id}"></td></tr>
-                <tr><th>PATENTE</th><td colspan="3"><input id="f_pat" value="${militarData.patente}"></td></tr>
-            </table>
-            <hr><h4>📊 ESTATÍSTICAS</h4>
+            <table><tr><th>UNIDADE</th><td colspan="3"><input id="f_unidade" value="${militarData.unidade}" style="width:100%;"></td></tr>
+            <tr><th>CODINOME</th><td><input id="f_cod" value="${militarData.codinome}"></td><th>ID</th><td><input id="f_id" value="${militarData.id}"></td></tr>
+            <tr><th>PATENTE</th><td colspan="3"><input id="f_pat" value="${militarData.patente}"></td></tr></table>
+            <h4>📊 ESTATÍSTICAS</h4>
             <table><tr><th>VIDA</th><td><input id="f_vida" value="${militarData.vida}"></td><th>DEF.BAL</th><td><input id="f_defb" value="${militarData.defB}"></td></tr>
             <tr><th>DEF.EXP</th><td><input id="f_defe" value="${militarData.defE}"></td><th>MUNIÇÃO</th><td><input id="f_mun" value="${militarData.municao}"></td></tr>
             <tr><th>MOVIMENTO</th><td colspan="3"><input id="f_m1" style="width:70px;" value="${militarData.mov1}"> / <input id="f_m2" style="width:70px;" value="${militarData.mov2}"></td></tr></table>
@@ -738,7 +431,7 @@
             <div>MISSÃO: <input id="f_miss" value="${militarData.missao}" style="width:70%;"></div>
             <div>DATA: <input id="f_data" value="${militarData.data}"></div>
             <div>NOTAS: <textarea id="f_notas" rows="2" style="width:100%;">${militarData.notas}</textarea></div>
-            <button id="saveFichaBtn" class="game-btn">💾 SALVAR ALTERAÇÕES</button>
+            <button id="saveFichaBtn" class="game-btn">💾 SALVAR</button>
         </div>`;
         createWin("FICHA OPERACIONAL", html, 650, 580);
         setTimeout(() => {
@@ -765,431 +458,332 @@
                 militarData.data = document.getElementById('f_data').value;
                 militarData.notas = document.getElementById('f_notas').value;
                 saveFicha();
-                alert("✅ Ficha salva com sucesso!");
+                alert("✅ Ficha salva!");
             };
         }, 50);
     }
-
-    // ================== CHAT GLOBAL ==================
+    
+    // ================== CHAT ==================
+    function refreshChatUI() {
+        let container = document.getElementById('chatMsgs');
+        if (!container) return;
+        container.innerHTML = globalChat.slice(-60).map(m => `<div class="chat-message"><b style="color:#aaffaa;">${m.user}</b> [${m.time}]<br>${m.text}</div>`).join('');
+        container.scrollTop = container.scrollHeight;
+    }
+    
     function openChat() {
         let html = `<div class="chat-area">
-            <div class="chat-messages" id="chatMsgs" style="height:320px;"></div>
-            <div style="display:flex; gap:10px;">
-                <input type="text" id="chatInput" placeholder="Digite sua mensagem..." style="flex:1;">
-                <button id="sendChat" class="game-btn">📤 ENVIAR</button>
-            </div>
-            <div style="margin-top:10px; font-size:11px; color:#6aff8a;">🟢 USUÁRIOS ONLINE: <span id="onlineCount"></span></div>
+            <div class="chat-messages" id="chatMsgs"></div>
+            <div style="display:flex; gap:10px;"><input type="text" id="chatInput" style="flex:1;" placeholder="Mensagem..."><button id="sendChat" class="game-btn">ENVIAR</button></div>
         </div>`;
-        createWin("CHAT GLOBAL - REDE TÁTICA", html, 600, 500);
-        function refreshChat() {
-            let container = document.getElementById('chatMsgs');
-            if (!container) return;
-            container.innerHTML = globalChat.slice(-60).map(m => `<div class="chat-message"><b style="color:#aaffaa;">${m.user}</b> <span style="color:#6a8a6a;">[${m.time}]</span><br>${m.text}</div>`).join('');
-            document.getElementById('onlineCount').innerHTML = onlineUsers.join(', ') || currentUser;
-            container.scrollTop = container.scrollHeight;
-        }
-        function sendMessage() {
-            let input = document.getElementById('chatInput');
-            if (!input.value.trim()) return;
-            globalChat.push({ user: currentUser, text: input.value, time: new Date().toLocaleTimeString() });
-            saveChat();
-            refreshChat();
-            input.value = '';
-        }
-        refreshChat();
-        setInterval(refreshChat, 2000);
+        createWin("CHAT GLOBAL", html, 600, 500);
+        refreshChatUI();
         setTimeout(() => {
-            document.getElementById('sendChat').onclick = sendMessage;
-            document.getElementById('chatInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
+            document.getElementById('sendChat').onclick = () => {
+                let input = document.getElementById('chatInput');
+                if (input.value.trim()) {
+                    let msg = { type: 'chat', user: currentUser, text: input.value, time: new Date().toLocaleTimeString() };
+                    globalChat.push(msg);
+                    saveLocalData();
+                    refreshChatUI();
+                    broadcastToPeers(msg);
+                    input.value = '';
+                }
+            };
         }, 100);
     }
-
-    // ================== MURAL COLABORATIVO ==================
-    function openMural() {
-        let html = `<div style="max-height:480px; overflow-y:auto;">
-            <h3>📌 MURAL COLABORATIVO - RPG</h3>
-            <div id="muralPosts" style="max-height:340px; overflow-y:auto;"></div>
-            <textarea id="newMuralPost" rows="3" style="width:100%; margin:12px 0;" placeholder="Nova anotação, ideia, lore..."></textarea>
-            <button id="addMuralPost" class="game-btn">📌 ADICIONAR AO MURAL</button>
-        </div>`;
-        createWin("MURAL COLABORATIVO", html, 620, 550);
-        function renderMural() {
-            let container = document.getElementById('muralPosts');
-            if (!container) return;
-            container.innerHTML = muralPosts.slice(0, 40).map(p => `<div class="mural-post"><b>📌 ${p.author}</b> <span style="color:#6a8a6a;">[${p.date}]</span><br>${p.text}</div>`).join('');
-        }
-        renderMural();
-        setTimeout(() => {
-            document.getElementById('addMuralPost').onclick = () => {
-                let text = document.getElementById('newMuralPost').value.trim();
-                if (!text) return;
-                muralPosts.unshift({ author: currentUser, text: text, date: new Date().toLocaleString() });
-                saveMural();
-                renderMural();
-                document.getElementById('newMuralPost').value = '';
-            };
-        }, 50);
-        setInterval(renderMural, 3000);
+    
+    // ================== MURAL ==================
+    function refreshMuralUI() {
+        let container = document.getElementById('muralPosts');
+        if (!container) return;
+        container.innerHTML = muralPosts.slice(0, 30).map(p => `<div class="mural-post"><b>${p.user}</b> [${p.time}]<br>${p.text}</div>`).join('');
     }
-
-    // ================== GALERIA DE IMAGENS ==================
+    
+    function openMural() {
+        let html = `<div><div id="muralPosts" style="max-height:350px; overflow-y:auto;"></div><textarea id="newMural" rows="3" style="width:100%;"></textarea><button id="addMural" class="game-btn">PUBLICAR</button></div>`;
+        createWin("MURAL COLABORATIVO", html, 600, 520);
+        refreshMuralUI();
+        setTimeout(() => {
+            document.getElementById('addMural').onclick = () => {
+                let text = document.getElementById('newMural').value.trim();
+                if (text) {
+                    let post = { type: 'mural', user: currentUser, text: text, time: new Date().toLocaleString() };
+                    muralPosts.unshift(post);
+                    saveLocalData();
+                    refreshMuralUI();
+                    broadcastToPeers(post);
+                    document.getElementById('newMural').value = '';
+                }
+            };
+        }, 100);
+    }
+    
+    // ================== RANKING ==================
+    function refreshRankingUI() {
+        let container = document.getElementById('rankingList');
+        if (!container) return;
+        container.innerHTML = gameScores.slice(0, 30).map((s, i) => `<div class="ranking-item">${i+1}º - <b>${s.user}</b> | ${s.game} | ${s.score} pts | ${s.date}</div>`).join('');
+    }
+    
+    function openRanking() {
+        let html = `<div id="rankingList" style="max-height:400px; overflow-y:auto;"></div>`;
+        createWin("RANKING", html, 500, 480);
+        refreshRankingUI();
+        setInterval(refreshRankingUI, 3000);
+    }
+    
+    // ================== JOGADORES ==================
+    function updatePlayersUI() {
+        let container = document.getElementById('playersList');
+        if (!container) return;
+        let allPlayers = [currentUser, ...connectedPeers];
+        container.innerHTML = allPlayers.map(p => `<div style="background:#0a1a0a; padding:10px; margin:8px 0; border-left:3px solid #6aff8a;">🟢 ${p} ${p === currentUser ? '(você)' : ''}</div>`).join('');
+    }
+    
+    function openPlayers() {
+        let html = `<div id="playersList"></div><div class="room-id-box">📡 ID DA SALA: <span class="room-id">${currentRoom}</span><br><button id="copyRoom" class="game-btn" style="margin-top:8px;">📋 COPIAR</button></div>`;
+        createWin("JOGADORES ONLINE", html, 450, 400);
+        updatePlayersUI();
+        setTimeout(() => {
+            document.getElementById('copyRoom').onclick = () => { navigator.clipboard.writeText(currentRoom); alert("ID copiado!"); };
+        }, 100);
+    }
+    
+    // ================== GALERIA ==================
     function openGallery() {
-        let html = `<div>
-            <h3>🖼️ GALERIA TÁTICA</h3>
-            <div class="img-gallery" id="galleryGrid" style="max-height:350px; overflow-y:auto;"></div>
-            <div style="margin-top:18px; display:flex; gap:10px;">
-                <input type="text" id="imgUrl" placeholder="URL da imagem (jpg/png/gif)" style="flex:1;">
-                <button id="addImage" class="game-btn">➕ ADICIONAR</button>
-            </div>
-            <p style="font-size:10px; margin-top:10px; color:#6a8a6a;">* As imagens ficam salvas localmente no seu navegador</p>
-        </div>`;
-        createWin("GALERIA DE IMAGENS", html, 680, 550);
+        let html = `<div class="img-gallery" id="galleryGrid"></div><div style="margin-top:15px; display:flex; gap:8px;"><input type="text" id="imgUrl" style="flex:1;" placeholder="URL da imagem"><button id="addImg" class="game-btn">ADICIONAR</button></div>`;
+        createWin("GALERIA", html, 650, 500);
         function renderGallery() {
             let grid = document.getElementById('galleryGrid');
             if (!grid) return;
-            grid.innerHTML = imageGallery.map(img => `<div class="img-card"><img src="${img.url}" alt="img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22100%22 viewBox=%220 0 120 100%22%3E%3Crect width=%22120%22 height=%22100%22 fill=%22%232a6a2a%22/%3E%3Ctext x=%2260%22 y=%2250%22 text-anchor=%22middle%22 fill=%22%236aff8a%22%3EERRO%3C/text%3E%3C/svg%3E'"><div style="margin-top:6px;">${img.name}</div><button class="game-btn" data-id="${img.id}" style="margin-top:8px; padding:4px 12px;">🗑️ REMOVER</button></div>`).join('');
-            document.querySelectorAll('[data-id]').forEach(btn => {
-                btn.onclick = () => { imageGallery = imageGallery.filter(i => i.id != btn.dataset.id); saveGallery(); renderGallery(); };
-            });
+            grid.innerHTML = imageGallery.map(img => `<div class="img-card"><img src="${img.url}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect width=%22100%22 height=%22100%22 fill=%22%232a6a2a%22/%3E%3Ctext x=%2250%22 y=%2250%22 text-anchor=%22middle%22 fill=%22%236aff8a%22%3EERRO%3C/text%3E%3C/svg%3E'"><div>${img.name}</div><button class="game-btn" data-id="${img.id}" style="margin-top:5px;">REMOVER</button></div>`).join('');
+            document.querySelectorAll('[data-id]').forEach(btn => { btn.onclick = () => { imageGallery = imageGallery.filter(i => i.id != btn.dataset.id); saveLocalData(); renderGallery(); }; });
         }
         renderGallery();
         setTimeout(() => {
-            document.getElementById('addImage').onclick = () => {
+            document.getElementById('addImg').onclick = () => {
                 let url = document.getElementById('imgUrl').value.trim();
-                if (!url) return;
-                imageGallery.push({ id: Date.now(), url: url, name: `Imagem_${imageGallery.length+1}` });
-                saveGallery();
-                renderGallery();
-                document.getElementById('imgUrl').value = '';
+                if (url) { imageGallery.push({ id: Date.now(), url: url, name: `Img_${imageGallery.length+1}` }); saveLocalData(); renderGallery(); document.getElementById('imgUrl').value = ''; }
             };
-        }, 50);
+        }, 100);
     }
-
-    // ================== RANKING ==================
-    function openRanking() {
-        let html = `<div>
-            <h3>🏆 RANKING DE PONTUAÇÕES</h3>
-            <div id="rankingList" style="max-height:380px; overflow-y:auto;"></div>
-            <p style="margin-top:10px; font-size:10px;">* Pontuações registradas em jogos</p>
-        </div>`;
-        createWin("RANKING", html, 520, 480);
-        function renderRanking() {
-            let container = document.getElementById('rankingList');
-            if (!container) return;
-            let sorted = [...gameScores].slice(0, 30);
-            container.innerHTML = sorted.map((s, i) => `<div class="ranking-item">${i+1}º - <b>${s.user}</b> | 🎮 ${s.game} | 🏆 ${s.score} pts | 📅 ${s.date}</div>`).join('');
-            if(sorted.length === 0) container.innerHTML = "<p style='margin:20px; text-align:center;'>Sem pontuações ainda. Jogue e registre seus recordes!</p>";
-        }
-        renderRanking();
-        setInterval(renderRanking, 3000);
-    }
-
-    // ================== EDITOR DE TEXTO ==================
-    function openEditor() {
-        let savedText = localStorage.getItem(`cmd_editor_${currentUser}`) || '';
-        let html = `<div>
-            <h3>✏️ EDITOR DE TEXTO TÁTICO</h3>
-            <textarea id="editorContent" rows="16" style="width:100%; background:#0a1a0a; color:#8aff8a; border:1px solid #2a6a2a; padding:10px; font-family:monospace; font-size:12px;">${savedText}</textarea>
-            <div style="display:flex; gap:12px; margin-top:12px;">
-                <button id="saveEditor" class="game-btn">💾 SALVAR</button>
-                <button id="clearEditor" class="game-btn">🗑️ LIMPAR</button>
-            </div>
-            <p style="font-size:10px; margin-top:10px;">* Documento salvo localmente para este usuário</p>
-        </div>`;
-        createWin("EDITOR DE TEXTO", html, 650, 550);
-        setTimeout(() => {
-            document.getElementById('saveEditor').onclick = () => {
-                let content = document.getElementById('editorContent').value;
-                localStorage.setItem(`cmd_editor_${currentUser}`, content);
-                alert("✅ Documento salvo com sucesso!");
-            };
-            document.getElementById('clearEditor').onclick = () => {
-                document.getElementById('editorContent').value = '';
-                localStorage.setItem(`cmd_editor_${currentUser}`, '');
-                alert("Documento limpo!");
-            };
-        }, 50);
-    }
-
-    // ================== CALCULADORA ==================
-    function openCalc() {
-        let html = `<div>
-            <h3>🧮 CALCULADORA TÁTICA</h3>
-            <input type="text" id="calcDisplay" readonly style="width:100%; padding:14px; font-size:20px; text-align:right; margin-bottom:12px; background:#0a1a0a; color:#6aff8a; border:1px solid #2a6a2a;">
-            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px;">
-                <button class="game-btn calc-btn" data-val="7">7</button><button class="game-btn calc-btn" data-val="8">8</button><button class="game-btn calc-btn" data-val="9">9</button><button class="game-btn calc-btn" data-op="/">/</button>
-                <button class="game-btn calc-btn" data-val="4">4</button><button class="game-btn calc-btn" data-val="5">5</button><button class="game-btn calc-btn" data-val="6">6</button><button class="game-btn calc-btn" data-op="*">*</button>
-                <button class="game-btn calc-btn" data-val="1">1</button><button class="game-btn calc-btn" data-val="2">2</button><button class="game-btn calc-btn" data-val="3">3</button><button class="game-btn calc-btn" data-op="-">-</button>
-                <button class="game-btn calc-btn" data-val="0">0</button><button class="game-btn calc-btn" data-val=".">.</button><button class="game-btn calc-btn" id="calcEqual">=</button><button class="game-btn calc-btn" data-op="+">+</button>
-                <button class="game-btn calc-btn" id="calcClear">C</button><button class="game-btn calc-btn" id="calcBackspace">⌫</button>
-            </div>
-        </div>`;
-        createWin("CALCULADORA", html, 380, 450);
-        let calcDisplay = document.getElementById('calcDisplay');
-        let currentExpr = '';
-        setTimeout(() => {
-            document.querySelectorAll('.calc-btn[data-val]').forEach(btn => {
-                btn.onclick = () => { currentExpr += btn.dataset.val; calcDisplay.value = currentExpr; };
-            });
-            document.querySelectorAll('.calc-btn[data-op]').forEach(btn => {
-                btn.onclick = () => { currentExpr += btn.dataset.op; calcDisplay.value = currentExpr; };
-            });
-            document.getElementById('calcEqual').onclick = () => {
-                try { let result = eval(currentExpr); currentExpr = String(result); calcDisplay.value = currentExpr; }
-                catch(e) { calcDisplay.value = "ERRO"; currentExpr = ''; }
-            };
-            document.getElementById('calcClear').onclick = () => { currentExpr = ''; calcDisplay.value = ''; };
-            document.getElementById('calcBackspace').onclick = () => { currentExpr = currentExpr.slice(0,-1); calcDisplay.value = currentExpr; };
-        }, 50);
-    }
-
-    // ================== TERMINAL CMD ==================
-    function openTerminal() {
-        let history = [];
-        let html = `<div>
-            <h3>💻 TERMINAL DE COMANDOS</h3>
-            <div id="terminalOutput" style="height:340px; background:#0a1a0a; border:1px solid #2a6a2a; overflow-y:auto; padding:10px; font-family:monospace; font-size:11px;"></div>
-            <div style="display:flex; margin-top:10px; gap:8px;">
-                <span style="color:#6aff8a;">$></span>
-                <input type="text" id="terminalInput" style="flex:1; background:#0a1a0a; border:1px solid #2a6a2a; color:#8aff8a; padding:8px;">
-                <button id="terminalExec" class="game-btn">EXEC</button>
-            </div>
-        </div>`;
-        createWin("TERMINAL CMD", html, 650, 520);
-        function addOutput(text) {
-            let output = document.getElementById('terminalOutput');
-            output.innerHTML += `<div class="terminal-line">${text}</div>`;
-            output.scrollTop = output.scrollHeight;
-        }
-        function executeCommand(cmd) {
-            let lower = cmd.toLowerCase().trim();
-            if (lower === 'help' || lower === '?') {
-                addOutput("═ COMANDOS DISPONÍVEIS ═");
-                addOutput("help, ?        - Mostra esta ajuda");
-                addOutput("date           - Exibe data e hora atual");
-                addOutput("user           - Mostra usuário atual");
-                addOutput("online         - Lista usuários online");
-                addOutput("clear, cls     - Limpa o terminal");
-                addOutput("list           - Lista arquivos do sistema");
-                addOutput("ficha          - Exibe resumo da ficha");
-                addOutput("chat           - Últimas mensagens do chat");
-                addOutput("say [texto]    - Envia mensagem ao chat");
-                addOutput("rank           - Mostra ranking");
-                addOutput("whoami         - Alias para user");
-            } else if (lower === 'date') {
-                addOutput(`📅 ${new Date().toString()}`);
-            } else if (lower === 'user' || lower === 'whoami') {
-                addOutput(`👤 Usuário atual: ${currentUser}`);
-            } else if (lower === 'online') {
-                addOutput(`🟢 Usuários online: ${onlineUsers.join(', ')}`);
-            } else if (lower === 'clear' || lower === 'cls') {
-                document.getElementById('terminalOutput').innerHTML = '';
-            } else if (lower === 'list') {
-                let keys = Object.keys(localStorage).filter(k => k.startsWith('cmd_'));
-                addOutput(`📁 Arquivos do sistema (${keys.length}): ${keys.join(', ')}`);
-            } else if (lower === 'ficha') {
-                addOutput(`📋 Ficha de ${currentUser}:`);
-                addOutput(`  Unidade: ${militarData.unidade}`);
-                addOutput(`  Codinome: ${militarData.codinome}`);
-                addOutput(`  Patente: ${militarData.patente}`);
-                addOutput(`  Missão: ${militarData.missao}`);
-            } else if (lower === 'chat') {
-                addOutput(`💬 Últimas mensagens:`);
-                globalChat.slice(-5).forEach(m => addOutput(`  ${m.user}: ${m.text}`));
-            } else if (lower === 'rank') {
-                addOutput(`🏆 Top 5 pontuações:`);
-                gameScores.slice(0,5).forEach((s,i) => addOutput(`  ${i+1}. ${s.user} - ${s.game}: ${s.score}`));
-            } else if (cmd.startsWith('say ')) {
-                let msg = cmd.substring(4);
-                globalChat.push({ user: `[CMD]${currentUser}`, text: msg, time: new Date().toLocaleTimeString() });
-                saveChat();
-                addOutput(`📨 Mensagem enviada ao chat: "${msg}"`);
-            } else if (cmd) {
-                addOutput(`❌ Comando não reconhecido: "${cmd}". Digite "help" para ajuda.`);
-            }
-        }
-        setTimeout(() => {
-            let input = document.getElementById('terminalInput');
-            let btn = document.getElementById('terminalExec');
-            btn.onclick = () => { executeCommand(input.value); input.value = ''; };
-            input.addEventListener('keypress', (e) => { if(e.key === 'Enter') { executeCommand(input.value); input.value = ''; } });
-            addOutput("═ TERMINAL CMD OS v5.0 ═");
-            addOutput(`Bem-vindo, ${currentUser}. Digite 'help' para comandos disponíveis.`);
-        }, 50);
-    }
-
-    // ================== ARQUIVOS ==================
-    function openFiles() {
-        let html = `<div>
-            <div class="folder-item" id="showUsers">🔐 USUÁRIOS CADASTRADOS</div>
-            <div class="folder-item" id="showOnline">🟢 USUÁRIOS ONLINE</div>
-            <div class="folder-item" id="showChat">💬 ÚLTIMAS MENSAGENS</div>
-            <div class="folder-item" id="showScores">🏆 RANKING DE PONTOS</div>
-            <div class="folder-item" id="showStorage">💾 ARMAZENAMENTO</div>
-            <div id="fileView" style="margin-top:18px; background:#0a1a0a; padding:12px; border:1px solid #2a6a2a; max-height:260px; overflow-y:auto;"></div>
-        </div>`;
-        createWin("ARQUIVOS DO SISTEMA", html, 580, 560);
-        setTimeout(() => {
-            document.getElementById('showUsers').onclick = () => document.getElementById('fileView').innerHTML = `<pre style="color:#8aff8a;">${JSON.stringify(usersDB, null, 2)}</pre>`;
-            document.getElementById('showOnline').onclick = () => document.getElementById('fileView').innerHTML = `<pre style="color:#8aff8a;">Online: ${onlineUsers.join(', ') || 'Nenhum'}\nTotal: ${onlineUsers.length} usuário(s)</pre>`;
-            document.getElementById('showChat').onclick = () => document.getElementById('fileView').innerHTML = `<pre style="color:#8aff8a;">${globalChat.slice(-15).map(m => `${m.user} [${m.time}]: ${m.text}`).join('\n')}</pre>`;
-            document.getElementById('showScores').onclick = () => document.getElementById('fileView').innerHTML = `<pre style="color:#8aff8a;">${gameScores.slice(0,20).map(s => `${s.user} - ${s.game}: ${s.score} (${s.date})`).join('\n') || 'Nenhuma pontuação registrada'}</pre>`;
-            document.getElementById('showStorage').onclick = () => {
-                let items = [];
-                for(let i = 0; i < localStorage.length; i++) {
-                    let key = localStorage.key(i);
-                    if(key && key.startsWith('cmd_')) items.push(`${key}: ${localStorage.getItem(key).substring(0, 60)}...`);
-                }
-                document.getElementById('fileView').innerHTML = `<pre style="color:#8aff8a;">${items.join('\n') || 'Nenhum dado armazenado'}</pre>`;
-            };
-        }, 50);
-    }
-
+    
     // ================== CAMPO MINADO ==================
     function openMines() {
-        let html = `<div><div id="minesDiv" style="display:flex; justify-content:center; margin:10px 0;"></div><div id="mineMsg" style="text-align:center; margin:12px; font-weight:bold;"></div><button id="newMineBtn" class="game-btn">🔄 NOVO JOGO</button></div>`;
+        let html = `<div><div id="minesDiv" style="display:flex; justify-content:center;"></div><div id="mineMsg"></div><button id="newMine" class="game-btn">NOVO</button></div>`;
         createWin("CAMPO MINADO", html, 450, 530);
-        let size = 8, mines = 10, board, revealed, gameOver = false;
+        let size=8, mines=10, board, revealed, gameOver=false;
         function initGame() {
-            gameOver = false;
-            board = Array(size).fill().map(() => Array(size).fill(0));
-            revealed = Array(size).fill().map(() => Array(size).fill(false));
-            let minePos = [];
-            while (minePos.length < mines) { let r = Math.floor(Math.random() * size), c = Math.floor(Math.random() * size); if (!minePos.some(m => m[0] === r && m[1] === c)) minePos.push([r, c]); }
-            for (let [r, c] of minePos) board[r][c] = 'M';
-            for (let r = 0; r < size; r++) for (let c = 0; c < size; c++) if (board[r][c] !== 'M') { let cnt = 0; for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) { let nr = r + dr, nc = c + dc; if (nr >= 0 && nr < size && nc >= 0 && nc < size && board[nr][nc] === 'M') cnt++; } board[r][c] = cnt; }
+            gameOver=false;
+            board=Array(size).fill().map(()=>Array(size).fill(0));
+            revealed=Array(size).fill().map(()=>Array(size).fill(false));
+            let minePos=[];
+            while(minePos.length<mines){ let r=Math.floor(Math.random()*size), c=Math.floor(Math.random()*size); if(!minePos.some(m=>m[0]===r && m[1]===c)) minePos.push([r,c]); }
+            for(let [r,c] of minePos) board[r][c]='M';
+            for(let r=0;r<size;r++) for(let c=0;c<size;c++) if(board[r][c]!=='M'){ let cnt=0; for(let dr=-1;dr<=1;dr++) for(let dc=-1;dc<=1;dc++){ let nr=r+dr,nc=c+dc; if(nr>=0 && nr<size && nc>=0 && nc<size && board[nr][nc]==='M') cnt++; } board[r][c]=cnt; }
             render();
-            document.getElementById('mineMsg').innerHTML = '';
         }
-        function render() {
-            let cont = document.getElementById('minesDiv'); if (!cont) return;
-            cont.style.display = 'grid'; cont.style.gridTemplateColumns = `repeat(${size}, 36px)`;
-            cont.innerHTML = '';
-            for (let i = 0; i < size; i++) for (let j = 0; j < size; j++) {
-                let cell = document.createElement('div'); cell.className = 'mine-cell';
-                cell.style.background = revealed[i][j] ? '#1a3a1a' : '#0a1a0a';
-                if (revealed[i][j]) cell.innerText = board[i][j] === 'M' ? '💣' : (board[i][j] || '');
-                if (!gameOver && !revealed[i][j]) cell.onclick = () => {
-                    if (board[i][j] === 'M') {
-                        gameOver = true; document.getElementById('mineMsg').innerHTML = '💥 DERROTA! Você explodiu uma mina! 💥';
-                        for (let x = 0; x < size; x++) for (let y = 0; y < size; y++) if (board[x][y] === 'M') revealed[x][y] = true;
-                        render();
-                    } else { revealed[i][j] = true; render(); }
+        function render(){
+            let cont=document.getElementById('minesDiv'); if(!cont)return;
+            cont.style.display='grid'; cont.style.gridTemplateColumns=`repeat(${size},36px)`;
+            cont.innerHTML='';
+            for(let i=0;i<size;i++) for(let j=0;j<size;j++){
+                let cell=document.createElement('div'); cell.className='mine-cell';
+                cell.style.background=revealed[i][j]?'#1a3a1a':'#0a1a0a';
+                if(revealed[i][j]) cell.innerText=board[i][j]==='M'?'💣':(board[i][j]||'');
+                if(!gameOver && !revealed[i][j]) cell.onclick=()=>{
+                    if(board[i][j]==='M'){ gameOver=true; document.getElementById('mineMsg').innerHTML='💥 DERROTA!'; for(let x=0;x<size;x++) for(let y=0;y<size;y++) if(board[x][y]==='M') revealed[x][y]=true; render(); }
+                    else{ revealed[i][j]=true; render(); }
                 };
                 cont.appendChild(cell);
             }
         }
         initGame();
-        document.getElementById('newMineBtn')?.addEventListener('click', () => initGame());
+        document.getElementById('newMine')?.addEventListener('click',()=>initGame());
     }
-
-    // ================== BATALHA NAVAL 2P ==================
-    function openNaval() {
-        let html = `<div id="navalContainer" style="display:flex; flex-direction:column; align-items:center;"></div>`;
-        createWin("BATALHA NAVAL (2 JOGADORES)", html, 780, 620);
-        let playerTurn = 1, p1Score = 0, p2Score = 0, gameOver = false;
-        let board1 = Array(8).fill().map(() => Array(8).fill(false));
-        let board2 = Array(8).fill().map(() => Array(8).fill(false));
-        let hits1 = Array(8).fill().map(() => Array(8).fill(false));
-        let hits2 = Array(8).fill().map(() => Array(8).fill(false));
-        let ships = [[0,0],[2,3],[5,5],[7,1],[1,6],[3,4]];
-        ships.forEach(([r,c]) => { if(r<8 && c<8) { board1[r][c] = true; board2[r][c] = true; } });
-        function renderNaval() {
-            let cont = document.getElementById('navalContainer'); if (!cont) return;
-            cont.innerHTML = `<div style="display:flex; gap:40px; flex-wrap:wrap; justify-content:center;">
-                <div style="text-align:center;"><h3>⚓ ${currentUser}</h3><div id="b1" style="display:grid; grid-template-columns:repeat(8,38px); gap:3px;"></div><p style="margin-top:8px;">🎯 Acertos: ${p1Score}/${ships.length}</p></div>
-                <div style="text-align:center;"><h3>⚓ OPONENTE</h3><div id="b2" style="display:grid; grid-template-columns:repeat(8,38px); gap:3px;"></div><p style="margin-top:8px;">🎯 Acertos: ${p2Score}/${ships.length}</p></div>
-            </div><div id="turnMsg" style="margin:18px; font-weight:bold; text-align:center;"></div><button id="resetNav" class="game-btn">🔄 NOVO JOGO</button>`;
-            let b1 = document.getElementById('b1'), b2 = document.getElementById('b2');
-            for (let i = 0; i < 8; i++) for (let j = 0; j < 8; j++) {
-                let c1 = document.createElement('div'); c1.className = 'naval-cell'; 
-                c1.innerText = hits1[i][j] ? (board1[i][j] ? '💥' : '❌') : '~';
-                c1.style.background = hits1[i][j] ? (board1[i][j] ? '#8a4a4a' : '#2a4a2a') : '#0f180f';
-                b1.appendChild(c1);
-                let c2 = document.createElement('div'); c2.className = 'naval-cell'; 
-                c2.innerText = hits2[i][j] ? (board2[i][j] ? '💥' : '❌') : '~';
-                c2.style.background = hits2[i][j] ? (board2[i][j] ? '#8a4a4a' : '#2a4a2a') : '#0f180f';
-                if (!gameOver && !hits2[i][j] && playerTurn === 1) c2.onclick = () => { 
-                    if (!gameOver && playerTurn === 1 && !hits2[i][j]) { 
-                        hits2[i][j] = true; 
-                        if (board2[i][j]) p1Score++; 
-                        playerTurn = 2; 
-                        renderNaval(); 
-                        if(p1Score === ships.length) { gameOver = true; alert(`🏆 ${currentUser} VENCEU A BATALHA NAVAL! 🏆`); renderNaval(); }
-                    } 
-                };
-                if (!gameOver && !hits1[i][j] && playerTurn === 2) c1.onclick = () => { 
-                    if (!gameOver && playerTurn === 2 && !hits1[i][j]) { 
-                        hits1[i][j] = true; 
-                        if (board1[i][j]) p2Score++; 
-                        playerTurn = 1; 
-                        renderNaval(); 
-                        if(p2Score === ships.length) { gameOver = true; alert(`🏆 OPONENTE VENCEU A BATALHA NAVAL! 🏆`); renderNaval(); }
-                    } 
-                };
-                b2.appendChild(c2);
-            }
-            let msg = p1Score === ships.length ? `🏆 ${currentUser} VENCEU!` : (p2Score === ships.length ? `🏆 OPONENTE VENCEU!` : `🎯 VEZ DO ${playerTurn === 1 ? currentUser : "OPONENTE"} ATACAR!`);
-            document.getElementById('turnMsg').innerHTML = `<span style="color:#6aff8a; font-size:14px;">${msg}</span>`;
-        }
-        renderNaval();
-        setTimeout(() => document.getElementById('resetNav')?.addEventListener('click', () => { location.reload(); }), 50);
-    }
-
-    // ================== JOGO DA COBRA ==================
+    
+    // ================== COBRA ==================
     function openSnake() {
-        let html = `<div style="text-align:center;"><div id="snakeGrid" class="snake-grid"></div><button id="startSnake" class="game-btn">🐍 INICIAR JOGO</button><p style="margin-top:10px;">🏆 SCORE: <span id="snakeScore" style="color:#6aff8a; font-weight:bold;">0</span></p><p style="font-size:11px;">⬆️ W | ⬇️ S | ⬅️ A | ➡️ D</p></div>`;
+        let html = `<div style="text-align:center;"><div id="snakeGrid" class="snake-grid"></div><button id="startSnake" class="game-btn">INICIAR</button><p>SCORE: <span id="snakeScore">0</span></p><p>W A S D</p></div>`;
         createWin("JOGO DA COBRA", html, 480, 550);
-        let snake = [[10,10]], dir = "RIGHT", food = [15,15], game = false, score = 0, interval;
-        function build() {
-            let grid = document.getElementById('snakeGrid'); if (!grid) return;
-            grid.innerHTML = '';
-            for (let i = 0; i < 20; i++) for (let j = 0; j < 20; j++) {
-                let cell = document.createElement('div'); cell.className = 'snake-cell';
-                if (snake.some(s => s[0] === i && s[1] === j)) cell.classList.add('snake');
-                if (food[0] === i && food[1] === j) cell.classList.add('food');
+        let snake=[[10,10]], dir="RIGHT", food=[15,15], game=false, score=0, interval;
+        function build(){
+            let grid=document.getElementById('snakeGrid'); if(!grid)return;
+            grid.innerHTML='';
+            for(let i=0;i<20;i++) for(let j=0;j<20;j++){
+                let cell=document.createElement('div'); cell.className='snake-cell';
+                if(snake.some(s=>s[0]===i && s[1]===j)) cell.classList.add('snake');
+                if(food[0]===i && food[1]===j) cell.classList.add('food');
                 grid.appendChild(cell);
             }
         }
-        function updateSnake() {
-            if (!game) return;
-            let head = snake[0], newHead = [...head];
-            if (dir === 'RIGHT') newHead[1]++; if (dir === 'LEFT') newHead[1]--; if (dir === 'UP') newHead[0]--; if (dir === 'DOWN') newHead[0]++;
-            if (newHead[0] < 0 || newHead[0] >= 20 || newHead[1] < 0 || newHead[1] >= 20 || snake.some(s => s[0] === newHead[0] && s[1] === newHead[1])) { 
-                game = false; clearInterval(interval); addScore("JOGO DA COBRA", score); alert(`🐍 GAME OVER! Pontuação final: ${score}`); return; 
+        function update(){
+            if(!game) return;
+            let head=snake[0], newHead=[...head];
+            if(dir==='RIGHT') newHead[1]++; if(dir==='LEFT') newHead[1]--; if(dir==='UP') newHead[0]--; if(dir==='DOWN') newHead[0]++;
+            if(newHead[0]<0||newHead[0]>=20||newHead[1]<0||newHead[1]>=20||snake.some(s=>s[0]===newHead[0]&&s[1]===newHead[1])){
+                game=false; clearInterval(interval); addScoreToRanking("JOGO DA COBRA", score); alert(`GAME OVER! Score: ${score}`); return;
             }
             snake.unshift(newHead);
-            if (newHead[0] === food[0] && newHead[1] === food[1]) { score++; document.getElementById('snakeScore').innerText = score; food = [Math.floor(Math.random() * 20), Math.floor(Math.random() * 20)]; } else snake.pop();
+            if(newHead[0]===food[0] && newHead[1]===food[1]){ score++; document.getElementById('snakeScore').innerText=score; food=[Math.floor(Math.random()*20),Math.floor(Math.random()*20)]; } else snake.pop();
             build();
         }
-        document.getElementById('startSnake')?.addEventListener('click', () => { if (interval) clearInterval(interval); snake = [[10,10]]; dir = "RIGHT"; score = 0; food = [15,15]; game = true; document.getElementById('snakeScore').innerText = '0'; build(); interval = setInterval(updateSnake, 130); });
-        window.addEventListener('keydown', (e) => { if (!game) return; let k = e.key.toLowerCase(); if (k === 'w' && dir !== 'DOWN') dir = 'UP'; if (k === 's' && dir !== 'UP') dir = 'DOWN'; if (k === 'a' && dir !== 'RIGHT') dir = 'LEFT'; if (k === 'd' && dir !== 'LEFT') dir = 'RIGHT'; });
+        document.getElementById('startSnake')?.addEventListener('click',()=>{ if(interval)clearInterval(interval); snake=[[10,10]]; dir="RIGHT"; score=0; food=[15,15]; game=true; document.getElementById('snakeScore').innerText='0'; build(); interval=setInterval(update,130); });
+        window.addEventListener('keydown',(e)=>{ if(!game) return; let k=e.key.toLowerCase(); if(k==='w' && dir!=='DOWN') dir='UP'; if(k==='s' && dir!=='UP') dir='DOWN'; if(k==='a' && dir!=='RIGHT') dir='LEFT'; if(k==='d' && dir!=='LEFT') dir='RIGHT'; });
         build();
     }
-
-    // ================== DINO RUN ==================
+    
+    // ================== DINO ==================
     function openDino() {
-        let html = `<div style="text-align:center;"><div id="dinoArea" style="height:160px;background:#0a1a0a;position:relative;margin:15px;overflow:hidden;border:2px solid #2a6a2a;border-radius:6px;">
-            <div id="dinoC" style="position:absolute;bottom:0;left:55px;width:28px;height:28px;background:linear-gradient(135deg,#6aff8a,#4aff6a);border-radius:4px;"></div>
-            <div id="obsC" style="position:absolute;bottom:0;right:0;width:22px;height:28px;background:#8a6a4a;border-radius:2px;"></div>
-        </div><p>🏆 SCORE: <span id="dinoScore" style="color:#6aff8a; font-weight:bold;">0</span></p><button id="startDino" class="game-btn">🦖 CORRER</button><p style="font-size:11px;">🔘 PRESSIONE ESPAÇO PARA PULAR</p></div>`;
-        createWin("DINO RUN", html, 530, 430);
-        let run = false, score = 0, obsX = 320, jump = false, y = 0, loop;
-        function gameLoopD() {
-            if (!run) return;
-            obsX -= 7; if (obsX < 0) { obsX = 300; score++; document.getElementById('dinoScore').innerText = score; }
-            document.getElementById('obsC').style.right = (320 - obsX) + 'px';
-            let d = document.getElementById('dinoC');
-            if (!jump && y === 0 && Math.abs(obsX - 60) < 28) { 
-                run = false; clearInterval(loop); addScore("DINO RUN", score); alert(`🦖 GAME OVER! Pontuação: ${score}`); 
-            }
-            if (jump) { y -= 1.4; if (y <= -26) { jump = false; y = 0; } d.style.bottom = y + 24 + 'px'; } else d.style.bottom = '0px';
+        let html = `<div style="text-align:center;"><div id="dinoArea" style="height:150px;background:#0a1a0a;position:relative;margin:10px;overflow:hidden;border:1px solid #2a6a2a;"><div id="dinoC" style="position:absolute;bottom:0;left:50px;width:25px;height:25px;background:#6aff8a;"></div><div id="obsC" style="position:absolute;bottom:0;right:0;width:20px;height:25px;background:#8a6a4a;"></div></div><p>SCORE: <span id="dinoScore">0</span></p><button id="startDino" class="game-btn">CORRER</button><p>ESPACO PARA PULAR</p></div>`;
+        createWin("DINO RUN", html, 500, 420);
+        let run=false, score=0, obsX=300, jump=false, y=0, loop;
+        function gameLoop(){
+            if(!run) return;
+            obsX-=6; if(obsX<0){ obsX=280; score++; document.getElementById('dinoScore').innerText=score; }
+            document.getElementById('obsC').style.right=(300-obsX)+'px';
+            let d=document.getElementById('dinoC');
+            if(!jump && y===0 && Math.abs(obsX-55)<25){ run=false; clearInterval(loop); addScoreToRanking("DINO RUN", score); alert(`GAME OVER! Score: ${score}`); }
+            if(jump){ y-=1.3; if(y<=-24){ jump=false; y=0; } d.style.bottom=y+22+'px'; } else d.style.bottom='0px';
         }
-        document.getElementById('startDino')?.addEventListener('click', () => { if (loop) clearInterval(loop); obsX = 320; score = 0; run = true; jump = false; y = 0; document.getElementById('dinoScore').innerText = '0'; loop = setInterval(gameLoopD, 26); });
-        window.addEventListener('keydown', (e) => { if (e.code === 'Space' && run && !jump) { e.preventDefault(); jump = true; y = 22; } });
+        document.getElementById('startDino')?.addEventListener('click',()=>{ if(loop)clearInterval(loop); obsX=300; score=0; run=true; jump=false; y=0; document.getElementById('dinoScore').innerText='0'; loop=setInterval(gameLoop,28); });
+        window.addEventListener('keydown',(e)=>{ if(e.code==='Space' && run && !jump){ e.preventDefault(); jump=true; y=20; } });
     }
-
-    window.addEventListener('beforeunload', () => { if(currentUser) removeOnline(); });
+    
+    // ================== BATALHA NAVAL P2P ==================
+    let currentNavalGame = null;
+    let navalBoard = null;
+    let navalHits = null;
+    
+    function openNavalLobby() {
+        let html = `<div><h3>⚓ BATALHA NAVAL P2P</h3><div id="navalLobbyPlayers"></div><div id="navalGameArea"></div></div>`;
+        createWin("BATALHA NAVAL", html, 700, 550);
+        
+        function updateLobby() {
+            let container = document.getElementById('navalLobbyPlayers');
+            if (!container) return;
+            let others = connectedPeers.filter(p => p !== currentUser);
+            container.innerHTML = `<h4>👥 DESAFIAR OPONENTE</h4>` + others.map(p => `<div class="online-user" data-player="${p}" style="background:#0a2a0a; padding:10px; margin:5px; cursor:pointer;">🎯 DESAFIAR ${p}</div>`).join('');
+            document.querySelectorAll('[data-player]').forEach(el => {
+                el.onclick = () => {
+                    let challenge = { type: 'naval_challenge', from: currentUser, to: el.dataset.player, id: Date.now() };
+                    broadcastToPeers(challenge);
+                    alert(`Desafio enviado para ${el.dataset.player}!`);
+                };
+            });
+        }
+        updateLobby();
+        setInterval(updateLobby, 3000);
+        
+        window.navalChallengeCallback = (challenge) => {
+            if (confirm(`${challenge.from} desafiou você para uma Batalha Naval! Aceitar?`)) {
+                let accept = { type: 'naval_accept', challengeId: challenge.id, from: currentUser, to: challenge.from };
+                broadcastToPeers(accept);
+                initNavalGame(challenge.from, true);
+            }
+        };
+    }
+    
+    function initNavalGame(opponent, isInitiator) {
+        currentNavalGame = { opponent: opponent, board: Array(8).fill().map(() => Array(8).fill(false)), hits: Array(8).fill().map(() => Array(8).fill(false)), myTurn: isInitiator };
+        let ships = [[0,0],[2,3],[5,5],[7,1],[1,6],[3,4]];
+        ships.forEach(([r,c]) => { if(r<8 && c<8) currentNavalGame.board[r][c] = true; });
+        renderNavalGame();
+    }
+    
+    function renderNavalGame() {
+        let container = document.getElementById('navalGameArea');
+        if (!container || !currentNavalGame) return;
+        container.innerHTML = `<div style="text-align:center;"><h4>⚔️ VS ${currentNavalGame.opponent}</h4><div id="navalBoard" style="display:grid; grid-template-columns:repeat(8,40px); gap:3px; justify-content:center;"></div><p>${currentNavalGame.myTurn ? "✅ SUA VEZ!" : "⏳ AGUARDANDO..."}</p><button id="closeNaval" class="game-btn">FECHAR</button></div>`;
+        let boardDiv = document.getElementById('navalBoard');
+        for(let i=0;i<8;i++) for(let j=0;j<8;j++){
+            let cell = document.createElement('div'); cell.className='naval-cell';
+            cell.innerText = currentNavalGame.hits[i][j] ? (currentNavalGame.board[i][j] ? '💥' : '❌') : '~';
+            if(currentNavalGame.myTurn && !currentNavalGame.hits[i][j]) cell.onclick = () => { makeNavalAttack(i,j); };
+            boardDiv.appendChild(cell);
+        }
+        document.getElementById('closeNaval').onclick = () => { currentNavalGame = null; container.innerHTML = ''; };
+    }
+    
+    function makeNavalAttack(row,col){
+        if(!currentNavalGame || !currentNavalGame.myTurn) return;
+        currentNavalGame.hits[row][col] = true;
+        let hit = currentNavalGame.board[row][col];
+        renderNavalGame();
+        broadcastToPeers({ type: 'naval_attack', row: row, col: col, hit: hit, from: currentUser, to: currentNavalGame.opponent });
+        currentNavalGame.myTurn = false;
+        renderNavalGame();
+    }
+    
+    function handleNavalAttack(data){
+        if(currentNavalGame && currentNavalGame.opponent === data.from){
+            currentNavalGame.hits[data.row][data.col] = true;
+            renderNavalGame();
+            currentNavalGame.myTurn = true;
+            renderNavalGame();
+        }
+    }
+    
+    // ================== EDITOR ==================
+    function openEditor() {
+        let saved = localStorage.getItem('editor_' + currentUser) || '';
+        let html = `<textarea id="editorText" rows="15" style="width:100%; background:#0a1a0a; color:#8aff8a; border:1px solid #2a6a2a; padding:10px;">${saved}</textarea><div style="margin-top:10px;"><button id="saveEditor" class="game-btn">SALVAR</button><button id="clearEditor" class="game-btn">LIMPAR</button></div>`;
+        createWin("EDITOR DE TEXTO", html, 600, 520);
+        setTimeout(() => {
+            document.getElementById('saveEditor').onclick = () => { localStorage.setItem('editor_' + currentUser, document.getElementById('editorText').value); alert("Salvo!"); };
+            document.getElementById('clearEditor').onclick = () => { document.getElementById('editorText').value = ''; localStorage.setItem('editor_' + currentUser, ''); };
+        }, 100);
+    }
+    
+    // ================== CALCULADORA ==================
+    function openCalc() {
+        let html = `<div><input type="text" id="calcDisplay" readonly style="width:100%; padding:12px; font-size:18px; text-align:right; margin-bottom:10px;"><div style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px;"><button class="game-btn" data-val="7">7</button><button class="game-btn" data-val="8">8</button><button class="game-btn" data-val="9">9</button><button class="game-btn" data-op="/">/</button><button class="game-btn" data-val="4">4</button><button class="game-btn" data-val="5">5</button><button class="game-btn" data-val="6">6</button><button class="game-btn" data-op="*">*</button><button class="game-btn" data-val="1">1</button><button class="game-btn" data-val="2">2</button><button class="game-btn" data-val="3">3</button><button class="game-btn" data-op="-">-</button><button class="game-btn" data-val="0">0</button><button class="game-btn" data-val=".">.</button><button id="calcEq" class="game-btn">=</button><button class="game-btn" data-op="+">+</button><button id="calcClr" class="game-btn">C</button></div></div>`;
+        createWin("CALCULADORA", html, 380, 450);
+        let expr = '';
+        setTimeout(() => {
+            document.querySelectorAll('[data-val]').forEach(btn => { btn.onclick = () => { expr += btn.dataset.val; document.getElementById('calcDisplay').value = expr; }; });
+            document.querySelectorAll('[data-op]').forEach(btn => { btn.onclick = () => { expr += btn.dataset.op; document.getElementById('calcDisplay').value = expr; }; });
+            document.getElementById('calcEq').onclick = () => { try { expr = eval(expr).toString(); document.getElementById('calcDisplay').value = expr; } catch(e) { expr = ''; document.getElementById('calcDisplay').value = 'ERRO'; } };
+            document.getElementById('calcClr').onclick = () => { expr = ''; document.getElementById('calcDisplay').value = ''; };
+        }, 100);
+    }
+    
+    // ================== TERMINAL ==================
+    function openTerminal() {
+        let html = `<div id="termOut" style="height:300px; background:#0a1a0a; overflow-y:auto; padding:10px; margin-bottom:10px;"></div><div style="display:flex; gap:8px;"><span style="color:#6aff8a;">$></span><input type="text" id="termIn" style="flex:1;"><button id="termExec" class="game-btn">EXEC</button></div>`;
+        createWin("TERMINAL", html, 600, 480);
+        function addOut(t) { let out = document.getElementById('termOut'); out.innerHTML += `<div class="terminal-line">${t}</div>`; out.scrollTop = out.scrollHeight; }
+        setTimeout(() => {
+            document.getElementById('termExec').onclick = () => {
+                let cmd = document.getElementById('termIn').value.trim().toLowerCase();
+                if(cmd === 'help') addOut("Comandos: help, date, user, online, clear, list");
+                else if(cmd === 'date') addOut(new Date().toString());
+                else if(cmd === 'user') addOut(`Usuário: ${currentUser}`);
+                else if(cmd === 'online') addOut(`Online: ${connectedPeers.join(', ')}`);
+                else if(cmd === 'clear') document.getElementById('termOut').innerHTML = '';
+                else if(cmd === 'list') addOut(`Pastas: ${Object.keys(localStorage).filter(k=>k.startsWith('cmd_')).join(', ')}`);
+                else if(cmd) addOut(`Comando não reconhecido: ${cmd}`);
+                document.getElementById('termIn').value = '';
+            };
+            addOut("Terminal CMD OS v5.0 - Digite 'help' para ajuda.");
+        }, 100);
+    }
+    
+    // ================== ARQUIVOS ==================
+    function openFiles() {
+        let html = `<div class="folder-item" id="showUsers">🔐 USUÁRIOS</div><div class="folder-item" id="showStorage">💾 ARMAZENAMENTO</div><div id="fileView" style="margin-top:15px; background:#0a1a0a; padding:10px;"></div>`;
+        createWin("ARQUIVOS", html, 500, 450);
+        setTimeout(() => {
+            document.getElementById('showUsers').onclick = () => document.getElementById('fileView').innerHTML = `<pre>Sala: ${currentRoom}\nJogadores: ${[currentUser,...connectedPeers].join(', ')}</pre>`;
+            document.getElementById('showStorage').onclick = () => {
+                let items = []; for(let i=0;i<localStorage.length;i++){ let k=localStorage.key(i); if(k && k.includes(currentRoom || '')) items.push(k); }
+                document.getElementById('fileView').innerHTML = `<pre>${items.join('\n') || 'Nenhum dado'}</pre>`;
+            };
+        }, 100);
+    }
+    
+    document.getElementById('createRoomBtn').onclick = createOrJoinRoom;
 </script>
 </body>
 </html>
