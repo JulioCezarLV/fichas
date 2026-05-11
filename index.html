@@ -21,28 +21,26 @@
             align-items: center;
         }
 
-        /* container estilo documento militar */
+        /* CONTAINER PRINCIPAL - COMPACTADO PARA CABER EXATAMENTE EM UMA PÁGINA A4 */
         .sheet {
-            max-width: 1100px;
+            max-width: 850px;
             width: 100%;
             background: #e8e3d5;
-            background-image: none;
             border: 2px solid #5a4a2e;
             box-shadow: 12px 12px 0 rgba(0, 0, 0, 0.2);
-            padding: 20px 24px 32px;
+            padding: 8px 12px 12px;
             position: relative;
         }
 
-        /* selo / topo militar */
+        /* TOPO */
         .military-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            border-bottom: 3px solid #4a3a28;
-            padding-bottom: 12px;
-            margin-bottom: 22px;
-            flex-wrap: wrap;
-            gap: 15px;
+            border-bottom: 2px solid #4a3a28;
+            padding-bottom: 4px;
+            margin-bottom: 6px;
+            gap: 6px;
         }
 
         .title-section {
@@ -50,76 +48,62 @@
         }
 
         .title-section h1 {
-            font-size: 1.6rem;
+            font-size: 1.1rem;
             font-weight: 900;
-            letter-spacing: 3px;
+            letter-spacing: 1px;
             color: #2b4a2f;
-            margin: 0 0 6px 0;
+            margin: 0 0 1px 0;
             font-family: 'Courier New', monospace;
             text-transform: uppercase;
-            border-left: 8px solid #6b4c2c;
-            padding-left: 14px;
+            border-left: 4px solid #6b4c2c;
+            padding-left: 8px;
         }
 
         .title-section .sub {
-            font-size: 0.8rem;
+            font-size: 0.55rem;
             color: #4a3a2a;
             text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
-        /* SLOT DE IMAGEM - AGORA COM UPLOAD LOCAL */
+        /* IMAGEM - TAMANHO MÍNIMO */
         .image-slot {
             background: #bcb09b;
             border: 2px solid #4a3a28;
-            width: 130px;
-            min-width: 130px;
-            height: 140px;
+            width: 85px;
+            min-width: 85px;
+            height: 95px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            font-size: 0.7rem;
-            color: #2c2b26;
-            font-weight: bold;
             background-color: #d8ceb4;
-            box-shadow: inset 0 0 0 1px #f0ecd9, 3px 3px 0 rgba(0,0,0,0.1);
             overflow: hidden;
-            position: relative;
         }
 
         .image-preview-container {
             width: 100%;
-            height: 95px;
+            height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: #a89b7a;
             overflow: hidden;
-            position: relative;
-            border-bottom: 1px solid #6b5a3e;
             cursor: pointer;
         }
 
         .image-preview-container img {
             max-width: 100%;
             max-height: 100%;
-            width: auto;
-            height: auto;
             object-fit: contain;
-            display: block;
         }
 
         .image-preview-container .no-image {
             color: #4a3e2a;
-            font-size: 0.65rem;
+            font-size: 0.45rem;
             text-align: center;
-            padding: 8px;
+            padding: 2px;
         }
 
         .image-input-area {
-            padding: 6px 8px;
+            padding: 2px 3px;
             width: 100%;
         }
 
@@ -127,16 +111,14 @@
             width: 100%;
             background: #fffcf0;
             border: 1px solid #7c6846;
-            font-family: monospace;
-            font-size: 0.6rem;
-            padding: 3px;
-            cursor: pointer;
+            font-size: 0.4rem;
+            padding: 1px;
         }
 
         .image-buttons {
             display: flex;
-            gap: 4px;
-            margin-top: 4px;
+            gap: 2px;
+            margin-top: 2px;
             justify-content: center;
         }
 
@@ -144,219 +126,222 @@
             background: #5e4b30;
             border: none;
             color: #efe3cd;
-            font-family: monospace;
-            font-size: 0.6rem;
-            padding: 2px 6px;
+            font-size: 0.4rem;
+            padding: 1px 2px;
             cursor: pointer;
             box-shadow: none;
-            text-transform: none;
-            letter-spacing: 0;
         }
 
-        .image-buttons button:hover {
-            background: #7a6240;
-            transform: none;
-        }
-
-        /* blocos de informações */
+        /* INFORMAÇÕES BÁSICAS */
         .info-bar {
             background: #d6cdb2;
             border: 1px solid #8b7a5b;
-            padding: 12px 18px;
-            margin-bottom: 22px;
+            padding: 3px 6px;
+            margin-bottom: 6px;
             display: flex;
             flex-wrap: wrap;
-            gap: 16px;
+            gap: 4px;
             justify-content: space-between;
-            font-weight: bold;
         }
 
         .info-item {
             display: flex;
             align-items: baseline;
-            gap: 8px;
-            flex-wrap: wrap;
+            gap: 3px;
         }
 
         .info-item label {
-            font-size: 0.75rem;
+            font-size: 0.5rem;
             text-transform: uppercase;
             background: #5e4b30;
             color: #efe3cd;
-            padding: 2px 10px;
-            letter-spacing: 1px;
+            padding: 1px 3px;
         }
 
         .info-item input {
             background: #fffef5;
             border: 1px solid #7a6442;
-            padding: 5px 8px;
+            padding: 1px 3px;
             font-family: monospace;
-            font-weight: bold;
-            width: 160px;
+            width: 100px;
+            font-size: 0.55rem;
         }
 
-        /* estatísticas campo */
+        /* ESTATÍSTICAS */
         .stats-grid {
             background: #dbd0b5;
-            padding: 16px 20px;
-            margin: 20px 0;
+            padding: 4px 6px;
+            margin: 5px 0;
             border: 1px solid #8f7b56;
-            border-left: 8px solid #556b2f;
+            border-left: 4px solid #556b2f;
         }
 
         .stats-title {
             font-weight: 900;
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 15px;
+            font-size: 0.65rem;
+            margin-bottom: 4px;
             border-bottom: 1px solid #8b744c;
             display: inline-block;
-            padding-right: 20px;
+            padding-right: 8px;
         }
 
         .row-stats {
             display: flex;
             flex-wrap: wrap;
-            gap: 18px 30px;
+            gap: 4px 8px;
         }
 
         .stat {
             background: #f2ebd5;
-            padding: 6px 14px;
+            padding: 1px 4px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
+            gap: 3px;
             border: 1px solid #aa946b;
         }
 
         .stat label {
+            font-size: 0.5rem;
             font-weight: 800;
-            font-size: 0.75rem;
-            text-transform: uppercase;
         }
 
         .stat input {
             background: white;
             border: 1px solid #7e6843;
-            padding: 5px 8px;
-            width: 100px;
-            font-family: monospace;
-            font-weight: bold;
+            padding: 1px 2px;
+            width: 55px;
+            font-size: 0.55rem;
         }
 
         .slash-group {
             display: flex;
-            gap: 6px;
+            gap: 2px;
             align-items: center;
         }
 
         .slash-group input {
-            width: 70px;
-            text-align: center;
+            width: 38px;
         }
 
-        /* inventário e habilidades */
+        /* BLOCOS */
         .military-block {
             background: #e2d9c2;
-            margin: 26px 0;
-            padding: 8px 18px 18px;
+            margin: 5px 0;
+            padding: 2px 6px 4px;
             border: 1px solid #a48e64;
-            position: relative;
         }
 
         .block-title {
             background: #5f4c30;
             display: inline-block;
-            padding: 4px 24px;
+            padding: 1px 10px;
             color: #ffe5bf;
-            font-weight: bold;
-            letter-spacing: 2px;
-            font-size: 0.9rem;
-            margin-top: -14px;
-            margin-bottom: 18px;
+            font-size: 0.55rem;
+            margin-top: -7px;
+            margin-bottom: 4px;
             text-transform: uppercase;
-            border-radius: 0px;
         }
 
         .inventario-row {
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 2px;
         }
 
         .item-line {
             background: #f6efde;
-            padding: 6px 12px;
-            border-left: 5px solid #6f4f2c;
+            padding: 1px 4px;
+            border-left: 3px solid #6f4f2c;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 4px;
         }
 
         .item-line strong {
-            min-width: 28px;
-            font-size: 1rem;
+            min-width: 18px;
+            font-size: 0.65rem;
         }
 
         .item-line input {
             flex: 1;
             background: #fffef5;
             border: 1px solid #b7a06e;
-            padding: 8px 12px;
-            font-family: monospace;
-            font-size: 0.85rem;
+            padding: 1px 4px;
+            font-size: 0.55rem;
         }
 
         textarea {
             width: 100%;
             background: #fffcf0;
             border: 1px solid #9f8960;
-            padding: 12px;
-            font-family: monospace;
-            font-size: 0.85rem;
-            margin-top: 10px;
-            resize: vertical;
+            padding: 2px 4px;
+            font-size: 0.55rem;
+            margin-top: 2px;
+            resize: none;
         }
 
         .habilidades-list {
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 2px;
         }
 
         .hab-item {
             background: #f2ead7;
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 4px 12px;
+            gap: 4px;
+            padding: 1px 4px;
             border-bottom: 1px solid #cfbc93;
         }
 
         .hab-num {
             font-weight: 900;
-            min-width: 40px;
-            font-size: 1.2rem;
+            min-width: 22px;
+            font-size: 0.65rem;
         }
 
         .hab-item input {
             flex: 1;
             background: #fffcf3;
             border: 1px solid #b49966;
-            padding: 8px 10px;
-            font-family: monospace;
-            font-weight: bold;
+            padding: 1px 4px;
+            font-size: 0.55rem;
         }
 
-        /* botões militares */
+        /* MISSÃO */
+        .missao-box {
+            background: #cbc09e;
+            border-left: 4px solid #425c2c;
+            padding: 3px 6px;
+            margin: 5px 0;
+        }
+
+        .missao-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            align-items: center;
+            margin-bottom: 2px;
+        }
+
+        .missao-row strong {
+            font-size: 0.55rem;
+        }
+
+        .missao-row input {
+            background: #fff3e0;
+            border: 1px solid #a48149;
+            padding: 1px 3px;
+            font-size: 0.55rem;
+        }
+
+        /* BOTÕES - OCULTOS NO PDF */
         .action-bar {
             display: flex;
-            gap: 16px;
+            gap: 6px;
             justify-content: center;
-            margin: 28px 0 12px;
+            margin: 10px 0 4px;
             flex-wrap: wrap;
         }
 
@@ -366,156 +351,151 @@
             color: #efe1c1;
             font-family: 'Courier New', monospace;
             font-weight: bold;
-            padding: 8px 24px;
-            font-size: 0.8rem;
+            padding: 3px 12px;
+            font-size: 0.55rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
             cursor: pointer;
-            transition: 0.05s linear;
-            border-radius: 0px;
-            box-shadow: 3px 3px 0 #12140c;
+            box-shadow: 2px 2px 0 #12140c;
         }
 
         button:hover {
             background: #4f6236;
             transform: translate(-1px, -1px);
-            box-shadow: 4px 4px 0 #12140c;
         }
 
-        button:active {
-            transform: translate(2px, 2px);
-            box-shadow: 1px 1px 0 #12140c;
-        }
-
-        .reset-btn {
-            background: #5c432a;
-        }
-
-        .export-txt-btn {
-            background: #2c5a3b;
-        }
-
-        .archive-btn {
-            background: #3a4a6e;
-        }
+        .reset-btn { background: #5c432a; }
+        .export-txt-btn { background: #2c5a3b; }
+        .archive-btn { background: #3a4a6e; }
 
         footer {
-            font-size: 0.65rem;
+            font-size: 0.4rem;
             text-align: center;
-            margin-top: 20px;
+            margin-top: 5px;
             color: #5a4c32;
             border-top: 1px dotted #bba16d;
-            padding-top: 12px;
-            text-transform: uppercase;
+            padding-top: 3px;
         }
 
-        input, textarea, button {
-            outline: none;
-        }
-
-        @media (max-width: 700px) {
+        /* ESTILOS PARA IMPRESSÃO/PDF - GARANTE PÁGINA ÚNICA */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
             .sheet {
-                padding: 16px;
+                box-shadow: none;
+                border: 1px solid #aaa;
+                margin: 0 auto;
+                padding: 6px;
+                max-width: 100%;
+                page-break-after: avoid;
+                page-break-before: avoid;
+                page-break-inside: avoid;
+                break-inside: avoid;
+                overflow: visible;
             }
-            .image-slot {
-                width: 110px;
-                min-width: 110px;
-                height: 130px;
+            .action-bar, footer, .image-buttons, .image-input-area input[type="file"] {
+                display: none;
             }
-            .image-preview-container {
-                height: 80px;
+            * {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                break-before: avoid;
+                break-after: avoid;
             }
         }
     </style>
 </head>
 <body>
 <div class="sheet" id="fichaContainer">
-    <!-- cabeçalho com espaço para IMAGEM - UPLOAD LOCAL -->
+    <!-- CABEÇALHO -->
     <div class="military-header">
         <div class="title-section">
-            <h1>FICHA DE OPERAÇÕES<br> COMANDO TÁTICO</h1>
+            <h1>FICHA DE OPERAÇÕES<br>COMANDO TÁTICO</h1>
             <div class="sub">DOCUMENTO CLASSIFICADO // LIVRO DE CAMPO</div>
         </div>
-        <div class="image-slot" id="imageSlot">
+        <div class="image-slot">
             <div class="image-preview-container" id="imagePreviewContainer">
-                <div class="no-image" id="noImageText">SEM IMAGEM<br>CLIQUE PARA SELECIONAR</div>
+                <div class="no-image" id="noImageText">SEM IMAGEM<br>CLIQUE</div>
                 <img id="previewImage" style="display: none;" alt="Preview">
             </div>
             <div class="image-input-area">
                 <input type="file" id="imageUploadInput" accept="image/*" style="display: none;">
                 <div class="image-buttons">
-                    <button id="selectImageBtn" type="button">SELECIONAR IMAGEM</button>
+                    <button id="selectImageBtn" type="button">SEL</button>
                     <button id="clearImageBtn" type="button">LIMPAR</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- INFORMAÇÕES BÁSICAS (estilo militar) -->
+    <!-- INFORMAÇÕES BÁSICAS -->
     <div class="info-bar">
-        <div class="info-item"><label>UNIDADE</label> <input type="text" id="unidadeField" placeholder="Ex: 3º Batalhão" value="FORCA ALFA"></div>
-        <div class="info-item"><label>CODINOME</label> <input type="text" id="nomePersonagem" placeholder="Operador" value="COMANDO FANTASMA"></div>
-        <div class="info-item"><label>ID / ARQUIVO</label> <input type="text" id="arquivoID" placeholder="Nº Registro" value="FT-210"></div>
-        <div class="info-item"><label>PATENTE</label> <input type="text" id="patente" placeholder="Graduação" value="SARGENTO"></div>
+        <div class="info-item"><label>UNIDADE</label> <input type="text" id="unidadeField" value="FORCA ALFA"></div>
+        <div class="info-item"><label>CODINOME</label> <input type="text" id="nomePersonagem" value="COMANDO FANTASMA"></div>
+        <div class="info-item"><label>ID</label> <input type="text" id="arquivoID" value="FT-210"></div>
+        <div class="info-item"><label>PATENTE</label> <input type="text" id="patente" value="SARGENTO"></div>
     </div>
 
-    <!-- ESTATÍSTICA DE CAMPO -->
+    <!-- ESTATÍSTICAS -->
     <div class="stats-grid">
         <div class="stats-title">ESTATISTICA DE CAMPO</div>
         <div class="row-stats">
-            <div class="stat"><label>VIDA (PV):</label> <input type="text" id="vida" value="32 / 32"></div>
-            <div class="stat"><label>DEFESA BALISTICA:</label> <input type="text" id="defB" value="16"></div>
-            <div class="stat"><label>DEFESA EXPLOSAO:</label> <input type="text" id="defE" value="14"></div>
-            <div class="stat"><label>MUNICAO GERAL:</label> <input type="text" id="municao" value="90 / 120"></div>
-            <div class="stat"><label>MOVIMENTO:</label> <div class="slash-group"><input type="text" id="mov1" value="8m"> / <input type="text" id="mov2" value="12m"></div></div>
+            <div class="stat"><label>VIDA:</label> <input type="text" id="vida" value="32/32"></div>
+            <div class="stat"><label>DEF.BAL:</label> <input type="text" id="defB" value="16"></div>
+            <div class="stat"><label>DEF.EXP:</label> <input type="text" id="defE" value="14"></div>
+            <div class="stat"><label>MUNICAO:</label> <input type="text" id="municao" value="90/120"></div>
+            <div class="stat"><label>MOV:</label> <div class="slash-group"><input type="text" id="mov1" value="8m">/<input type="text" id="mov2" value="12m"></div></div>
         </div>
     </div>
 
     <!-- INVENTÁRIO -->
     <div class="military-block">
-        <div class="block-title">INVENTARIO DE CAMPO</div>
+        <div class="block-title">INVENTARIO</div>
         <div class="inventario-row">
-            <div class="item-line"><strong>1.</strong> <input type="text" id="inv1" value="Fuzil M4 + carregador estendido"></div>
-            <div class="item-line"><strong>2.</strong> <input type="text" id="inv2" value="Granada de fragmentacao x2"></div>
+            <div class="item-line"><strong>1.</strong> <input type="text" id="inv1" value="Fuzil M4 + carregador"></div>
+            <div class="item-line"><strong>2.</strong> <input type="text" id="inv2" value="Granada frag x2"></div>
             <div class="item-line"><strong>3.</strong> <input type="text" id="inv3" value="Kit medico tatico"></div>
-            <div class="item-line"><strong>4.</strong> <input type="text" id="inv4" value="Radio portatil / sinalizador"></div>
+            <div class="item-line"><strong>4.</strong> <input type="text" id="inv4" value="Radio / sinalizador"></div>
         </div>
-        <textarea id="inventarioExtra" rows="2" placeholder="Equipamentos secundarios, municao extra, ferramentas...">C4 (1kg), Oculos de visao noturna, coldre de perna</textarea>
+        <textarea id="inventarioExtra" rows="1">C4 (1kg), Oculos noturno, coldre</textarea>
     </div>
 
-    <!-- HABILIDADES ESPECIAIS -->
+    <!-- HABILIDADES -->
     <div class="military-block">
-        <div class="block-title">HABILIDADES OPERACIONAIS</div>
+        <div class="block-title">HABILIDADES</div>
         <div class="habilidades-list">
             <div class="hab-item"><span class="hab-num">1.</span> <input type="text" id="hab1" value="Tiro de precisao avancado"></div>
             <div class="hab-item"><span class="hab-num">2.</span> <input type="text" id="hab2" value="Especialista em demolicoes"></div>
-            <div class="hab-item"><span class="hab-num">3.</span> <input type="text" id="hab3" value="Movimento furtivo (camuflagem)"></div>
-            <div class="hab-item"><span class="hab-num">4.</span> <input type="text" id="hab4" value="Lideranca tatica + bonus de grupo"></div>
+            <div class="hab-item"><span class="hab-num">3.</span> <input type="text" id="hab3" value="Movimento furtivo"></div>
+            <div class="hab-item"><span class="hab-num">4.</span> <input type="text" id="hab4" value="Lideranca em combate"></div>
         </div>
-        <textarea id="obsHabilidades" rows="2" placeholder="Observacoes taticas / especializacoes adicionais">Treinamento em combate CQB, sobrevivencia em selva.</textarea>
+        <textarea id="obsHabilidades" rows="1">CQB, sobrevivencia em selva</textarea>
     </div>
 
-    <!-- INFORMAÇÕES ADICIONAIS / MISSÃO ATUAL -->
-    <div style="background:#cbc09e; border-left:6px solid #425c2c; padding: 12px 20px; margin: 12px 0;">
-        <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between;">
-            <div><strong>MISSAO ATUAL:</strong> <input type="text" id="infoExtra" style="background:#fff3e0; border:1px solid #a48149; padding:5px 10px; width: 280px;" value="OPERACAO: TERRA QUEIMADA"></div>
-            <div><strong>DATA:</strong> <input type="text" id="dataMissao" placeholder="DD/MM/AAAA" style="background:#fff3e0; border:1px solid #a48149; padding:5px 10px;" value="16/05/2026"></div>
+    <!-- MISSÃO -->
+    <div class="missao-box">
+        <div class="missao-row">
+            <strong>MISSAO:</strong> <input type="text" id="infoExtra" style="width: 200px;" value="OP: TERRA QUEIMADA">
+            <strong>DATA:</strong> <input type="text" id="dataMissao" style="width: 80px;" value="16/05/2026">
         </div>
-        <div style="margin-top: 12px;"><strong>NOTAS DE PLANEJAMENTO:</strong> <input type="text" id="notasPlano" style="width:100%; background:#fffcf0; border:1px solid #af8e58; padding:6px;" value="Ponto de extracao - zona norte. Codigo vermelho."></div>
+        <div class="missao-row" style="margin-top: 2px;">
+            <strong style="width: auto;">NOTAS:</strong> <input type="text" id="notasPlano" style="flex:1;" value="Extracao zona norte - codigo vermelho">
+        </div>
     </div>
 
+    <!-- BOTÕES -->
     <div class="action-bar">
-        <button id="resetBtn" class="reset-btn">LIMPAR FICHA</button>
-        <button id="exportTxtBtn" class="export-txt-btn">EXPORTAR RELATORIO (TXT)</button>
-        <button id="archiveBtn" class="archive-btn">ARQUIVAR FICHA (PDF)</button>
+        <button id="resetBtn" class="reset-btn">LIMPAR</button>
+        <button id="exportTxtBtn" class="export-txt-btn">EXPORTAR TXT</button>
+        <button id="archiveBtn" class="archive-btn">PDF UNICO</button>
     </div>
-    <footer>
-        DOCUMENTO OPERACIONAL - EDITAVEL - DADOS SALVOS LOCALMENTE
-    </footer>
+    <footer>DOCUMENTO OPERACIONAL - EDICAO LIVRE</footer>
 </div>
 
 <script>
-    // lista de campos a serem salvos (exceto imagem que é base64)
+    // Lista de campos
     const fieldIds = [
         'unidadeField', 'vida', 'defB', 'defE', 'municao', 'mov1', 'mov2',
         'inv1', 'inv2', 'inv3', 'inv4', 'inventarioExtra',
@@ -523,65 +503,48 @@
         'nomePersonagem', 'arquivoID', 'patente', 'infoExtra', 'dataMissao', 'notasPlano'
     ];
     
-    // elementos da imagem
+    // Elementos de imagem
     const previewImage = document.getElementById('previewImage');
     const noImageText = document.getElementById('noImageText');
     const imageUploadInput = document.getElementById('imageUploadInput');
-    let currentImageBase64 = null; // armazenar base64 da imagem
+    let currentImageBase64 = null;
 
-    // FUNÇÃO PARA CARREGAR IMAGEM LOCALMENTE (Arquivo)
     function handleImageUpload(file) {
         if (!file) return;
-        
         const reader = new FileReader();
         reader.onload = function(e) {
-            const base64 = e.target.result;
-            currentImageBase64 = base64;
-            previewImage.src = base64;
+            currentImageBase64 = e.target.result;
+            previewImage.src = currentImageBase64;
             previewImage.style.display = 'block';
             noImageText.style.display = 'none';
             saveToLocalStorage();
             showToast("IMAGEM CARREGADA");
         };
-        reader.onerror = function() {
-            showToast("ERRO AO CARREGAR IMAGEM");
-        };
+        reader.onerror = () => showToast("ERRO");
         reader.readAsDataURL(file);
     }
 
-    // Limpar imagem
     function clearImage() {
         currentImageBase64 = null;
         previewImage.src = '';
         previewImage.style.display = 'none';
         noImageText.style.display = 'flex';
-        noImageText.innerHTML = 'SEM IMAGEM<br>CLIQUE PARA SELECIONAR';
+        noImageText.innerHTML = 'SEM IMAGEM<br>CLIQUE';
         if (imageUploadInput) imageUploadInput.value = '';
         saveToLocalStorage();
         showToast("IMAGEM REMOVIDA");
     }
 
-    // abrir seletor de arquivos
-    function openFileSelector() {
-        if (imageUploadInput) {
-            imageUploadInput.click();
-        }
-    }
-
-    // salvar no localStorage (incluindo imagem base64)
+    function openFileSelector() { imageUploadInput?.click(); }
+    
     function saveToLocalStorage() {
         const data = {};
-        for (let id of fieldIds) {
-            const el = document.getElementById(id);
-            if (el) data[id] = el.value;
-        }
-        // salvar imagem base64 também
+        fieldIds.forEach(id => { const el = document.getElementById(id); if(el) data[id] = el.value; });
         data.imageBase64 = currentImageBase64;
         localStorage.setItem('fichaMilitarData', JSON.stringify(data));
-        // toast rápido sem excesso
     }
 
-    function showToast(msg, duration = 1500) {
+    function showToast(msg) {
         let toast = document.getElementById('militaryToast');
         if (!toast) {
             toast = document.createElement('div');
@@ -592,17 +555,15 @@
             toast.style.transform = 'translateX(-50%)';
             toast.style.backgroundColor = '#2b2a25';
             toast.style.color = '#dad2b0';
-            toast.style.padding = '6px 18px';
+            toast.style.padding = '3px 10px';
             toast.style.fontFamily = 'monospace';
-            toast.style.fontWeight = 'bold';
-            toast.style.border = '1px solid #988e6e';
+            toast.style.fontSize = '0.65rem';
             toast.style.zIndex = '9999';
-            toast.style.fontSize = '0.8rem';
             document.body.appendChild(toast);
         }
         toast.textContent = msg;
         toast.style.opacity = '1';
-        setTimeout(() => { toast.style.opacity = '0'; }, duration);
+        setTimeout(() => toast.style.opacity = '0', 1200);
     }
 
     function loadFromLocalStorage() {
@@ -617,156 +578,131 @@
                         previewImage.src = currentImageBase64;
                         previewImage.style.display = 'block';
                         noImageText.style.display = 'none';
-                    } else {
-                        clearImage();
                     }
                 } else {
                     const el = document.getElementById(id);
-                    if (el && data.hasOwnProperty(id)) {
-                        el.value = data[id];
-                    }
+                    if (el && data.hasOwnProperty(id)) el.value = data[id];
                 }
             }
             return true;
         } catch(e) { return false; }
     }
 
-    // auto-save
     function attachAutoSave() {
-        for (let id of fieldIds) {
+        fieldIds.forEach(id => {
             const el = document.getElementById(id);
             if (el) {
                 el.addEventListener('input', () => saveToLocalStorage());
                 el.addEventListener('change', () => saveToLocalStorage());
             }
-        }
+        });
     }
 
     function resetAllFields() {
-        document.getElementById('unidadeField').value = '';
-        document.getElementById('vida').value = '';
-        document.getElementById('defB').value = '';
-        document.getElementById('defE').value = '';
-        document.getElementById('municao').value = '';
-        document.getElementById('mov1').value = '';
-        document.getElementById('mov2').value = '';
-        document.getElementById('inv1').value = '';
-        document.getElementById('inv2').value = '';
-        document.getElementById('inv3').value = '';
-        document.getElementById('inv4').value = '';
-        document.getElementById('inventarioExtra').value = '';
-        document.getElementById('hab1').value = '';
-        document.getElementById('hab2').value = '';
-        document.getElementById('hab3').value = '';
-        document.getElementById('hab4').value = '';
-        document.getElementById('obsHabilidades').value = '';
-        document.getElementById('nomePersonagem').value = '';
-        document.getElementById('arquivoID').value = '';
-        document.getElementById('patente').value = '';
-        document.getElementById('infoExtra').value = '';
-        document.getElementById('dataMissao').value = '';
-        document.getElementById('notasPlano').value = '';
+        fieldIds.forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
         clearImage();
         saveToLocalStorage();
         showToast("FICHA LIMPA");
     }
 
-    // FUNÇÃO ARQUIVAR FICHA - GERAR PDF DA PÁGINA (apenas o conteúdo do container)
+    // FUNÇÃO GERAR PDF - GARANTE PÁGINA ÚNICA
     async function archiveAsPDF() {
         const element = document.getElementById('fichaContainer');
         if (!element) return;
         
-        showToast("GERANDO PDF... AGUARDE");
+        showToast("GERANDO PDF PAGINA UNICA...");
         
-        // Opções de configuração do PDF (estilo militar)
+        // Configuração otimizada para página única
         const opt = {
-            margin:        [0.5, 0.5, 0.5, 0.5], // margens em polegadas
+            margin:        [0.1, 0.1, 0.1, 0.1],
             filename:     `ficha_operacao_${new Date().getTime()}.pdf`,
-            image:        { type: 'jpeg', quality: 0.95 },
-            html2canvas:  { scale: 2, letterRendering: true, useCORS: true, logging: false },
-            jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+            image:        { type: 'jpeg', quality: 0.92 },
+            html2canvas:  { 
+                scale: 2.2,
+                letterRendering: true,
+                useCORS: true,
+                logging: false,
+                backgroundColor: '#e8e3d5',
+                windowWidth: element.scrollWidth,
+                windowHeight: element.scrollHeight
+            },
+            jsPDF:        { 
+                unit: 'in', 
+                format: 'a4', 
+                orientation: 'portrait',
+                compress: true,
+                hotfixes: ['px_scaling']
+            },
+            pagebreak:    { mode: 'avoid-all' }
         };
         
         try {
-            // Chamar html2pdf para gerar o PDF
+            // Forçar estilos para evitar quebra
+            const originalStyle = element.style.cssText;
+            element.style.pageBreakInside = 'avoid';
+            element.style.breakInside = 'avoid';
+            element.style.overflow = 'visible';
+            element.style.height = 'auto';
+            
             await html2pdf().set(opt).from(element).save();
-            showToast("PDF ARQUIVADO COM SUCESSO");
+            
+            element.style.cssText = originalStyle;
+            showToast("PDF DE UMA PAGINA GERADO!");
         } catch (error) {
-            console.error("Erro ao gerar PDF:", error);
+            console.error("Erro:", error);
             showToast("ERRO AO GERAR PDF");
         }
     }
 
-    // EXPORTAR TXT (resumo)
     function exportAsTxt() {
         let content = "=====================================================\n";
         content += "     RELATORIO OPERACIONAL - FICHA DE CAMPO\n";
         content += "=====================================================\n";
         content += `UNIDADE: ${document.getElementById('unidadeField').value}\n`;
         content += `CODINOME: ${document.getElementById('nomePersonagem').value} | ID: ${document.getElementById('arquivoID').value} | PATENTE: ${document.getElementById('patente').value}\n`;
-        content += `DATA MISSAO: ${document.getElementById('dataMissao').value}\n`;
-        content += "\n--- ESTATISTICAS DE COMBATE ---\n";
-        content += `VIDA (PV): ${document.getElementById('vida').value}\n`;
-        content += `DEFESA BALISTICA: ${document.getElementById('defB').value} | DEFESA EXPLOSAO: ${document.getElementById('defE').value}\n`;
-        content += `MUNICAO GERAL: ${document.getElementById('municao').value}\n`;
+        content += `DATA: ${document.getElementById('dataMissao').value}\n`;
+        content += "\n--- ESTATISTICAS ---\n";
+        content += `VIDA: ${document.getElementById('vida').value}\n`;
+        content += `DEFESA BAL: ${document.getElementById('defB').value} | DEF EXP: ${document.getElementById('defE').value}\n`;
+        content += `MUNICAO: ${document.getElementById('municao').value}\n`;
         content += `MOVIMENTO: ${document.getElementById('mov1').value} / ${document.getElementById('mov2').value}\n`;
         content += "\n--- INVENTARIO ---\n";
         content += `1. ${document.getElementById('inv1').value}\n2. ${document.getElementById('inv2').value}\n3. ${document.getElementById('inv3').value}\n4. ${document.getElementById('inv4').value}\n`;
-        content += `EQUIPAMENTOS ADICIONAIS: ${document.getElementById('inventarioExtra').value}\n`;
-        content += "\n--- HABILIDADES OPERACIONAIS ---\n";
+        content += `EXTRA: ${document.getElementById('inventarioExtra').value}\n`;
+        content += "\n--- HABILIDADES ---\n";
         content += `1. ${document.getElementById('hab1').value}\n2. ${document.getElementById('hab2').value}\n3. ${document.getElementById('hab3').value}\n4. ${document.getElementById('hab4').value}\n`;
-        content += `OBSERVACOES: ${document.getElementById('obsHabilidades').value}\n`;
-        content += `\n--- MISSAO E NOTAS ---\n`;
-        content += `MISSAO ATUAL: ${document.getElementById('infoExtra').value}\n`;
-        content += `NOTAS DE PLANEJAMENTO: ${document.getElementById('notasPlano').value}\n`;
-        content += `\n[FIM DO REGISTRO] - ${new Date().toLocaleString()}\n`;
-        downloadFile('relatorio_operacao.txt', content);
-        showToast("RELATORIO TXT EXPORTADO");
-    }
-
-    function downloadFile(filename, text) {
-        const blob = new Blob([text], {type: 'text/plain;charset=utf-8'});
+        content += `OBS: ${document.getElementById('obsHabilidades').value}\n`;
+        content += `\n--- MISSAO ---\n`;
+        content += `${document.getElementById('infoExtra').value}\n`;
+        content += `NOTAS: ${document.getElementById('notasPlano').value}\n`;
+        content += `\n[FIM] - ${new Date().toLocaleString()}\n`;
+        
+        const blob = new Blob([content], {type: 'text/plain;charset=utf-8'});
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = filename;
+        link.download = `relatorio_${Date.now()}.txt`;
         link.click();
         URL.revokeObjectURL(link.href);
+        showToast("TXT EXPORTADO");
     }
 
-    // inicialização
+    // INICIALIZAÇÃO
     window.addEventListener('DOMContentLoaded', () => {
         loadFromLocalStorage();
         attachAutoSave();
         
-        // Configurar eventos da imagem
         if (imageUploadInput) {
             imageUploadInput.addEventListener('change', (e) => {
-                if (e.target.files && e.target.files[0]) {
-                    handleImageUpload(e.target.files[0]);
-                }
+                if (e.target.files?.[0]) handleImageUpload(e.target.files[0]);
             });
         }
         
-        const selectBtn = document.getElementById('selectImageBtn');
-        if (selectBtn) {
-            selectBtn.addEventListener('click', openFileSelector);
-        }
-        
-        const clearImgBtn = document.getElementById('clearImageBtn');
-        if (clearImgBtn) {
-            clearImgBtn.addEventListener('click', clearImage);
-        }
-        
-        // clicar no preview também pode abrir seletor
-        const previewContainer = document.getElementById('imagePreviewContainer');
-        if (previewContainer) {
-            previewContainer.addEventListener('click', openFileSelector);
-        }
-        
-        // Botões principais
-        document.getElementById('resetBtn').addEventListener('click', resetAllFields);
-        document.getElementById('exportTxtBtn').addEventListener('click', exportAsTxt);
-        document.getElementById('archiveBtn').addEventListener('click', archiveAsPDF);
+        document.getElementById('selectImageBtn')?.addEventListener('click', openFileSelector);
+        document.getElementById('clearImageBtn')?.addEventListener('click', clearImage);
+        document.getElementById('imagePreviewContainer')?.addEventListener('click', openFileSelector);
+        document.getElementById('resetBtn')?.addEventListener('click', resetAllFields);
+        document.getElementById('exportTxtBtn')?.addEventListener('click', exportAsTxt);
+        document.getElementById('archiveBtn')?.addEventListener('click', archiveAsPDF);
     });
 </script>
 </body>
